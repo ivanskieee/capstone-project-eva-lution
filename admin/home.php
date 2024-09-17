@@ -8,14 +8,14 @@ if (!isset($_SESSION['user'])) {
     exit;
 }
 ?>
-
+<nav class="main-header">
 <div class="col-12">
     <div class="card">
         <div class="card-body">
             Welcome!
             <br>
             <div class="col-md-5">
-                <div class="callout callout-info">
+                <div class="callout callout-info" style="border-left-color: rgb(51, 128, 64);">
                     <h5><b>Academic Year:
                             Semester</b></h5>
                     <h6><b>Evaluation Status:</b></h6>
@@ -28,7 +28,7 @@ if (!isset($_SESSION['user'])) {
     <div class="col-12 col-sm-6 col-md-4">
         <div class="small-box bg-light shadow-sm border">
             <div class="inner">
-                <h3></h3>
+                <h3>1</h3>
 
                 <p>Total Faculties</p>
             </div>
@@ -40,7 +40,7 @@ if (!isset($_SESSION['user'])) {
     <div class="col-12 col-sm-6 col-md-4">
         <div class="small-box bg-light shadow-sm border">
             <div class="inner">
-                <h3></h3>
+                <h3>1</h3>
 
                 <p>Total Students</p>
             </div>
@@ -52,7 +52,7 @@ if (!isset($_SESSION['user'])) {
     <div class="col-12 col-sm-6 col-md-4">
         <div class="small-box bg-light shadow-sm border">
             <div class="inner">
-                <h3></h3>
+                <h3>1</h3>
 
                 <p>Total Users</p>
             </div>
@@ -64,7 +64,7 @@ if (!isset($_SESSION['user'])) {
     <div class="col-12 col-sm-6 col-md-4">
         <div class="small-box bg-light shadow-sm border">
             <div class="inner">
-                <h3></h3>
+                <h3>0</h3>
 
                 <p>Total Classes</p>
             </div>
@@ -74,5 +74,6 @@ if (!isset($_SESSION['user'])) {
         </div>
     </div>
 </div>
+</nav>
 
 <?php include 'footer.php'; ?>
