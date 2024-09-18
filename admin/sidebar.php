@@ -89,7 +89,7 @@
             </a>
             <ul class="nav nav-treeview">
               <li class="nav-item">
-                <a href="./index.php?page=new_student" class="nav-link nav-new_student tree-item">
+                <a href="new_student.php" class="nav-link nav-new_student tree-item">
                   <i class="fas fa-angle-right nav-icon"></i>
                   <p>Add New</p>
                 </a>
@@ -156,4 +156,18 @@
   		}
      
   	})
+    
+    document.addEventListener('DOMContentLoaded', function () {
+    // Get all nav links
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    // Loop through the links
+    navLinks.forEach(link => {
+      // Check if the current link's href matches the current page URL
+      if (link.href === window.location.href) {
+        // Add 'active' class to the matching link
+        link.classList.add('active');
+      }
+    });
+  });
   </script>
