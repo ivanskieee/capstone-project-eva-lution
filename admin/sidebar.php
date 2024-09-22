@@ -10,11 +10,11 @@
       <ul class="nav nav-pills nav-sidebar flex-column nav-flat" data-widget="treeview" role="menu"
         data-accordion="false">
         <li class="nav-item dropdown">
-          <a href="./" class="nav-link nav-home" style="background-color: rgb(51, 128, 64);">
+          <a href="home.php"
+            class="nav-link nav-home <?php echo basename($_SERVER['PHP_SELF']) == 'home.php' ? 'active' : ''; ?>"
+            style="<?php echo basename($_SERVER['PHP_SELF']) == 'home.php' ? 'background-color: rgb(51, 128, 64); color: #fff; border: 1px solid #343a40;' : 'background-color: #343a40; color: #fff; border: 1px solid #343a40;'; ?>">
             <i class="nav-icon fas fa-tachometer-alt"></i>
-            <p>
-              Dashboard
-            </p>
+            <p>Dashboard</p>
           </a>
         </li>
         <li class="nav-item dropdown">
@@ -58,7 +58,9 @@
           </a>
         </li>
         <li class="nav-item">
-          <a href="#" class="nav-link nav-edit_faculty">
+          <a href="#"
+            class="nav-link nav-edit_faculty <?php echo basename($_SERVER['PHP_SELF']) == 'new_faculty.php' ? 'active' : ''; ?>"
+            style="<?php echo basename($_SERVER['PHP_SELF']) == 'new_faculty.php' ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
             <i class="nav-icon fas fa-user-friends"></i>
             <p>
               Faculties
@@ -109,7 +111,9 @@
           </ul>
         </li>
         <li class="nav-item">
-          <a href="#" class="nav-link nav-edit_student">
+          <a href="#"
+            class="nav-link nav-edit_student <?php echo basename($_SERVER['PHP_SELF']) == 'new_student.php' ? 'active' : ''; ?>"
+            style="<?php echo basename($_SERVER['PHP_SELF']) == 'new_student.php' ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
             <i class="nav-icon fa ion-ios-people-outline"></i>
             <p>
               Students
