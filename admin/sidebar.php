@@ -70,7 +70,7 @@
           <ul class="nav nav-treeview">
             <li class="nav-item">
               <a href="#" class="nav-link nav-edit_faculty">
-                <i class="fas fa-angle-right nav-icon"></i>
+                <i class="right fas fa-angle-left"></i>
                 <p>Tertiary</p>
               </a>
               <ul class="nav nav-treeview">
@@ -90,7 +90,7 @@
             </li>
             <li class="nav-item">
               <a href="#" class="nav-link nav-edit_faculty">
-                <i class="fas fa-angle-right nav-icon"></i>
+                <i class="right fas fa-angle-left"></i>
                 <p>Secondary</p>
               </a>
               <ul class="nav nav-treeview">
@@ -154,13 +154,13 @@
           <ul class="nav nav-treeview">
             <li class="nav-item">
               <a href="./index.php?page=new_user" class="nav-link nav-new_user tree-item">
-                <i class="fas fa-angle-right nav-icon"></i>
+                <i class="nav-icon"></i>
                 <p>Add New</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="./index.php?page=user_list" class="nav-link nav-user_list tree-item">
-                <i class="fas fa-angle-right nav-icon"></i>
+                <i class="nav-icon"></i>
                 <p>List</p>
               </a>
             </li>
