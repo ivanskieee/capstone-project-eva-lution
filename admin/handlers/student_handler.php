@@ -8,7 +8,7 @@ require '../vendor/autoload.php'; // Ensure PHPMailer is autoloaded using Compos
 include 'header.php';
 include 'sidebar.php';
 include 'footer.php';
-include 'connection.php';
+include '../database/connection.php';
 
 $id = isset($_POST['id']) ? $_POST['id'] : null;
 $student = null;
