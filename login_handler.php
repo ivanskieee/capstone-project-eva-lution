@@ -62,7 +62,7 @@ if ($_POST) {
     }
 
     // Verify Faculty Login (with password verification)
-    $query = 'SELECT * FROM faculty_list WHERE email = :email';
+    $query = 'SELECT * FROM college_faculty_list WHERE email = :email';
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':email', $email);
     $stmt->execute();

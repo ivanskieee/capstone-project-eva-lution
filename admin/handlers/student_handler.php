@@ -13,6 +13,18 @@ include '../database/connection.php';
 $id = isset($_POST['id']) ? $_POST['id'] : null;
 $student = null;
 
+$stmt = $conn->prepare('SELECT * FROM student_list');
+$stmt->execute();
+$students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+//this with be ano pag may class na 
+// $class = []; 
+// $stmt = $conn->prepare('SELECT id, name FROM classes');
+// $stmt->execute();
+// while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+//     $class[$row['id']] = $row['name'];
+// }
+
 if ($id) {
     $stmt = $conn->prepare('SELECT * FROM student_list WHERE id = :id');
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
@@ -77,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($stmt->execute()) {
         // After saving data, send an email
         sendEmail($email, $password);
-        echo "<script>window.location.replace('new_student.php');</script>";
+        echo "<script>window.location.replace('student_list.php');</script>";
     } else {
         echo "<script>alert('Error saving data.');</script>";
     }

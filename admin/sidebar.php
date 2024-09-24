@@ -59,8 +59,8 @@
         </li>
         <li class="nav-item">
           <a href="#"
-            class="nav-link nav-edit_faculty <?php echo basename($_SERVER['PHP_SELF']) == 'new_faculty.php' ? 'active' : ''; ?>"
-            style="<?php echo basename($_SERVER['PHP_SELF']) == 'new_faculty.php' ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
+            class="nav-link nav-edit_faculty <?php echo in_array(basename($_SERVER['PHP_SELF']), ['new_faculty.php', 'tertiary_faculty_list.php']) ? 'active' : ''; ?>"
+            style="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['new_faculty.php', 'tertiary_faculty_list.php']) ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
             <i class="nav-icon fas fa-user-friends"></i>
             <p>
               Faculties
@@ -69,6 +69,7 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
+              <!-- this will be for Tertiary -->
               <a href="#" class="nav-link nav-edit_faculty">
                 <i class="right fas fa-angle-left"></i>
                 <p>Tertiary</p>
@@ -81,7 +82,7 @@
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="./index.php?page=student_list" class="nav-link nav-faculty_list tree-item">
+                  <a href="tertiary_faculty_list.php" class="nav-link nav-tertiary_faculty_list tree-item">
                     <i class="nav-icon"></i>
                     <p>List</p>
                   </a>
@@ -89,6 +90,7 @@
               </ul>
             </li>
             <li class="nav-item">
+              <!-- this will be for Secondary -->
               <a href="#" class="nav-link nav-edit_faculty">
                 <i class="right fas fa-angle-left"></i>
                 <p>Secondary</p>
@@ -112,8 +114,8 @@
         </li>
         <li class="nav-item">
           <a href="#"
-            class="nav-link nav-edit_student <?php echo basename($_SERVER['PHP_SELF']) == 'new_student.php' ? 'active' : ''; ?>"
-            style="<?php echo basename($_SERVER['PHP_SELF']) == 'new_student.php' ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
+            class="nav-link nav-edit_student <?php echo (basename($_SERVER['PHP_SELF']) == 'new_student.php' || basename($_SERVER['PHP_SELF']) == 'student_list.php') ? 'active' : ''; ?>"
+            style="<?php echo (basename($_SERVER['PHP_SELF']) == 'new_student.php' || basename($_SERVER['PHP_SELF']) == 'student_list.php') ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
             <i class="nav-icon fa ion-ios-people-outline"></i>
             <p>
               Students
@@ -128,7 +130,7 @@
               </a>
             </li>
             <li class="nav-item">
-              <a href="./index.php?page=student_list" class="nav-link nav-student_list tree-item">
+              <a href="student_list.php" class="nav-link nav-student_list tree-item">
                 <i class="nav-icon"></i>
                 <p>List</p>
               </a>

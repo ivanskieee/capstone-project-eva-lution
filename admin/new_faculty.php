@@ -57,7 +57,7 @@ include "handlers/faculty_handler.php";
                     <button type="submit" class="btn btn-secondary btn-secondary-blue mr-3">
                         <?php echo isset($faculty) ? 'Update' : 'Submit'; ?>
                     </button>
-                    <button type="button" class="btn btn-secondary" onclick="window.location.href = '/faculty';">Cancel</button>
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href = './tertiary_faculty_list.php';">Cancel</button>
                 </div>
             </form>
         </div>

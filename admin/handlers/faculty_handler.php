@@ -13,8 +13,12 @@ include '../database/connection.php';
 $id = isset($_POST['id']) ? $_POST['id'] : null;
 $faculty = null;
 
+$stmt = $conn->prepare('SELECT * FROM college_faculty_list');
+$stmt->execute();
+$tertiary_faculties = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 if ($id) {
-    $stmt = $conn->prepare('SELECT * FROM faculty_list WHERE id = :id');
+    $stmt = $conn->prepare('SELECT * FROM college_faculty_list WHERE id = :id');
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt->execute();
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -50,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($id) {
         // Update faculty record
-        $query = "UPDATE faculty_list SET school_id = :school_id, firstname = :firstname, lastname = :lastname, email = :email, password = :password, avatar = :avatar WHERE id = :id";
+        $query = "UPDATE college_faculty_list SET school_id = :school_id, firstname = :firstname, lastname = :lastname, email = :email, password = :password, avatar = :avatar WHERE id = :id";
         $stmt = $conn->prepare($query);
         $stmt->bindParam(':school_id', $school_id);
         $stmt->bindParam(':firstname', $firstname);
@@ -61,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     } else {
         // Insert new faculty record
-        $query = "INSERT INTO faculty_list (school_id, firstname, lastname, email, password, avatar) VALUES (:school_id, :firstname, :lastname, :email, :password, :avatar)";
+        $query = "INSERT INTO college_faculty_list (school_id, firstname, lastname, email, password, avatar) VALUES (:school_id, :firstname, :lastname, :email, :password, :avatar)";
         $stmt = $conn->prepare($query);
         $stmt->bindParam(':school_id', $school_id);
         $stmt->bindParam(':firstname', $firstname);
@@ -74,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($stmt->execute()) {
         // After saving data, send an email
         sendEmail($email, $password);
-        echo "<script>window.location.replace('new_faculty.php');</script>";
+        echo "<script>window.location.replace('tertiary_faculty_list.php');</script>";
     } else {
         echo "<script>alert('Error saving data.');</script>";
     }
