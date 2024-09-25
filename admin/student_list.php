@@ -40,11 +40,11 @@ include "handlers/student_handler.php"; // Handle student-related operations
                                     Action
                                 </button>
                                 <div class="dropdown-menu">
-                                    <a class="dropdown-item view_student" href="javascript:void(0)" data-id="<?php echo $row['id']; ?>">View</a>
+                                    <a class="dropdown-item view_student" href="javascript:void(0)" data-id="<?php echo isset($row['id']); ?>">View</a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="./index.php?page=edit_student&id=<?php echo $row['id']; ?>">Edit</a>
+                                    <a class="dropdown-item" href="./index.php?page=edit_student&id=<?php echo isset($row['id']); ?>">Edit</a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item delete_student" href="javascript:void(0)" data-id="<?php echo $row['id']; ?>">Delete</a>
+                                    <a class="dropdown-item delete_student" href="javascript:void(0)" data-id="<?php echo isset($row['id']); ?>">Delete</a>
                                 </div>
                             </td>
                         </tr>

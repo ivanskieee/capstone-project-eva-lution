@@ -54,7 +54,7 @@ include "handlers/faculty_handler.php";
                 </div>
                 <hr>
                 <div class="col-lg-12 text-right justify-content-center d-flex">
-                    <button type="submit" class="btn btn-secondary btn-secondary-blue mr-3">
+                    <button type="submit" class="btn btn-success btn-secondary-blue mr-3">
                         <?php echo isset($faculty) ? 'Update' : 'Submit'; ?>
                     </button>
                     <button type="button" class="btn btn-secondary" onclick="window.location.href = './tertiary_faculty_list.php';">Cancel</button>

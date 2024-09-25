@@ -18,15 +18,17 @@
           </a>
         </li>
         <li class="nav-item dropdown">
-          <a href="./index.php?page=subject_list" class="nav-link nav-subject_list">
+          <a href="subject_list.php"
+            class="nav-link nav-subject_list <?php echo in_array(basename($_SERVER['PHP_SELF']), ['subject_list.php']) ? 'active' : ''; ?>"
+            style="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['subject_list.php', 'manage_subject.php']) ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
             <i class="nav-icon fas fa-th-list"></i>
-            <p>
-              Subjects
-            </p>
+            <p>Subjects</p>
           </a>
         </li>
         <li class="nav-item dropdown">
-          <a href="./index.php?page=class_list" class="nav-link nav-class_list">
+          <a href="class_list.php"
+            class="nav-link nav-class_list <?php echo in_array(basename($_SERVER['PHP_SELF']), ['class_list.php']) ? 'active' : ''; ?>"
+            style="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['class_list.php', 'manage_class.php']) ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
             <i class="nav-icon fas fa-list-alt"></i>
             <p>
               Classes

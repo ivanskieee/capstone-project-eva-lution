@@ -10,9 +10,11 @@ include 'sidebar.php';
 include 'footer.php';
 include '../database/connection.php';
 
+// Retrieve the faculty ID if provided
 $id = isset($_POST['id']) ? $_POST['id'] : null;
 $faculty = null;
 
+// Fetch all faculty records
 $stmt = $conn->prepare('SELECT * FROM college_faculty_list');
 $stmt->execute();
 $tertiary_faculties = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -25,8 +27,8 @@ if ($id) {
     $faculty = $stmt->fetch();
 }
 
-// Handle form submission
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+// Handle form submission for adding or updating faculty
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
     $school_id = $_POST['school_id'];
     $firstname = $_POST['firstname'];
     $lastname = $_POST['lastname'];
@@ -83,23 +85,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo "<script>alert('Error saving data.');</script>";
     }
 
-    $conn->close();
+    $conn = null; // Close the connection
 }
 
+// Handle faculty deletion
+// Handle faculty deletion
+if (isset($_POST['delete_id'])) {
+    $delete_id = $_POST['delete_id'];
+
+    // Prepare and execute the delete statement
+    $stmt = $conn->prepare('DELETE FROM college_faculty_list WHERE faculty_id = :id');
+    $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
+
+    if ($stmt->execute()) {
+        echo "<script>alert('Faculty deleted successfully.');</script>";
+    } else {
+        echo "<script>alert('Error deleting faculty.');</script>";
+    }
+
+    echo "<script>window.location.replace('tertiary_faculty_list.php');</script>";
+}
+
+
+$conn = null; // Close the connection
+
+
+
 // Function to send email using PHPMailer
-function sendEmail($toEmail, $plainPassword) {
+function sendEmail($toEmail, $plainPassword)
+{
     $mail = new PHPMailer(true);
-    
+
     try {
         // Server settings
         $mail->SMTPDebug = 0;                                       // Disable verbose debug output
         $mail->isSMTP();                                            // Send using SMTP
-        $mail->Host       = 'smtp.gmail.com';                       // Set the SMTP server to send through
-        $mail->SMTPAuth   = true;                                   // Enable SMTP authentication
-        $mail->Username   = 'evaluationspc@gmail.com';                 // SMTP username (your Gmail address)
-        $mail->Password   = 'ctet pnsr jirf ohpl';                    // SMTP password (use App Password if 2FA is enabled)
+        $mail->Host = 'smtp.gmail.com';                       // Set the SMTP server to send through
+        $mail->SMTPAuth = true;                                   // Enable SMTP authentication
+        $mail->Username = 'evaluationspc@gmail.com';                 // SMTP username (your Gmail address)
+        $mail->Password = 'ctet pnsr jirf ohpl';                    // SMTP password (use App Password if 2FA is enabled)
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption
-        $mail->Port       = 587;                                    // TCP port to connect to
+        $mail->Port = 587;                                    // TCP port to connect to
 
         // Recipients
         $mail->setFrom('your_email@gmail.com', 'Your Name');
@@ -108,7 +134,7 @@ function sendEmail($toEmail, $plainPassword) {
         // Content
         $mail->isHTML(true);                                        // Set email format to HTML
         $mail->Subject = 'Account Created';
-        $mail->Body    = "Dear Faculty,<br>Your account has been created successfully.<br><b>Email:</b> $toEmail<br><b>Password:</b> $plainPassword<br><br>Thank you!";
+        $mail->Body = "Dear Faculty,<br>Your account has been created successfully.<br><b>Email:</b> $toEmail<br><b>Password:</b> $plainPassword<br><br>Thank you!";
         $mail->AltBody = "Dear Faculty,\nYour account has been created successfully.\nEmail: $toEmail\nPassword: $plainPassword\n\nThank you!";
 
         $mail->send();
