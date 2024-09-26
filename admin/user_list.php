@@ -1,5 +1,5 @@
 <?php
-include "handlers/student_handler.php"; // Handle student-related operations
+include 'handlers/user_handler.php';
 
 ?>
 
@@ -8,8 +8,8 @@ include "handlers/student_handler.php"; // Handle student-related operations
     <div class="card card-outline card-success">
         <div class="card-header">
             <div class="card-tools">
-                <a class="btn btn-block btn-sm btn-default btn-flat border-primary" href="new_student.php">
-                    <i class="fa fa-plus"></i> Add New Student
+                <a class="btn btn-block btn-sm btn-default btn-flat border-primary" href="new_users.php">
+                    <i class="fa fa-plus"></i> Add New Users
                 </a>
             </div>
         </div>
@@ -18,23 +18,19 @@ include "handlers/student_handler.php"; // Handle student-related operations
                 <thead>
                     <tr>
                         <th class="text-center">#</th>
-                        <th>School ID</th>
                         <th>Name</th>
                         <th>Email</th>
-                        <th>Current Class</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php
                     $i = 1;
-                    foreach ($students as $row): ?>
+                    foreach ($admin as $row): ?>
                         <tr>
                             <th class="text-center"><?php echo $i++; ?></th>
-                            <td><b><?php echo htmlspecialchars($row['school_id']); ?></b></td>
                             <td><b><?php echo htmlspecialchars(ucwords($row['firstname'] . ' ' . $row['lastname'])); ?></b></td>
                             <td><b><?php echo htmlspecialchars($row['email']); ?></b></td>
-                            <td><b><?php echo isset($class[$row['class_id']]) ? htmlspecialchars($class[$row['course']]) : "N/A"; ?></b></td>
                             <td class="text-center">
                                 <button type="button" class="btn btn-default btn-sm btn-flat border-info wave-effect text-info dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
                                     Action
@@ -55,42 +51,3 @@ include "handlers/student_handler.php"; // Handle student-related operations
     </div>
 </div>
 </nav>
-
-<script>
-    $(document).ready(function() {
-        // Initialize DataTable
-        $('#student_list').DataTable();
-
-        // View student details
-        $('.view_student').click(function() {
-            var id = $(this).data('id');
-            uni_modal("<i class='fa fa-id-card'></i> Student Details", "<?php echo $_SESSION['login_view_folder']; ?>view_student.php?id=" + id);
-        });
-
-        // Delete student with confirmation
-        $('.delete_student').click(function() {
-            var id = $(this).data('id');
-            _conf("Are you sure you want to delete this student?", "delete_student", [id]);
-        });
-    });
-
-    function delete_student(id) {
-        start_load();
-        $.ajax({
-            url: 'ajax.php?action=delete_student',
-            method: 'POST',
-            data: {id: id},
-            success: function(resp) {
-                if (resp == 1) {
-                    alert_toast("Data successfully deleted", 'success');
-                    setTimeout(function() {
-                        location.reload();
-                    }, 1500);
-                } else {
-                    alert_toast("An error occurred.", 'danger');
-                    end_load();
-                }
-            }
-        });
-    }
-</script>

@@ -1,44 +1,30 @@
 <?php
-// Include PHPMailer classes
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require '../vendor/autoload.php'; // Ensure PHPMailer is autoloaded using Composer
+require '../vendor/autoload.php';
 
 include 'header.php';
 include 'sidebar.php';
 include 'footer.php';
 include '../database/connection.php';
 
-$id = isset($_POST['id']) ? $_POST['id'] : null;
-$student = null;
-
-$stmt = $conn->prepare('SELECT * FROM student_list');
+$stmt = $conn->prepare('SELECT * FROM users');
 $stmt->execute();
-$students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+$admin = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-//this with be ano pag may class na 
-// Fetch classes
-$classes = [];
-$stmt = $conn->query("SELECT class_id, concat(course, ' ', level, ' - ', section) as class_name FROM class_list");
-$classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-
-
-if ($id) {
-    $stmt = $conn->prepare('SELECT * FROM student_list WHERE id = :id');
-    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-    $stmt->execute();
-    $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $student = $stmt->fetch();
-}
+// if ($id) {
+//     $stmt = $conn->prepare('SELECT * FROM users WHERE id = :id');
+//     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+//     $stmt->execute();
+//     $stmt->setFetchMode(PDO::FETCH_ASSOC);
+//     $student = $stmt->fetch();
+// }
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $school_id = $_POST['school_id'];
     $firstname = $_POST['firstname'];
     $lastname = $_POST['lastname'];
-    $class_id = $_POST['class_id'];
     $email = $_POST['email'];
     $password = $_POST['password'];
     $cpass = $_POST['cpass'];
@@ -63,24 +49,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if ($id) {
         // Update student record
-        $query = "UPDATE student_list SET school_id = :school_id, firstname = :firstname, lastname = :lastname, class_id = :class_id, email = :email, password = :password, avatar = :avatar WHERE id = :id";
+        $query = "UPDATE users SET firstname = :firstname, lastname = :lastname , email = :email, password = :password, avatar = :avatar WHERE id = :id";
         $stmt = $conn->prepare($query);
-        $stmt->bindParam(':school_id', $school_id);
         $stmt->bindParam(':firstname', $firstname);
         $stmt->bindParam(':lastname', $lastname);
-        $stmt->bindParam(':class_id', $class_id);
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':password', $hashed_password);
         $stmt->bindParam(':avatar', $avatar);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     } else {
         // Insert new student record
-        $query = "INSERT INTO student_list (school_id, firstname, lastname, class_id, email, password, avatar) VALUES (:school_id, :firstname, :lastname, :class_id, :email, :password, :avatar)";
+        $query = "INSERT INTO users (firstname, lastname, email, password, avatar) VALUES (:firstname, :lastname, :email, :password, :avatar)";
         $stmt = $conn->prepare($query);
-        $stmt->bindParam(':school_id', $school_id);
         $stmt->bindParam(':firstname', $firstname);
         $stmt->bindParam(':lastname', $lastname);
-        $stmt->bindParam(':class_id', $class_id);
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':password', $hashed_password);
         $stmt->bindParam(':avatar', $avatar);
@@ -89,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($stmt->execute()) {
         // After saving data, send an email
         sendEmail($email, $password);
-        echo "<script>window.location.replace('student_list.php');</script>";
+        echo "<script>window.location.replace('user_list.php');</script>";
     } else {
         echo "<script>alert('Error saving data.');</script>";
     }
@@ -128,5 +110,3 @@ function sendEmail($toEmail, $plainPassword) {
         echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
     }
 }
-
-?>

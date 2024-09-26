@@ -36,15 +36,19 @@
           </a>
         </li>
         <li class="nav-item dropdown">
-          <a href="./index.php?page=academic_list" class="nav-link nav-academic_list">
+          <a href="academic_list.php"
+            class="nav-link nav-academic_list <?php echo in_array(basename($_SERVER['PHP_SELF']), ['academic_list.php']) ? 'active' : ''; ?>"
+            style="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['academic_list.php', 'manage_academic.php']) ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
             <i class="nav-icon fas fa-calendar"></i>
             <p>
-              Acadamic Year
+              Academic Year
             </p>
           </a>
         </li>
         <li class="nav-item dropdown">
-          <a href="./index.php?page=questionnaire" class="nav-link nav-questionnaire">
+          <a href="questionnaire.php"
+            class="nav-link nav-questionnaire <?php echo in_array(basename($_SERVER['PHP_SELF']), ['questionnaire.php']) ? 'active' : ''; ?>"
+            style="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['questionnaire.php', 'manage_questionnaire.php']) ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
             <i class="nav-icon fas fa-file-alt"></i>
             <p>
               Questionnaires
@@ -148,7 +152,9 @@
           </a>
         </li>
         <li class="nav-item">
-          <a href="#" class="nav-link nav-edit_user">
+          <a href="#"
+            class="nav-link nav-edit_user <?php echo in_array(basename($_SERVER['PHP_SELF']), ['users.php', 'edit_user.php']) ? 'active' : ''; ?>"
+            style="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['new_users.php', 'user_list.php']) ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
             <i class="nav-icon fas fa-users"></i>
             <p>
               Users
@@ -157,13 +163,13 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="./index.php?page=new_user" class="nav-link nav-new_user tree-item">
+              <a href="new_users.php" class="nav-link nav-new_user tree-item">
                 <i class="nav-icon"></i>
                 <p>Add New</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="./index.php?page=user_list" class="nav-link nav-user_list tree-item">
+              <a href="user_list.php" class="nav-link nav-user_list tree-item">
                 <i class="nav-icon"></i>
                 <p>List</p>
               </a>
