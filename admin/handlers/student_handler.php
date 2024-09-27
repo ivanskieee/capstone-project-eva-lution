@@ -34,7 +34,7 @@ if ($id) {
 }
 
 // Handle form submission
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
     $school_id = $_POST['school_id'];
     $firstname = $_POST['firstname'];
     $lastname = $_POST['lastname'];
@@ -96,6 +96,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $conn->close();
 }
+
+if (isset($_POST['delete_id'])) {
+    $delete_id = $_POST['delete_id'];
+
+    // Prepare and execute the delete statement
+    // Ensure that the column name matches your database schema
+    $stmt = $conn->prepare('DELETE FROM student_list WHERE student_id = :id');
+    $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
+
+    if ($stmt->execute()) {
+        echo "<script>alert('Student deleted successfully.');</script>";
+    } else {
+        echo "<script>alert('Error deleting student.');</script>";
+    }
+
+    echo "<script>window.location.replace('student_list.php');</script>";
+}
+
+$conn = null;
 
 // Function to send email using PHPMailer
 function sendEmail($toEmail, $plainPassword) {

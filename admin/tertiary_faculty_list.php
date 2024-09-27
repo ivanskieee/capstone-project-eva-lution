@@ -1,6 +1,5 @@
 <?php
 include "handlers/faculty_handler.php"; // Handle faculty-related operations
-include "handlers/delete_faculty.php";
 ?>
 
 <nav class="main-header">

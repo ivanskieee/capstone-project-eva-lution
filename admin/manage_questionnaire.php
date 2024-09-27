@@ -5,7 +5,7 @@ include 'handlers/questionnaire_handler.php';
 <nav class="main-header">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-4 mt-5">
                 <div class="card card-info card-primary">
                     <div class="card-header">
                         <b>Question Form</b>
@@ -18,12 +18,9 @@ include 'handlers/questionnaire_handler.php';
                                 <label for="">Criteria</label>
                                 <select name="criteria_id" id="criteria_id" class="custom-select custom-select-sm select2">
                                     <option value=""></option>
-                                <?php 
-                                    $criteria = $conn->query("SELECT * FROM criteria_list order by abs(order_by) asc ");
-                                    while($row = $criteria->fetch_assoc()):
-                                ?>
+                               
                                 <option value="<?php echo $row['id'] ?>"><?php echo $row['criteria'] ?></option>
-                                <?php endwhile; ?>
+                                
                                 </select>
                             </div>
                             <div class="form-group">
@@ -34,18 +31,18 @@ include 'handlers/questionnaire_handler.php';
                     </div>
                     <div class="card-footer">
                         <div class="d-flex justify-content-end w-100">
-                            <button class="btn btn-sm btn-primary btn-flat bg-gradient-primary mx-1" form="manage-question">Save</button>
+                            <button class="btn btn-sm btn-success btn-flat bg-gradient-success mx-1" form="manage-question">Save</button>
                             <button class="btn btn-sm btn-flat btn-secondary bg-gradient-secondary mx-1" form="manage-question" type="reset">Cancel</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-8 mt-2">
                 <div class="card card-outline card-info">
                     <div class="card-header">
-                        <b>Evaluation Questionnaire for Academic: <?php echo $year.' '.(ordinal_suffix($semester)) ?> </b>
+                        <b>Evaluation Questionnaire for Academic: </b>
                         <div class="card-tools">
-                            <button class="btn btn-sm btn-flat btn-primary bg-gradient-primary mx-1" id="eval_restrict" type="button">Evaluation Restriction</button>
+                            <button class="btn btn-sm btn-flat btn-secondary bg-gradient-secondary mx-1" id="eval_restrict" type="button">Evaluation Restriction</button>
                             <button class="btn btn-sm btn-flat btn-success bg-gradient-success mx-1" form="order-question">Save Order</button>
                         </div>
                     </div>
@@ -56,15 +53,10 @@ include 'handlers/questionnaire_handler.php';
                         </fieldset>
                         <form id="order-question">
                         <div class="clear-fix mt-2"></div>
-                        <?php 
-                                $q_arr = array();
-                            $criteria = $conn->query("SELECT * FROM criteria_list order by abs(order_by) asc ");
-                            while($crow = $criteria->fetch_assoc()):
-                        ?>
                         <table class="table table-condensed">
                             <thead>
                                 <tr class="bg-gradient-secondary">
-                                    <th colspan="2" class=" p-1"><b><?php echo $crow['criteria'] ?></b></th>
+                                    <th colspan="2" class=" p-1"><b></b></th>
                                     <th class="text-center">5</th>
                                     <th class="text-center">4</th>
                                     <th class="text-center">3</th>
@@ -73,11 +65,6 @@ include 'handlers/questionnaire_handler.php';
                                 </tr>
                             </thead>
                             <tbody class="tr-sortable">
-                                <?php 
-                                $questions = $conn->query("SELECT * FROM question_list where criteria_id = {$crow['id']} and academic_id = $id order by abs(order_by) asc ");
-                                while($row=$questions->fetch_assoc()):
-                                $q_arr[$row['id']] = $row;
-                                ?>
                                 <tr class="bg-white">
                                     <td class="p-1 text-center" width="5px">
                                         <span class="btn-group dropright">
@@ -92,23 +79,22 @@ include 'handlers/questionnaire_handler.php';
                                         </span>
                                     </td>
                                     <td class="p-1" width="40%">
-                                        <?php echo $row['question'] ?>
-                                        <input type="hidden" name="qid[]" value="<?php echo $row['id'] ?>">
+                                        
+                                        <input type="hidden" name="qid[]" value="">
                                     </td>
-                                    <?php for($c=0;$c<5;$c++): ?>
+                                    
                                     <td class="text-center">
                                         <div class="icheck-success d-inline">
-                                            <input type="radio" name="qid[<?php echo $row['id'] ?>][]" id="qradio<?php echo $row['id'].'_'.$c ?>">
-                                            <label for="qradio<?php echo $row['id'].'_'.$c ?>">
+                                            <input type="radio" name="qid[">
+                                            <label for="qradio">
                                             </label>
                                       </div>
                                     </td>
-                                    <?php endfor; ?>
+                                    
                                 </tr>
-                                <?php endwhile; ?>
+                                
                             </tbody>
                         </table>
-                        <?php endwhile; ?>
                         </form>
                     </div>
                 </div>

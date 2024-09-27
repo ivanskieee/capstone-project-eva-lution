@@ -26,20 +26,22 @@ if ($_POST) {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    // Verify Admin Login (without password verification)
-    $query = 'SELECT * FROM users WHERE email = :email AND password = :password';
+    // Verify Admin Login (with password verification)
+    $query = 'SELECT * FROM users WHERE email = :email';
     $stmt = $conn->prepare($query);
     $stmt->bindParam(':email', $email);
-    $stmt->bindParam(':password', $password);  // Admin password not hashed
     $stmt->execute();
 
     if ($stmt->rowCount() > 0) {
         $stmt->setFetchMode(PDO::FETCH_ASSOC);
         $user = $stmt->fetch();
-        $user['role'] = 'admin';
-        $_SESSION['user'] = $user;
-        header('location: admin/home.php');
-        exit;
+
+        if (password_verify($password, $user['password'])) {
+            $user['role'] = 'admin';
+            $_SESSION['user'] = $user;
+            header('location: admin/home.php');
+            exit;
+        }
     }
 
     // Verify Student Login (with password verification)

@@ -56,7 +56,9 @@
           </a>
         </li>
         <li class="nav-item dropdown">
-          <a href="./index.php?page=criteria_list" class="nav-link nav-criteria_list">
+          <a href="criteria_list.php"
+            class="nav-link nav-criteria_list <?php echo in_array(basename($_SERVER['PHP_SELF']), ['criteria_list.php']) ? 'active' : ''; ?>"
+            style="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['criteria_list.php']) ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
             <i class="nav-icon fas fa-list-alt"></i>
             <p>
               Evaluation Criteria

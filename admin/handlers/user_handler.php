@@ -22,7 +22,7 @@ $admin = $stmt->fetchAll(PDO::FETCH_ASSOC);
 // }
 
 // Handle form submission
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
     $firstname = $_POST['firstname'];
     $lastname = $_POST['lastname'];
     $email = $_POST['email'];
@@ -78,6 +78,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     $conn->close();
 }
+
+if (isset($_POST['delete_id'])) {
+    $delete_id = $_POST['delete_id'];
+
+    // Prepare and execute the delete statement
+    // Ensure that the column name matches your database schema
+    $stmt = $conn->prepare('DELETE FROM users WHERE id = :id');
+    $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
+
+    if ($stmt->execute()) {
+        echo "<script>alert('Admin deleted successfully.');</script>";
+    } else {
+        echo "<script>alert('Error deleting admin.');</script>";
+    }
+
+    echo "<script>window.location.replace('user_list.php');</script>";
+}
+
+$conn = null;
 
 // Function to send email using PHPMailer
 function sendEmail($toEmail, $plainPassword) {

@@ -8,7 +8,7 @@ include "handlers/questionnaire_handler.php";
             <div class="card-header">
                 <div class="card-tools">
                     <a class="btn btn-block btn-sm btn-default btn-flat border-primary new_academic"
-                        href="manage_questionnaire.php"><i class="fa fa-plus"></i> Add New</a>
+                        href="manage_questionnaire_academic.php"><i class="fa fa-plus"></i> Add New</a>
                 </div>
             </div>
             <div class="card-body">
@@ -39,8 +39,8 @@ include "handlers/questionnaire_handler.php";
                                 <th class="text-center"><?php echo $i++ ?></th>
                                 <td><b><?php echo $row['year'] ?></b></td>
                                 <td><b><?php echo $row['semester'] ?></b></td>
-                                <td class="text-center"><b><?php echo number_format($questions) ?></b></td>
-                                <td class="text-center"><b><?php echo number_format($answers) ?></b></td>
+                                <td class="text-center"><b>0</b></td>
+                                <td class="text-center"><b>0</b></td>
                                 <td class="text-center">
                                     <button type="button"
                                         class="btn btn-default btn-sm btn-flat border-info wave-effect text-info dropdown-toggle"
@@ -49,7 +49,7 @@ include "handlers/questionnaire_handler.php";
                                     </button>
                                     <div class="dropdown-menu" style="">
                                         <a class="dropdown-item manage_questionnaire"
-                                            href="index.php?page=manage_questionnaire&id=<?php echo $row['id'] ?>">Manage</a>
+                                            href="manage_questionnaire.php">Manage</a>
                                     </div>
                                 </td>
                             </tr>
