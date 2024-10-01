@@ -34,7 +34,7 @@ include "handlers/student_handler.php"; // Handle student-related operations
                                 <td><b><?php echo htmlspecialchars(ucwords($row['firstname'] . ' ' . $row['lastname'])); ?></b>
                                 </td>
                                 <td><b><?php echo htmlspecialchars($row['email']); ?></b></td>
-                                <td><b><?php echo isset($class[$row['class_id']]) ? htmlspecialchars($class[$row['course']]) : "N/A"; ?></b>
+                                <td><b><?php echo htmlspecialchars($row['class_name']); ?></b></td>
                                 </td>
                                 <td class="text-center">
                                     <button type="button"

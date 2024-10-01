@@ -58,42 +58,59 @@
             color: #fff;
             cursor: pointer;
         }
+        .user-img {
+        border-radius: 50%;
+        height: 25px;
+        width: 25px;
+        object-fit: cover;
+    }
     </style>
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-lg bg-navbar">
-        <div class="container-fluid">
-            <a class="navbar-brand d-flex text-white align-items-center" href="#">
+<nav class="main-header navbar navbar-expand navbar-dark bg-navbar" style="background-color: rgb(51, 128, 64);">
+    <!-- Left navbar links -->
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-widget="pushmenu" href="" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+      <li>
+         <a class="navbar-brand d-flex text-white align-items-center" href="./">
                 <img src="images/spclog.png" alt="SPC Logo" width="30" height="30"
                     class="d-inline-block align-text-top me-2">
                 SPC Evaluation System
             </a>
-        </div>
-        <ul class="navbar-nav ml-auto" style="margin-right: 50px;">
-            <li class="nav-item">
-                <a class="nav-link" data-widget="fullscreen" href="#" role="button"
-                    style="color: #fff; margin-right: 20px;">
-                    <i class="fas fa-expand-arrows-alt"></i>
-                </a>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link" data-toggle="dropdown" aria-expanded="true" href="javascript:void(0)"
-                    style="color: #fff;">
-                    <span>
-                        <span class="fa fa-angle-down mr-1"></span>
-                    </span>
-                </a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="account_settings" style="">
-                    <a class="dropdown-item" href="javascript:void(0)" id="manage_account"><i class="fa fa-cog"></i>
-                        Manage Account</a>
-                    <a class="dropdown-item" href="../database/logout.php"><i class="fa fa-power-off"></i>
-                        Logout</a>
+      </li>
+    </ul>
+
+    <ul class="navbar-nav ml-auto">
+     
+      <li class="nav-item">
+        <a class="nav-link" data-widget="fullscreen" href="#" role="button">
+          <i class="fas fa-expand-arrows-alt"></i>
+        </a>
+      </li>
+     <li class="nav-item dropdown">
+            <a class="nav-link"  data-toggle="dropdown" aria-expanded="true" href="javascript:void(0)">
+              <span>
+                <div class="d-felx badge-pill">
+                  <span class=""><img src="assets/uploads/png.png" alt="" class="user-img border "></span>
+                  <span><b>Teacher</b></span>
+                  <span class="fa fa-angle-down ml-2"></span>
                 </div>
-            </li>
-        </ul>
-        <button id="toggle-sidebar" class="bars">
-            <i class="fas fa-bars mr-3"></i>
-        </button>
-    </nav>
+              </span>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="account_settings" style="left: -2.5em;">
+              <a class="dropdown-item" href="javascript:void(0)" id="manage_account"><i class="fa fa-cog"></i> Manage Account</a>
+              <a class="dropdown-item" href="../database/logout.php"><i class="fa fa-power-off"></i> Logout</a>
+            </div>
+      </li>
+    </ul>
+  </nav>
+  <!-- /.navbar -->
+  <script>
+     $('#manage_account').click(function(){
+        uni_modal('Manage Account','manage_user.php?id=<?php echo $_SESSION['login_id'] ?>')
+      })
+  </script>
     

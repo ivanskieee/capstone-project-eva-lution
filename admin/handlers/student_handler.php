@@ -13,9 +13,15 @@ include '../database/connection.php';
 $id = isset($_POST['id']) ? $_POST['id'] : null;
 $student = null;
 
-$stmt = $conn->prepare('SELECT * FROM student_list');
+$stmt = $conn->prepare("
+    SELECT student_list.*, 
+           CONCAT(class_list.course, ' ', class_list.level, ' - ', class_list.section) as class_name
+    FROM student_list
+    JOIN class_list ON student_list.class_id = class_list.class_id
+");
 $stmt->execute();
 $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
 //this with be ano pag may class na 
 // Fetch classes

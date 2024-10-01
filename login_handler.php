@@ -13,9 +13,11 @@ include 'includes/header.php';
 
 if (isset($_SESSION['user'])) {
     if ($_SESSION['user']['role'] === 'admin') {
-        header('location: admin/home.php');
+        header('Location: admin/home.php');
     } elseif ($_SESSION['user']['role'] === 'student') {
-        header('location: student/home.php');
+        header('Location: student/home.php');
+    } elseif ($_SESSION['user']['role'] === 'faculty') {
+        header('Location: faculty/home.php');
     }
     exit;
 }

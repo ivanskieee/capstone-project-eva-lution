@@ -1,13 +1,20 @@
 <?php
 session_start();
-include 'header.php';
-include 'sidebar.php';
-include '../database/connection.php';
-
 if (!isset($_SESSION['user'])) {
     header('location: ../index.php');
     exit;
 }
+
+if ($_SESSION['user']['role'] !== 'admin') {
+    // Redirect to an unauthorized page or login page if they don't have the correct role
+    header('Location: unauthorized.php');
+    exit;
+}
+include 'header.php';
+include 'sidebar.php';
+include '../database/connection.php';
+
+
 ?>
 <nav class="main-header">
     <div class="col-12 mt-5">
@@ -38,7 +45,7 @@ if (!isset($_SESSION['user'])) {
                         ?>
                     </h3>
 
-                    <p>Total Faculties</p>
+                    <p>Total Teachers</p>
                 </div>
                 <div class="icon">
                     <i class="fa fa-user-friends"></i>
