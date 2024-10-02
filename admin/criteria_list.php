@@ -43,7 +43,7 @@ include 'handlers/criteria_handler.php';
 										form="order-criteria">Save Order</button>
 								</div>
 								<hr>
-								<form action="" id="order-criteria">
+								
 									<ul class="list-group btn col-md-8" id="ui-sortable-list">
 										<?php
 										$i = 1;
@@ -72,9 +72,9 @@ include 'handlers/criteria_handler.php';
 													value="<?php echo isset($row['id']) ?>">
 											</li>
 										<?php endforeach; ?>
-								</form>
+								
 								</ul>
-								</form>
+								
 							</div>
 						</div>
 					</div>
