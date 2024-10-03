@@ -18,12 +18,12 @@ if ($id) {
     $stmt->execute([$academic_id]);
     $academics = $stmt->fetch();
 }
-// Check if form is submitted via POST
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $year = $_POST['year'];
     $semester = $_POST['semester'];
 
-    // If ID exists, update the class; otherwise, insert a new class
+    
     if ($id) {
         $query = "UPDATE academic_list SET year = ?, semester = ? WHERE academic_id = ?";
         $stmt = $conn->prepare($query);
@@ -34,14 +34,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->execute([$year, $semester]);
     }
 
-    // Commit and close the connection
     $conn = null;
-
-    // Flash message for success
+   
     $_SESSION['flash_message'] = 'Data successfully saved.';
     $_SESSION['flash_type'] = 'success';
 
-    // Redirect to class list
     echo "<script>window.location.replace('academic_list.php');</script>";
 
     exit;

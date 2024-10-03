@@ -1,20 +1,17 @@
 <?php
-// Include PHPMailer classes
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require '../vendor/autoload.php'; // Ensure PHPMailer is autoloaded using Composer
+require '../vendor/autoload.php'; 
 
 include 'header.php';
 include 'sidebar.php';
 include 'footer.php';
 include '../database/connection.php';
 
-// Retrieve the faculty ID if provided
 $id = isset($_POST['id']) ? $_POST['id'] : null;
 $faculty = null;
 
-// Fetch all faculty records
 $stmt = $conn->prepare('SELECT * FROM college_faculty_list');
 $stmt->execute();
 $tertiary_faculties = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -27,7 +24,6 @@ if ($id) {
     $faculty = $stmt->fetch();
 }
 
-// Handle form submission for adding or updating faculty
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
     $school_id = $_POST['school_id'];
     $firstname = $_POST['firstname'];
@@ -42,12 +38,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
         return;
     }
 
-    // Hash the password if it's provided
     if (!empty($password)) {
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
     }
 
-    // File upload handling for avatar
     if ($avatar) {
         $target_dir = "uploads/";
         $target_file = $target_dir . basename($_FILES["img"]["name"]);
@@ -55,7 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
     }
 
     if ($id) {
-        // Update faculty record
         $query = "UPDATE college_faculty_list SET school_id = :school_id, firstname = :firstname, lastname = :lastname, email = :email, password = :password, avatar = :avatar WHERE id = :id";
         $stmt = $conn->prepare($query);
         $stmt->bindParam(':school_id', $school_id);
@@ -66,7 +59,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
         $stmt->bindParam(':avatar', $avatar);
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     } else {
-        // Insert new faculty record
         $query = "INSERT INTO college_faculty_list (school_id, firstname, lastname, email, password, avatar) VALUES (:school_id, :firstname, :lastname, :email, :password, :avatar)";
         $stmt = $conn->prepare($query);
         $stmt->bindParam(':school_id', $school_id);
@@ -78,18 +70,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
     }
 
     if ($stmt->execute()) {
-        // After saving data, send an email
         sendEmail($email, $password);
         echo "<script>window.location.replace('tertiary_faculty_list.php');</script>";
     } else {
         echo "<script>alert('Error saving data.');</script>";
     }
 
-    $conn = null; // Close the connection
+    $conn = null; 
 }
-
-// Handle faculty deletion
-// Handle faculty deletion
 if (isset($_POST['delete_id'])) {
     $delete_id = $_POST['delete_id'];
 
@@ -107,32 +95,27 @@ if (isset($_POST['delete_id'])) {
 }
 
 
-$conn = null; // Close the connection
+$conn = null;
 
 
-
-// Function to send email using PHPMailer
 function sendEmail($toEmail, $plainPassword)
 {
     $mail = new PHPMailer(true);
 
     try {
-        // Server settings
-        $mail->SMTPDebug = 0;                                       // Disable verbose debug output
-        $mail->isSMTP();                                            // Send using SMTP
-        $mail->Host = 'smtp.gmail.com';                       // Set the SMTP server to send through
-        $mail->SMTPAuth = true;                                   // Enable SMTP authentication
-        $mail->Username = 'evaluationspc@gmail.com';                 // SMTP username (your Gmail address)
-        $mail->Password = 'ctet pnsr jirf ohpl';                    // SMTP password (use App Password if 2FA is enabled)
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         // Enable TLS encryption
-        $mail->Port = 587;                                    // TCP port to connect to
-
-        // Recipients
+        $mail->SMTPDebug = 0;                                       
+        $mail->isSMTP();                                            
+        $mail->Host = 'smtp.gmail.com';                       
+        $mail->SMTPAuth = true;                                   
+        $mail->Username = 'evaluationspc@gmail.com';                 
+        $mail->Password = 'ctet pnsr jirf ohpl';                    
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         
+        $mail->Port = 587;                                    
+        
         $mail->setFrom('your_email@gmail.com', 'Your Name');
-        $mail->addAddress($toEmail);                                // Add recipient
+        $mail->addAddress($toEmail);                                
 
-        // Content
-        $mail->isHTML(true);                                        // Set email format to HTML
+        $mail->isHTML(true);                                       
         $mail->Subject = 'Account Created';
         $mail->Body = "Dear Faculty,<br>Your account has been created successfully.<br><b>Email:</b> $toEmail<br><b>Password:</b> $plainPassword<br><br>Thank you!";
         $mail->AltBody = "Dear Faculty,\nYour account has been created successfully.\nEmail: $toEmail\nPassword: $plainPassword\n\nThank you!";

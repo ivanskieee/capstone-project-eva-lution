@@ -30,7 +30,6 @@ if (isset($_POST['submit_question'])) {
     }
 }
 
-// Fetch all criteria for the dropdown
 $stmt = $conn->prepare('SELECT * FROM criteria_list');
 $stmt->execute();
 $criteriaList = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -38,7 +37,7 @@ $criteriaList = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $stmt = $conn->prepare('SELECT * FROM question_list');
 $stmt->execute();
 $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
-// Fetch questions based on the selected criteria
+
 // $criteria_id = isset($_POST['criteria_id']) ? $_POST['criteria_id'] : null;
 
 // if ($criteria_id) {
@@ -51,15 +50,12 @@ $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 //     $questionz = []; // Default empty array if no criteria selected
 // }
 
-
-
 if ($id) {
     $stmt = $conn->prepare("SELECT * FROM question_list WHERE question_id = ?");
     $stmt->execute([$id]);
     $questions = $stmt->fetch();
 }
 
-// Check if form is submitted via POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
     $criteria_id = $_POST['criteria_id'];
     $question = $_POST['question'];
@@ -69,14 +65,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
     $stmt->bindParam(':question', $question, PDO::PARAM_STR);
     $stmt->execute();
 
-     // Commit and close the connection
      $conn = null;
 
-     // Flash message for success
      $_SESSION['flash_message'] = 'Data successfully saved.';
      $_SESSION['flash_type'] = 'success';
  
-     // Redirect to criteria list
      echo "<script>window.location.replace('manage_questionnaire.php');</script>";
      exit;
  
@@ -85,8 +78,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
 if (isset($_POST['delete_id'])) {
     $delete_id = $_POST['delete_id'];
 
-    // Prepare and execute the delete statement
-    // Ensure that the column name matches your database schema
     $stmt = $conn->prepare('DELETE FROM question_list WHERE question_id = :id');
     $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
 
