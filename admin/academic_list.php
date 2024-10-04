@@ -66,10 +66,14 @@ include 'handlers/academic_handler.php';
                                             class="btn btn-success btn-flat manage_academic">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <button type="button" class="btn btn-secondary btn-flat delete_academic"
-                                            data-id="<?php echo isset($row['id']) ?>">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                                        <form method="post" action="academic_list.php" style="display: inline;">
+                                            <input type="hidden" name="delete_id"
+                                                value="<?php echo isset($row['academic_id']) ? $row['academic_id'] : ''; ?>">
+                                            <button type="submit" class="btn btn-secondary btn-flat delete_academic"
+                                                onclick="return confirm('Are you sure you want to delete this academic year?');">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>

@@ -19,7 +19,7 @@ if ($id) {
     $academics = $stmt->fetch();
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['delete_id'])) {
     $year = $_POST['year'];
     $semester = $_POST['semester'];
 
@@ -43,5 +43,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     exit;
 }
+
+if (isset($_POST['delete_id'])) {
+    $delete_id = $_POST['delete_id'];
+
+    $stmt = $conn->prepare('DELETE FROM academic_list WHERE academic_id = :id');
+    $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
+
+    if ($stmt->execute()) {
+        echo "<script>alert('Academic year is deleted successfully.');</script>";
+    } else {
+        echo "<script>alert('Error deleting academic year.');</script>";
+    }
+
+    echo "<script>window.location.replace('academic_list.php');</script>";
+}
+
+$conn = null;
 
 ?>

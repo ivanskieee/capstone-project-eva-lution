@@ -17,7 +17,7 @@ if ($id) {
     $stmt->execute([$class_id]);
     $classes = $stmt->fetch();
 }
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['delete_id'])) {
     $course = $_POST['course'];
     $level = $_POST['level'];
     $section = $_POST['section'];
@@ -42,4 +42,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
+if (isset($_POST['delete_id'])) {
+    $delete_id = $_POST['delete_id'];
+
+    $stmt = $conn->prepare('DELETE FROM class_list WHERE class_id = :id');
+    $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
+
+    if ($stmt->execute()) {
+        echo "<script>alert('class is deleted successfully.');</script>";
+    } else {
+        echo "<script>alert('Error deleting class.');</script>";
+    }
+
+    echo "<script>window.location.replace('class_list.php');</script>";
+}
+
+$conn = null;
 

@@ -18,7 +18,7 @@ if ($id) {
     $subjects = $stmt->fetch();
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['delete_id'])) {
     $code = $_POST['code'];
     $subject = $_POST['subject'];
     $description = $_POST['description'];
@@ -42,5 +42,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     exit;
 }
+
+if (isset($_POST['delete_id'])) {
+    $delete_id = $_POST['delete_id'];
+
+    $stmt = $conn->prepare('DELETE FROM subject_list WHERE subject_id = :id');
+    $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
+
+    if ($stmt->execute()) {
+        echo "<script>alert('Subject is deleted successfully.');</script>";
+    } else {
+        echo "<script>alert('Error deleting subject.');</script>";
+    }
+
+    echo "<script>window.location.replace('subject_list.php');</script>";
+}
+
+$conn = null;
 
 

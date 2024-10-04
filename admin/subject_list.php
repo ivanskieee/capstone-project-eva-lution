@@ -45,10 +45,14 @@ include 'handlers/subject_handler.php';
                                             class="btn btn-success btn-flat manage_subject">
                                             <i class="fas fa-edit"></i>
                                         </a>
-                                        <button type="button" class="btn btn-secondary btn-flat delete_subject"
-                                            data-id="<?php echo isset($row['id']) ?>">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                                        <form method="post" action="subject_list.php" style="display: inline;">
+                                            <input type="hidden" name="delete_id"
+                                                value="<?php echo isset($row['subject_id']) ? $row['subject_id'] : ''; ?>">
+                                            <button type="submit" class="btn btn-secondary btn-flat delete_subject"
+                                                onclick="return confirm('Are you sure you want to delete this subject?');">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>

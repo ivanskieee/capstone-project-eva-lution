@@ -34,7 +34,7 @@ include 'handlers/class_handler.php';
                                 <th class="text-center"><?php echo $i++ ?></th>
                                 <td>
                                     <b>
-                                        <?php echo htmlspecialchars(ucwords($row['course'] . ' -' . ' ' . $row['level']. ' -' . ' ' . $row['section'])); ?>
+                                        <?php echo htmlspecialchars(ucwords($row['course'] . ' -' . ' ' . $row['level'] . ' -' . ' ' . $row['section'])); ?>
                                     </b>
                                 </td>
                                 <td class="text-center">
@@ -44,11 +44,14 @@ include 'handlers/class_handler.php';
                                             class="btn btn-success  manage_class">
                                             <i class="fas fa-edit"></i>
                                         </a>
-
-                                        <button type="button" class="btn btn-secondary  delete_class"
-                                            data-id="<?php echo isset($row['id']) ? $row['id'] : 0; ?>">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                                        <form method="post" action="class_list.php" style="display: inline;">
+                                            <input type="hidden" name="delete_id"
+                                                value="<?php echo isset($row['class_id']) ? $row['class_id'] : ''; ?>">
+                                            <button type="submit" class="btn btn-secondary  delete_class"
+                                                onclick="return confirm('Are you sure you want to delete this class?');">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
