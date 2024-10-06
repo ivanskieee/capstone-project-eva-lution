@@ -6,7 +6,7 @@ include 'handlers/questionnaire_handler.php';
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-4 mt-5">
-                <div class="card card-info card-primary">
+                <div class="card card-success">
                     <div class="card-header">
                         <b>Question Form</b>
                     </div>
@@ -44,7 +44,7 @@ include 'handlers/questionnaire_handler.php';
                 </div>
             </div>
             <div class="col-md-8 mt-2">
-                <div class="card card-outline card-info">
+                <div class="card card-outline card-success">
                     <div class="card-header">
                         <b>Evaluation Questionnaire for Academic: </b>
                         <div class="card-tools">
