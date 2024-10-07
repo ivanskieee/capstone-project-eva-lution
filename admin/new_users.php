@@ -45,10 +45,10 @@ include "handlers/user_handler.php";
                                 <small id="msg"></small>
                             </div>
                             <div class="form-group">
-                                <label class="control-label">Password</label>
+                                <label for="password" class="control-label">Password</label>
                                 <input type="password" class="form-control form-control-sm" name="password"
                                     id="password" <?php echo isset($admin) ? '' : 'required'; ?>>
-                                <small></small>
+                                <small><i><?php echo isset($id) ? 'Leave this blank if you do not want to change your password' : ''; ?></i></small>
                             </div>
                             <div class="form-group">
                                 <label class="label control-label">Confirm Password</label>

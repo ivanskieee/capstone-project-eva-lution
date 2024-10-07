@@ -8,7 +8,7 @@ include "handlers/faculty_handler.php";
     <div class="card">
         <div class="card-body">
             <form method="POST" enctype="multipart/form-data" id="new_faculty">
-                <input type="hidden" name="id" value="<?php echo isset($faculty['id']) ? $faculty['id'] : ''; ?>">
+                <input type="hidden" name="faculty_id" value="<?php echo isset($faculty['faculty_id']) ? $faculty['faculty_id'] : ''; ?>">
                 <div class="row">
                     <div class="col-md-6 border-right">
                         <div class="form-group">

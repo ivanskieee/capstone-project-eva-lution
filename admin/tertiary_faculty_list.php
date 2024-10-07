@@ -40,7 +40,7 @@ include "handlers/faculty_handler.php"; // Handle faculty-related operations
                                         </button>
                                         <div class="dropdown-menu">
                                             <a class="dropdown-item"
-                                                href="edit_tertiary.php?id=<?php echo isset($id) ? $id : ''; ?>">Edit</a>
+                                                href="new_faculty.php?faculty_id=<?php echo $row['faculty_id']; ?>">Edit</a>
                                             <div class="dropdown-divider"></div>
                                             <form method="post" action="tertiary_faculty_list.php" style="display: inline;">
                                                 <input type="hidden" name="delete_id"

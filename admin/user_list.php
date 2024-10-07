@@ -41,7 +41,7 @@ include 'handlers/user_handler.php';
                                         </button>
                                         <div class="dropdown-menu">
                                             <a class="dropdown-item"
-                                                href="./index.php?page=edit_student&id=<?php echo isset($row['id']); ?>">Edit</a>
+                                                href="new_users.php?id=<?php echo $row['id']; ?>">Edit</a>
                                             <div class="dropdown-divider"></div>
                                             <form method="post" action="user_list.php" style="display: inline;">
                                                 <input type="hidden" name="delete_id"

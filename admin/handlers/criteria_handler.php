@@ -1,12 +1,22 @@
 <?php
+session_start();
+if (!isset($_SESSION['user'])) {
+    header('location: ../index.php');
+    exit;
+}
+
+if ($_SESSION['user']['role'] !== 'admin') {
+    // Redirect to an unauthorized page or login page if they don't have the correct role
+    header('Location: unauthorized.php');
+    exit;
+}
 
 include 'header.php';
 include 'sidebar.php';
 include 'footer.php';
 include '../database/connection.php';
 
-$id = isset($_POST['id']) ? $_POST['id'] : null;
-$criterias = null;
+$id = isset($_GET['criteria_id']) ? $_GET['criteria_id'] : null;
 
 $stmt = $conn->prepare('SELECT * FROM criteria_list');
 $stmt->execute();
@@ -15,7 +25,7 @@ $criterias = $stmt->fetchAll(PDO::FETCH_ASSOC);
 if ($id) {
     $stmt = $conn->prepare("SELECT * FROM criteria_list WHERE criteria_id = ?");
     $stmt->execute([$id]);
-    $criterias = $stmt->fetch();
+    $criterias = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['delete_id'])) {

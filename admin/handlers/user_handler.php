@@ -1,4 +1,16 @@
 <?php
+session_start();
+if (!isset($_SESSION['user'])) {
+    header('location: ../index.php');
+    exit;
+}
+
+if ($_SESSION['user']['role'] !== 'admin') {
+    // Redirect to an unauthorized page or login page if they don't have the correct role
+    header('Location: unauthorized.php');
+    exit;
+}
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -9,17 +21,18 @@ include 'sidebar.php';
 include 'footer.php';
 include '../database/connection.php';
 
+$id = isset($_GET['id']) ? $_GET['id'] : null;
+
 $stmt = $conn->prepare('SELECT * FROM users');
 $stmt->execute();
 $admin = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// if ($id) {
-//     $stmt = $conn->prepare('SELECT * FROM users WHERE id = :id');
-//     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-//     $stmt->execute();
-//     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-//     $student = $stmt->fetch();
-// }
+if ($id) {
+    $stmt = $conn->prepare('SELECT * FROM users WHERE id = :id');
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+    $admin = $stmt->fetch(PDO::FETCH_ASSOC);
+}
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
@@ -46,17 +59,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
     }
 
     if ($id) {
-        $query = "UPDATE users SET firstname = :firstname, lastname = :lastname , email = :email, password = :password, avatar = :avatar WHERE id = :id";
+        // Update query
+        $query = "UPDATE users 
+                  SET firstname = :firstname, lastname = :lastname, email = :email";
+
+        if (!empty($password)) {
+            $query .= ", password = :password";
+        }
+
+        if ($avatar) {
+            $query .= ", avatar = :avatar";
+        }
+
+        $query .= " WHERE id = :id";
         $stmt = $conn->prepare($query);
+
+        // Bind parameters
         $stmt->bindParam(':firstname', $firstname);
         $stmt->bindParam(':lastname', $lastname);
         $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':password', $hashed_password);
-        $stmt->bindParam(':avatar', $avatar);
+
+        if (!empty($password)) {
+            $stmt->bindParam(':password', $hashed_password);
+        }
+
+        if ($avatar) {
+            $stmt->bindParam(':avatar', $avatar);
+        }
+
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
     } else {
-        $query = "INSERT INTO users (firstname, lastname, email, password, avatar) VALUES (:firstname, :lastname, :email, :password, :avatar)";
+        // Insert query
+        $query = "INSERT INTO users (firstname, lastname, email, password, avatar) 
+                  VALUES (:firstname, :lastname, :email, :password, :avatar)";
         $stmt = $conn->prepare($query);
+
+        // Bind parameters for insert
         $stmt->bindParam(':firstname', $firstname);
         $stmt->bindParam(':lastname', $lastname);
         $stmt->bindParam(':email', $email);
@@ -64,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
         $stmt->bindParam(':avatar', $avatar);
     }
 
+    // Execute query
     if ($stmt->execute()) {
         sendEmail($email, $password);
         echo "<script>window.location.replace('user_list.php');</script>";
@@ -71,7 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
         echo "<script>alert('Error saving data.');</script>";
     }
 
-    $conn->close();
+    $conn = null; // Close connection
 }
 
 if (isset($_POST['delete_id'])) {

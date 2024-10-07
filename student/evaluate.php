@@ -1,7 +1,5 @@
-
 <?php 
-include 'header.php';
-include 'sidebar.php';
+include 'handlers/eval_handler.php';
 ?>
 
 <nav class="main-header">

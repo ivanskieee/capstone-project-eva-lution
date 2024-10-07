@@ -15,7 +15,7 @@ include 'handlers/criteria_handler.php';
 								<div class="card-header"><b>Criteria Form</b></div>
 								<div class="card-body">
 									<form action="" id="manage-criteria" method="POST">
-										<input type="hidden" name="id"
+										<input type="hidden" name="criteria_id"
 											value="<?php echo isset($criterias['criteria_id']) ? $criterias['criteria_id'] : ''; ?>">
 										<div class="form-group">
 											<label for="criteria">Criteria</label>
@@ -30,7 +30,7 @@ include 'handlers/criteria_handler.php';
 										<button class="btn btn-sm btn-success btn-flat bg-gradient-success mx-1"
 											form="manage-criteria" type="submit">Save</button>
 										<button class="btn btn-sm btn-flat btn-secondary bg-gradient-secondary mx-1"
-											form="manage-criteria" type="reset">Cancel</button>
+											form="manage-criteria" type="reset" onclick="window.location.href = './criteria_list.php';">Cancel</button>
 									</div>
 								</div>
 							</div>
@@ -55,9 +55,8 @@ include 'handlers/criteria_handler.php';
 													<i class="fa fa-ellipsis-v"></i>
 												</span>
 												<div class="dropdown-menu">
-													<a class="dropdown-item edit_criteria" href="javascript:void(0)"
-														data-id="<?php echo isset($row['id']) ?>">Edit</a>
-													<div class="dropdown-divider"></div>
+													<a class="dropdown-item"
+														href="criteria_list.php?criteria_id=<?php echo $row['criteria_id']; ?>">Edit</a>
 													<form method="post" action="criteria_list.php" style="display: inline;">
 														<input type="hidden" name="delete_id"
 															value="<?php echo isset($row['criteria_id']) ? $row['criteria_id'] : ''; ?>">

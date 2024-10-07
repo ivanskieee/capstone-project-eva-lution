@@ -1,4 +1,15 @@
 <?php
+session_start();
+if (!isset($_SESSION['user'])) {
+    header('location: ../index.php');
+    exit;
+}
+
+if ($_SESSION['user']['role'] !== 'admin') {
+    header('Location: unauthorized.php');
+    exit;
+}
+
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -9,19 +20,19 @@ include 'sidebar.php';
 include 'footer.php';
 include '../database/connection.php';
 
-$id = isset($_POST['id']) ? $_POST['id'] : null;
-$faculty = null;
+$id = isset($_GET['faculty_id']) ? $_GET['faculty_id'] : null;
+
 
 $stmt = $conn->prepare('SELECT * FROM college_faculty_list');
 $stmt->execute();
 $tertiary_faculties = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+
 if ($id) {
-    $stmt = $conn->prepare('SELECT * FROM college_faculty_list WHERE id = :id');
-    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt = $conn->prepare('SELECT * FROM college_faculty_list WHERE faculty_id = :faculty_id');
+    $stmt->bindParam(':faculty_id', $id, PDO::PARAM_INT);
     $stmt->execute();
-    $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $faculty = $stmt->fetch();
+    $faculty = $stmt->fetch(PDO::FETCH_ASSOC);  
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
@@ -49,18 +60,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
     }
 
     if ($id) {
-        $query = "UPDATE college_faculty_list SET school_id = :school_id, firstname = :firstname, lastname = :lastname, email = :email, password = :password, avatar = :avatar WHERE id = :id";
+        $query = "UPDATE college_faculty_list 
+                  SET school_id = :school_id, firstname = :firstname, lastname = :lastname, email = :email";
+        
+        if (!empty($password)) {
+            $query .= ", password = :password";
+        }
+
+        if ($avatar) {
+            $query .= ", avatar = :avatar";
+        }
+
+        $query .= " WHERE faculty_id = :faculty_id";
         $stmt = $conn->prepare($query);
+
         $stmt->bindParam(':school_id', $school_id);
         $stmt->bindParam(':firstname', $firstname);
         $stmt->bindParam(':lastname', $lastname);
         $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':password', $hashed_password);
-        $stmt->bindParam(':avatar', $avatar);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+        
+        if (!empty($password)) {
+            $stmt->bindParam(':password', $hashed_password);
+        }
+
+       
+        if ($avatar) {
+            $stmt->bindParam(':avatar', $avatar);
+        }
+
+     
+        $stmt->bindParam(':faculty_id', $id, PDO::PARAM_INT);
+
     } else {
-        $query = "INSERT INTO college_faculty_list (school_id, firstname, lastname, email, password, avatar) VALUES (:school_id, :firstname, :lastname, :email, :password, :avatar)";
+        
+        $query = "INSERT INTO college_faculty_list (school_id, firstname, lastname, email, password, avatar) 
+                  VALUES (:school_id, :firstname, :lastname, :email, :password, :avatar)";
         $stmt = $conn->prepare($query);
+
+       
         $stmt->bindParam(':school_id', $school_id);
         $stmt->bindParam(':firstname', $firstname);
         $stmt->bindParam(':lastname', $lastname);
@@ -69,19 +107,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
         $stmt->bindParam(':avatar', $avatar);
     }
 
+    
     if ($stmt->execute()) {
-        sendEmail($email, $password);
+        
+        sendEmail($email, $password);  
+
+     
         echo "<script>window.location.replace('tertiary_faculty_list.php');</script>";
     } else {
         echo "<script>alert('Error saving data.');</script>";
     }
 
+    
     $conn = null; 
 }
 if (isset($_POST['delete_id'])) {
     $delete_id = $_POST['delete_id'];
 
-    // Prepare and execute the delete statement
     $stmt = $conn->prepare('DELETE FROM college_faculty_list WHERE faculty_id = :id');
     $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
 

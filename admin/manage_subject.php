@@ -7,26 +7,26 @@ include 'handlers/subject_handler.php';
         <div class="card">
             <div class="card-body">
                 <form method="POST" id="manage_subject">
-                    <input type="hidden" name="id" value="<?php echo isset($id) ? $id : '' ?>">
+                    <input type="hidden" name="subject_id" value="<?php echo isset($subjects['subject_id']) ? $subjects['subject_id'] : '' ?>">
                     <div id="msg" class="form-group"></div>
                     <div class="row">
                         <div class="col-md-6 border-right">
                             <div class="form-group">
                                 <label for="code" class="control-label">Subject Code</label>
                                 <input type="text" class="form-control form-control-sm" name="code" id="code"
-                                    value="<?php echo isset($code) ? $code : '' ?>" required>
+                                    value="<?php echo isset($subjects['code']) ? $subjects['code'] : '' ?>" required>
                             </div>
                             <div class="form-group">
                                 <label for="subject" class="control-label">Subject</label>
                                 <input type="text" class="form-control form-control-sm" name="subject" id="subject"
-                                    value="<?php echo isset($subject) ? $subject : '' ?>" required>
+                                    value="<?php echo isset($subjects['subject']) ? $subjects['subject'] : '' ?>" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="description" class="control-label">Description</label>
                                 <textarea name="description" id="description" cols="30" rows="4" class="form-control"
-                                    required><?php echo isset($description) ? $description : '' ?></textarea>
+                                    required><?php echo isset($subjects['description']) ? $subjects['description'] : '' ?></textarea>
                             </div>
                         </div>
                     </div>

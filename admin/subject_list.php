@@ -42,7 +42,7 @@ include 'handlers/subject_handler.php';
                                     <td><b><?php echo $row['description'] ?></b></td>
                                     <td class="text-center">
                                         <div class="btn-group">
-                                            <a href="javascript:void(0)" data-id='<?php echo isset($row['id']) ?>'
+                                            <a href="manage_subject.php?subject_id=<?php echo $row['subject_id']; ?>"
                                                 class="btn btn-success btn-flat manage_subject">
                                                 <i class="fas fa-edit"></i>
                                             </a>
