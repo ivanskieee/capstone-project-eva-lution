@@ -9,8 +9,8 @@ include "handlers/student_handler.php";
         <div class="card">
             <div class="card-body">
                 <form method="POST" id="new_student" enctype="multipart/form-data">
-                    <input type="hidden" id="id" name="id"
-                        value="<?php echo isset($student['id']) ? $student['id'] : ''; ?>">
+                    <input type="hidden" id="student_id" name="student_id"
+                        value="<?php echo isset($student['student_id']) ? $student['student_id'] : ''; ?>">
                     <div class="row">
                         <div class="col-md-6 border-right">
                             <div class="form-group">

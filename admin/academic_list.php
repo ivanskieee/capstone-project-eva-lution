@@ -63,7 +63,7 @@ include 'handlers/academic_handler.php';
 
                                     <td class="text-center">
                                         <div class="btn-group">
-                                            <a href="javascript:void(0)" data-id='<?php echo isset($row['id']) ?>'
+                                            <a href="manage_academic.php?academic_id=<?php echo $row['academic_id']; ?>"
                                                 class="btn btn-success btn-flat manage_academic">
                                                 <i class="fas fa-edit"></i>
                                             </a>

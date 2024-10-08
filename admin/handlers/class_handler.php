@@ -16,8 +16,7 @@ include 'sidebar.php';
 include 'footer.php';
 include '../database/connection.php';
 
-$id = isset($_POST['id']) ? $_POST['id'] : null;
-$classes = null;
+$id = isset($_GET['class_id']) ? $_GET['class_id'] : null;
 
 $stmt = $conn->prepare('SELECT * FROM class_list');
 $stmt->execute();
@@ -26,7 +25,7 @@ $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 if ($id) {
     $stmt = $conn->prepare("SELECT * FROM class_list WHERE class_id = ?");
-    $stmt->execute([$class_id]);
+    $stmt->execute([$id]);
     $classes = $stmt->fetch();
 }
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['delete_id'])) {

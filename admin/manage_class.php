@@ -7,26 +7,26 @@ include 'handlers/class_handler.php';
         <div class="card">
             <div class="card-body">
                 <form method="POST" enctype="multipart/form-data" id="manage_class">
-                    <input type="hidden" name="id" value="<?php echo isset($class_id) ? $class_id : '' ?>">
+                    <input type="hidden" name="class_id" value="<?php echo isset($classes['class_id']) ? $classes['class_id'] : '' ?>">
                     <div id="msg" class="form-group"></div>
                     <div class="row">
                         <div class="col-md-6 border-right">
                             <div class="form-group">
                                 <label for="curriculum" class="control-label">Course</label>
                                 <input type="text" class="form-control form-control-sm" name="course" id="course"
-                                    value="<?php echo isset($course) ? $course : '' ?>" required>
+                                    value="<?php echo isset($classes['course']) ? $classes['course'] : '' ?>" required>
                             </div>
                             <div class="form-group">
                                 <label for="level" class="control-label">Year Level</label>
                                 <input type="text" class="form-control form-control-sm" name="level" id="level"
-                                    value="<?php echo isset($level) ? $level : '' ?>" required>
+                                    value="<?php echo isset($classes['level']) ? $classes['level'] : '' ?>" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="section" class="control-label">Section</label>
                                 <input type="text" class="form-control form-control-sm" name="section" id="section"
-                                    value="<?php echo isset($section) ? $section : '' ?>" required>
+                                    value="<?php echo isset($classes['section']) ? $classes['section'] : '' ?>" required>
                             </div>
                         </div>
                     </div>

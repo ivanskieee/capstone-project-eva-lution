@@ -55,7 +55,7 @@ include 'handlers/questionnaire_handler.php';
                         </div>
                     </div>
                     <div class="card-body">
-                        <fieldset class="border border-info p-2 w-100">
+                        <fieldset class="border border-success p-2 w-100">
                             <legend class="w-auto">Rating Legend</legend>
                             <p>5 = Strongly Agree, 4 = Agree, 3 = Uncertain, 2 = Disagree, 1 = Strongly Disagree</p>
                         </fieldset>
@@ -78,7 +78,8 @@ include 'handlers/questionnaire_handler.php';
                                     <?php if (!empty($questions)): ?>
                                         <?php foreach ($questions as $row): ?>
                                             <tr class="bg-white">
-                                                <td class="p-1 text-center" width="5px">
+                                                <!-- Action buttons (Edit/Delete) -->
+                                                <td class="p-1 text-center" width="5%">
                                                     <span class="btn-group dropright">
                                                         <span type="button" class="btn" data-toggle="dropdown" aria-haspopup="true"
                                                             aria-expanded="false">
@@ -88,24 +89,29 @@ include 'handlers/questionnaire_handler.php';
                                                             <a class="dropdown-item edit_question" href="javascript:void(0)"
                                                                 data-id="<?= $row['question_id'] ?>">Edit</a>
                                                             <div class="dropdown-divider"></div>
-                                                            <form method="post" action="manage_questionnaire.php" style="display: inline;">
+                                                            <form method="post" action="manage_questionnaire.php"
+                                                                style="display: inline;">
                                                                 <input type="hidden" name="delete_id"
-                                                                    value="<?php echo isset($row['question_id']) ? $row['question_id'] : ''; ?>">
+                                                                    value="<?= $row['question_id'] ?>">
                                                                 <button type="submit" class="dropdown-item"
                                                                     onclick="return confirm('Are you sure you want to delete this question?');">Delete</button>
                                                             </form>
                                                         </div>
                                                     </span>
                                                 </td>
+
+                                                <!-- Question text -->
                                                 <td class="p-1" width="20%">
                                                     <?= ucwords($row['question']) ?>
                                                     <input type="hidden" name="qid[]" value="<?= $row['question_id'] ?>">
                                                 </td>
+
+                                                <!-- Radio buttons (for evaluation/ratings) -->
                                                 <?php for ($c = 0; $c < 5; $c++): ?>
                                                     <td class="text-center">
                                                         <div class="icheck-success d-inline">
                                                             <input type="radio" name="qid[<?= $row['question_id'] ?>][]"
-                                                                id="qradio<?= $row['question_id'] . '_' . $c ?>">
+                                                                id="qradio<?= $row['question_id'] . '_' . $c ?>" value="<?= $c + 1 ?>">
                                                             <label for="qradio<?= $row['question_id'] . '_' . $c ?>"></label>
                                                         </div>
                                                     </td>
@@ -113,6 +119,11 @@ include 'handlers/questionnaire_handler.php';
                                             </tr>
                                         <?php endforeach; ?>
                                     <?php else: ?>
+                                        <!-- Display a message when no questions are available -->
+                                        <tr>
+                                            <td colspan="7" class="text-center">No questions available for the selected
+                                                criteria.</td>
+                                        </tr>
                                     <?php endif; ?>
                                 </tbody>
                             </table>

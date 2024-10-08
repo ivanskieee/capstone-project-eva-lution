@@ -16,8 +16,7 @@ include 'sidebar.php';
 include 'footer.php';
 include '../database/connection.php';
 
-$id = isset($_POST['id']) ? $_POST['id'] : null;
-$academics = null;
+$id = isset($_GET['academic_id']) ? $_GET['academic_id'] : null;
 
 $stmt = $conn->prepare('SELECT * FROM academic_list');
 $stmt->execute();
@@ -26,7 +25,7 @@ $academics = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 if ($id) {
     $stmt = $conn->prepare("SELECT * FROM academic_list WHERE academic_id = ?");
-    $stmt->execute([$academic_id]);
+    $stmt->execute([$id]);
     $academics = $stmt->fetch();
 }
 

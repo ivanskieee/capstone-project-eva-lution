@@ -21,8 +21,7 @@ include 'sidebar.php';
 include 'footer.php';
 include '../database/connection.php';
 
-$id = isset($_POST['id']) ? $_POST['id'] : null;
-$student = null;
+$id = isset($_GET['student_id']) ? $_GET['student_id'] : null;
 
 $stmt = $conn->prepare("
     SELECT student_list.*, 
@@ -40,11 +39,11 @@ $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 
 if ($id) {
-    $stmt = $conn->prepare('SELECT * FROM student_list WHERE id = :id');
+    $stmt = $conn->prepare('SELECT * FROM student_list WHERE student_id = :id');
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt->execute();
     $stmt->setFetchMode(PDO::FETCH_ASSOC);
-    $student = $stmt->fetch();
+    $student = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
@@ -73,19 +72,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
     }
 
     if ($id) {
-        $query = "UPDATE student_list SET school_id = :school_id, firstname = :firstname, lastname = :lastname, class_id = :class_id, email = :email, password = :password, avatar = :avatar WHERE id = :id";
+        $query = "UPDATE student_list 
+                  SET school_id = :school_id, firstname = :firstname, lastname = :lastname, class_id = :class_id, email = :email";
+
+        if (!empty($password)) {
+            $query .= ", password = :password";
+        }
+
+        if ($avatar) {
+            $query .= ", avatar = :avatar";
+        }
+
+        $query .= " WHERE student_id = :id";
         $stmt = $conn->prepare($query);
+
+        
         $stmt->bindParam(':school_id', $school_id);
         $stmt->bindParam(':firstname', $firstname);
         $stmt->bindParam(':lastname', $lastname);
         $stmt->bindParam(':class_id', $class_id);
         $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':password', $hashed_password);
-        $stmt->bindParam(':avatar', $avatar);
+
+        if (!empty($password)) {
+            $stmt->bindParam(':password', $hashed_password);
+        }
+
+        if ($avatar) {
+            $stmt->bindParam(':avatar', $avatar);
+        }
+
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
     } else {
-        $query = "INSERT INTO student_list (school_id, firstname, lastname, class_id, email, password, avatar) VALUES (:school_id, :firstname, :lastname, :class_id, :email, :password, :avatar)";
+        
+        $query = "INSERT INTO student_list (school_id, firstname, lastname, class_id, email, password, avatar) 
+                  VALUES (:school_id, :firstname, :lastname, :class_id, :email, :password, :avatar)";
         $stmt = $conn->prepare($query);
+
+        
         $stmt->bindParam(':school_id', $school_id);
         $stmt->bindParam(':firstname', $firstname);
         $stmt->bindParam(':lastname', $lastname);
@@ -95,15 +119,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
         $stmt->bindParam(':avatar', $avatar);
     }
 
+    
     if ($stmt->execute()) {
-        
         sendEmail($email, $password);
         echo "<script>window.location.replace('student_list.php');</script>";
     } else {
         echo "<script>alert('Error saving data.');</script>";
     }
 
-    $conn->close();
+    $conn = null; 
 }
 
 if (isset($_POST['delete_id'])) {

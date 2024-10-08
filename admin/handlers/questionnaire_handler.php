@@ -16,8 +16,7 @@ include 'sidebar.php';
 include 'footer.php';
 include '../database/connection.php';
 
-$id = isset($_POST['id']) ? $_POST['id'] : null;
-$questionz = null;
+$id = isset($_GET['question_id']) ? $_GET['question_id'] : null;
 
 $stmt = $conn->prepare('SELECT * FROM academic_list');
 $stmt->execute();
@@ -27,7 +26,6 @@ if (isset($_POST['submit_question'])) {
     $criteria_id = $_POST['criteria_id'];
     $question = $_POST['question'];
 
-    // Insert the question into the database based on the selected criteria
     if (!empty($criteria_id) && !empty($question)) {
         $stmt = $conn->prepare('INSERT INTO question_list (criteria_id, question) VALUES (:criteria_id, :question)');
         $stmt->bindParam(':criteria_id', $criteria_id);
@@ -49,16 +47,16 @@ $stmt = $conn->prepare('SELECT * FROM question_list');
 $stmt->execute();
 $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// $criteria_id = isset($_POST['criteria_id']) ? $_POST['criteria_id'] : null;
+// $id = isset($_GET['criteria_id']) ? $_GET['criteria_id'] : null;
 
-// if ($criteria_id) {
+// if ($id) {
 //     // Fetch questions only if a criteria is selected
-//     $stmt = $conn->prepare('SELECT * FROM question_list WHERE criteria_id = :criteria_id');
-//     $stmt->bindParam(':criteria_id', $criteria_id);
+//     $stmt = $conn->prepare('SELECT * FROM question_list WHERE criteria_id = :id');
+//     $stmt->bindParam(':id', $id, PDO::PARAM_INT); // Ensure it's treated as an integer
 //     $stmt->execute();
-//     $questionz = $stmt->fetchAll(PDO::FETCH_ASSOC);
+//     $questionz = $stmt->fetchAll(PDO::FETCH_ASSOC); // Fetch all results
 // } else {
-//     $questionz = []; // Default empty array if no criteria selected
+//     $questionz = []; // Default to empty array if no criteria selected
 // }
 
 if ($id) {

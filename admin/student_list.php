@@ -45,7 +45,7 @@ include "handlers/student_handler.php"; // Handle student-related operations
                                         </button>
                                         <div class="dropdown-menu">
                                             <a class="dropdown-item"
-                                                href="./index.php?page=edit_student&id=<?php echo isset($row['id']); ?>">Edit</a>
+                                                href="new_student.php?student_id=<?php echo $row['student_id']; ?>"">Edit</a>
                                             <div class="dropdown-divider"></div>
                                             <form method="post" action="student_list.php" style="display: inline;">
                                                 <input type="hidden" name="delete_id"

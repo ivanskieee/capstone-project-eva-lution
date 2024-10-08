@@ -40,8 +40,7 @@ include 'handlers/class_handler.php';
                                     </td>
                                     <td class="text-center">
                                         <div class="btn-group">
-                                            <a href="javascript:void(0)"
-                                                data-id='<?php echo isset($row['id']) ? $row['id'] : 0; ?>'
+                                            <a href="manage_class.php?class_id=<?php echo $row['class_id']; ?>"
                                                 class="btn btn-success  manage_class">
                                                 <i class="fas fa-edit"></i>
                                             </a>
