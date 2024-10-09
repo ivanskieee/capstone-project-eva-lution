@@ -25,11 +25,11 @@ include 'handlers/questionnaire_handler.php';
                                     <?php endforeach; ?>
                                 </select>
                             </div>
-                            <!-- Question textarea -->
+
                             <div class="form-group">
                                 <label for="question">Question</label>
                                 <textarea name="question" id="question" cols="30" rows="4" class="form-control"
-                                    required><?php echo isset($question) ? $question : '' ?></textarea>
+                                    required><?php echo isset($questions['question']) ? $questions['question'] : '' ?></textarea>
                             </div>
                         </form>
                     </div>
@@ -38,7 +38,7 @@ include 'handlers/questionnaire_handler.php';
                             <button type="submit" class="btn btn-sm btn-success btn-flat bg-gradient-success mx-1"
                                 form="manage-question">Save</button>
                             <button class="btn btn-sm btn-flat btn-secondary bg-gradient-secondary mx-1"
-                                form="manage-question" type="reset">Cancel</button>
+                                form="manage-question" type="reset" onclick="window.location.href = './manage_questionnaire.php';">Cancel</button>
                         </div>
                     </div>
                 </div>
@@ -78,7 +78,6 @@ include 'handlers/questionnaire_handler.php';
                                     <?php if (!empty($questions)): ?>
                                         <?php foreach ($questions as $row): ?>
                                             <tr class="bg-white">
-                                                <!-- Action buttons (Edit/Delete) -->
                                                 <td class="p-1 text-center" width="5%">
                                                     <span class="btn-group dropright">
                                                         <span type="button" class="btn" data-toggle="dropdown" aria-haspopup="true"
@@ -86,8 +85,8 @@ include 'handlers/questionnaire_handler.php';
                                                             <i class="fa fa-ellipsis-v"></i>
                                                         </span>
                                                         <div class="dropdown-menu">
-                                                            <a class="dropdown-item edit_question" href="javascript:void(0)"
-                                                                data-id="<?= $row['question_id'] ?>">Edit</a>
+                                                            <a class="dropdown-item edit_question"
+                                                                href="manage_questionnaire.php?question_id=<?php echo $row['question_id']; ?>">Edit</a>
                                                             <div class="dropdown-divider"></div>
                                                             <form method="post" action="manage_questionnaire.php"
                                                                 style="display: inline;">
@@ -99,14 +98,10 @@ include 'handlers/questionnaire_handler.php';
                                                         </div>
                                                     </span>
                                                 </td>
-
-                                                <!-- Question text -->
                                                 <td class="p-1" width="20%">
                                                     <?= ucwords($row['question']) ?>
                                                     <input type="hidden" name="qid[]" value="<?= $row['question_id'] ?>">
                                                 </td>
-
-                                                <!-- Radio buttons (for evaluation/ratings) -->
                                                 <?php for ($c = 0; $c < 5; $c++): ?>
                                                     <td class="text-center">
                                                         <div class="icheck-success d-inline">
@@ -119,7 +114,6 @@ include 'handlers/questionnaire_handler.php';
                                             </tr>
                                         <?php endforeach; ?>
                                     <?php else: ?>
-                                        <!-- Display a message when no questions are available -->
                                         <tr>
                                             <td colspan="7" class="text-center">No questions available for the selected
                                                 criteria.</td>

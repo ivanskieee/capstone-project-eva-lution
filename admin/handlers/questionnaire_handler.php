@@ -62,27 +62,52 @@ $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 if ($id) {
     $stmt = $conn->prepare("SELECT * FROM question_list WHERE question_id = ?");
     $stmt->execute([$id]);
-    $questions = $stmt->fetch();
+    $questions = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
-    $criteria_id = $_POST['criteria_id'];
+// if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
+//     $criteria_id = $_POST['criteria_id'];
+//     $question = $_POST['question'];
+
+//     $stmt = $conn->prepare('INSERT INTO question_list (criteria_id, question) VALUES (:criteria_id, :question)');
+//     $stmt->bindParam(':criteria_id', $criteria_id, PDO::PARAM_INT);
+//     $stmt->bindParam(':question', $question, PDO::PARAM_STR);
+//     $stmt->execute();
+
+//      $conn = null;
+
+//      $_SESSION['flash_message'] = 'Data successfully saved.';
+//      $_SESSION['flash_type'] = 'success';
+ 
+//      echo "<script>window.location.replace('manage_questionnaire.php');</script>";
+//      exit;
+ 
+// }
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['delete_id'])) {
+    $criteria_id = $_POST['criteria_id'];  // or '$id' if you're using 'id' instead
     $question = $_POST['question'];
 
-    $stmt = $conn->prepare('INSERT INTO question_list (criteria_id, question) VALUES (:criteria_id, :question)');
-    $stmt->bindParam(':criteria_id', $criteria_id, PDO::PARAM_INT);
-    $stmt->bindParam(':question', $question, PDO::PARAM_STR);
-    $stmt->execute();
+    if ($id) {
+        // Update the question if the criteria_id already exists
+        $query = "UPDATE question_list SET question = ? WHERE criteria_id = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->execute([$question, $criteria_id]);
+    } else {
+        // Insert new question if there's no criteria_id
+        $query = "INSERT INTO question_list (criteria_id, question) VALUES (?, ?)";
+        $stmt = $conn->prepare($query);
+        $stmt->execute([$criteria_id, $question]);
+    }
 
-     $conn = null;
+    $conn = null;
 
-     $_SESSION['flash_message'] = 'Data successfully saved.';
-     $_SESSION['flash_type'] = 'success';
- 
-     echo "<script>window.location.replace('manage_questionnaire.php');</script>";
-     exit;
- 
+    $_SESSION['flash_message'] = 'Data successfully saved.';
+    $_SESSION['flash_type'] = 'success';
+
+    echo "<script>window.location.replace('manage_questionnaire.php');</script>";
+    exit;
 }
+
 
 if (isset($_POST['delete_id'])) {
     $delete_id = $_POST['delete_id'];
