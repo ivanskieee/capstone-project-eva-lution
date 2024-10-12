@@ -48730,6 +48730,34 @@ a.text-muted:hover {
   transition: margin-left 0.3s;
 }
 
+/* Custom checkmark animation */
+@keyframes checkmark {
+  0% { stroke-dashoffset: 100; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.checkmark {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: block;
+  stroke-width: 2;
+  stroke: #4CAF50;
+  stroke-miterlimit: 10;
+  margin: 10% auto;
+  box-shadow: inset 0px 0px 0px #4CAF50;
+  animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+}
+
+.checkmark__circle {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  stroke-width: 2;
+  fill: none;
+  animation: checkmark 1s ease-in-out forwards;
+}
+
+
 
 
 
