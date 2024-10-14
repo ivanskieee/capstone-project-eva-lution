@@ -13,5 +13,15 @@ if ($_SESSION['user']['role'] !== 'student') {
 
 include 'header.php';
 include 'sidebar.php';
+include '../database/connection.php';
+
+
+$stmt = $conn->prepare('SELECT * FROM criteria_list');
+$stmt->execute();
+$criteriaList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$stmt = $conn->prepare('SELECT * FROM question_list');
+$stmt->execute();
+$questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>

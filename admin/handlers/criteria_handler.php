@@ -28,38 +28,39 @@ $stmt->execute();
 $criterias = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Check if updating or deleting
     if (isset($_POST['delete_id'])) {
         $delete_id = $_POST['delete_id'];
         $stmt = $conn->prepare('DELETE FROM criteria_list WHERE criteria_id = :id');
         $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
 
         if ($stmt->execute()) {
-            echo json_encode(['success' => true, 'message' => 'Criteria deleted successfully.']);
+            $_SESSION['message'] = 'Criteria deleted successfully.';
         } else {
-            echo json_encode(['success' => false, 'message' => 'Error deleting criteria.']);
+            error_log('Error deleting criteria');
+            $_SESSION['error'] = 'Error deleting criteria. Please try again.';
         }
         
-        exit; 
-        
+        echo "<script>window.location.replace('criteria_list.php');</script>";
+
     } elseif (isset($_POST['criteria'])) {
         $criteria = $_POST['criteria'];
         $criteria_id = $_POST['criteria_id'] ?? null;
 
         if ($criteria_id) {
-            // Update existing criteria
+            
             $query = "UPDATE criteria_list SET criteria = ? WHERE criteria_id = ?";
             $stmt = $conn->prepare($query);
             $stmt->execute([$criteria, $criteria_id]);
-            echo json_encode(['success' => true, 'message' => 'Criteria updated successfully.']);
+            header('Location: criteria_list.php'); 
+            exit;
         } else {
-            // Insert new criteria
+            
             $query = "INSERT INTO criteria_list (criteria) VALUES (?)";
             $stmt = $conn->prepare($query);
             $stmt->execute([$criteria]);
-            echo json_encode(['success' => true, 'message' => 'Criteria added successfully.']);
+            header('Location: criteria_list.php'); 
+            exit;
         }
-        exit;
     }
 }
 

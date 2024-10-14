@@ -41,6 +41,7 @@ if ($_POST) {
         if (password_verify($password, $user['password'])) {
             $user['role'] = 'admin';
             $_SESSION['user'] = $user;
+            $_SESSION['login_name'] = $user['firstname'] . ' ' . $user['lastname'];
             header('location: admin/home.php');
             exit;
         }
@@ -60,6 +61,7 @@ if ($_POST) {
         if (password_verify($password, $user['password'])) {
             $user['role'] = 'student';
             $_SESSION['user'] = $user;
+            $_SESSION['login_name'] = $user['firstname'] . ' ' . $user['lastname'];
             header('location: student/home.php');
             exit;
         }

@@ -63,7 +63,7 @@ include "handlers/questionnaire_handler.php";
                                         </button>
                                         <div class="dropdown-menu" style="">
                                             <a class="dropdown-item manage_questionnaire"
-                                                href="manage_questionnaire.php">Manage</a>
+                                                href="manage_questionnaire.php?academic_id=<?php echo isset($row['academic_id']); ?>">Manage</a>
                                         </div>
                                     </td>
                                 </tr>

@@ -95,7 +95,7 @@
               <span>
                 <div class="d-felx badge-pill">
                   <span class=""><img src="assets/uploads/png.png" alt="" class="user-img border "></span>
-                  <span><b>Student</b></span>
+                  <span><b><?php echo ucwords($_SESSION['login_name']) ?></b></span>
                   <span class="fa fa-angle-down ml-2"></span>
                 </div>
               </span>
