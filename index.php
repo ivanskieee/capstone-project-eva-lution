@@ -6,7 +6,7 @@ include "login_handler.php";
         <div class="col-md-6 mt-4">
             <div class="login-box">
                 <div class="login-logo">
-                    <a href="#">Login</a>
+                    <a href="./">Login</a>
                 </div>
                 <div class="card">
                     <div class="card-body login-card-body">

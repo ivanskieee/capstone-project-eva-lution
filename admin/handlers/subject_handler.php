@@ -29,46 +29,47 @@ if ($id) {
     $subjects = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['delete_id'])) {
-    $code = $_POST['code'];
-    $subject = $_POST['subject'];
-    $description = $_POST['description'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Handle delete request
+    if (isset($_POST['delete_id'])) {
+        $delete_id = $_POST['delete_id'];
+        $stmt = $conn->prepare('DELETE FROM subject_list WHERE subject_id = :id');
+        $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
 
-    if ($id) {
-        $query = "UPDATE subject_list SET code = ?, subject = ?, description = ? WHERE subject_id = ?";
-        $stmt = $conn->prepare($query);
-        $stmt->execute([$code, $subject, $description, $id]);
-    } else {
-        $query = "INSERT INTO subject_list (code, subject, description) VALUES (?, ?, ?)";
-        $stmt = $conn->prepare($query);
-        $stmt->execute([$code, $subject, $description]);
+        if ($stmt->execute()) {
+            $_SESSION['message'] = 'Subject deleted successfully.';
+        } else {
+            error_log('Error deleting subject');
+            $_SESSION['error'] = 'Error deleting subject. Please try again.';
+        }
+        
+        echo "<script>window.location.replace('subject_list.php');</script>";
+    } 
+    // Handle add/update request
+    elseif (isset($_POST['code'], $_POST['subject'], $_POST['description'])) {
+        $code = $_POST['code'];
+        $subject = $_POST['subject'];
+        $description = $_POST['description'];
+        $id = $_POST['subject_id'] ?? null;
+
+        if ($id) {
+            $query = "UPDATE subject_list SET code = ?, subject = ?, description = ? WHERE subject_id = ?";
+            $stmt = $conn->prepare($query);
+            $stmt->execute([$code, $subject, $description, $id]);
+            $_SESSION['message'] = 'Subject updated successfully.';
+        } else {
+            $query = "INSERT INTO subject_list (code, subject, description) VALUES (?, ?, ?)";
+            $stmt = $conn->prepare($query);
+            $stmt->execute([$code, $subject, $description]);
+            $_SESSION['message'] = 'Subject added successfully.';
+        }
+
+        echo "<script>window.location.replace('subject_list.php');</script>";
+        exit;
     }
-
-    $conn = null;
-
-    $_SESSION['flash_message'] = 'Data successfully saved.';
-    $_SESSION['flash_type'] = 'success';
-
-    echo "<script>window.location.replace('subject_list.php');</script>";
-
-    exit;
-}
-
-if (isset($_POST['delete_id'])) {
-    $delete_id = $_POST['delete_id'];
-
-    $stmt = $conn->prepare('DELETE FROM subject_list WHERE subject_id = :id');
-    $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
-
-    if ($stmt->execute()) {
-        echo "<script>alert('Subject is deleted successfully.');</script>";
-    } else {
-        echo "<script>alert('Error deleting subject.');</script>";
-    }
-
-    echo "<script>window.location.replace('subject_list.php');</script>";
 }
 
 $conn = null;
+
 
 

@@ -8,27 +8,37 @@ include 'handlers/eval_handler.php';
 			<div class="col-md-3">
 				<div class="list-group">
 					<?php
-					// Your PDO query execution
+					// Adjust your PDO query to select faculty's first name, last name, and subject details
 					$query = "SELECT cf.faculty_id as fid, cf.firstname, cf.lastname, s.subject_id as sid, s.code, s.subject 
 						FROM college_faculty_list cf
-						JOIN subject_list s ON cf.faculty_id = s.subject_id";  // Adjust column names as needed
+						JOIN subject_list s ON s.subject_id = s.subject_id";  // Ensure correct column matching between tables
 					
-					$stmt = $conn->query($query); // Execute the query
-					
-					// Use fetch() instead of fetch_assoc()
+					// Prepare and execute the query
+					$stmt = $conn->prepare($query);
+					$stmt->execute();
+
+					// Fetch the current rid and sid from the URL if they are set
+					$active_rid = isset($_GET['rid']) ? $_GET['rid'] : null;
+					$active_sid = isset($_GET['sid']) ? $_GET['sid'] : null;
+
+					// Fetch and loop through the results
 					while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
 						if (empty($rid)) {
-							$rid = $row['fid'];
+							$rid = $row['fid'];  // Assigning the first faculty id found
 							$faculty_id = $row['fid'];
 							$subject_id = $row['sid'];
 						}
+
+						// Determine if the current row should be active (success)
+						$is_active = ($active_rid == $row['fid'] && $active_sid == $row['sid']) ? 'list-group-item-success' : '';
 						?>
-						<a class="list-group-item list-group-item-action <?php echo isset($rid) && $rid == $row['fid'] ? 'active' : '' ?>"
-							href="./index.php?page=evaluate&rid=<?php echo $row['fid'] ?>&sid=<?php echo $row['sid'] ?>">
+						<!-- Create list group item -->
+						<a class="list-group-item list-group-item-action <?php echo $is_active; ?>"
+							href="./evaluate.php?rid=<?php echo $row['fid'] ?>&sid=<?php echo $row['sid'] ?>">
+							<!-- Display faculty name and subject information -->
 							<?php echo ucwords($row['firstname'] . ' ' . $row['lastname']) . ' - (' . $row["code"] . ') ' . $row['subject'] ?>
 						</a>
 					<?php endwhile; ?>
-
 				</div>
 			</div>
 			<div class="col-md-9">

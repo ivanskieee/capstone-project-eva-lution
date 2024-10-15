@@ -46,11 +46,10 @@ include 'handlers/subject_handler.php';
                                                 class="btn btn-success btn-flat manage_subject">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form method="post" action="subject_list.php" style="display: inline;">
+                                            <form method="post" action="subject_list.php" style="display: inline;" class="delete-form">
                                                 <input type="hidden" name="delete_id"
                                                     value="<?php echo isset($row['subject_id']) ? $row['subject_id'] : ''; ?>">
-                                                <button type="submit" class="btn btn-secondary btn-flat delete_subject"
-                                                    onclick="return confirm('Are you sure you want to delete this subject?');">
+                                                <button type="submit" class="btn btn-secondary btn-flat delete_subject">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -65,3 +64,58 @@ include 'handlers/subject_handler.php';
         </div>
     </div>
 </nav>
+<script>
+    $(document).ready(function () {
+        // Handle form submission for adding/updating subject
+        $('#manage-subject').on('submit', function (e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: 'subject_list.php',
+                data: formData,
+                success: function (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Subject saved successfully.',
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then(() => {
+                        window.location.href = 'subject_list.php';
+                    });
+
+                    $('#manage-subject')[0].reset(); // Optionally reset form
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    });
+                }
+            });
+        });
+
+        // Delete confirmation
+        $(document).on('submit', '.delete-form', function (e) {
+            e.preventDefault();
+            var form = this;
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'This action will permanently delete the subject.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
+    });
+</script>

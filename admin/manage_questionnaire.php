@@ -89,11 +89,10 @@ include 'handlers/questionnaire_handler.php';
                                                                     href="manage_questionnaire.php?question_id=<?php echo $qRow['question_id']; ?>">Edit</a>
                                                                 <div class="dropdown-divider"></div>
                                                                 <form method="post" action="manage_questionnaire.php"
-                                                                    style="display: inline;">
+                                                                    style="display: inline;" class="delete-form">
                                                                     <input type="hidden" name="delete_id"
                                                                         value="<?= $qRow['question_id'] ?>">
-                                                                    <button type="submit" class="dropdown-item"
-                                                                        onclick="return confirm('Are you sure you want to delete this question?');">Delete</button>
+                                                                    <button type="submit" class="dropdown-item">Delete</button>
                                                                 </form>
                                                             </div>
                                                         </span>
@@ -131,3 +130,62 @@ include 'handlers/questionnaire_handler.php';
         </div>
     </div>
 </nav>
+<script>
+    $(document).ready(function () {
+        // Handle form submission for adding/updating question
+        $('#manage-question').on('submit', function (e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: 'manage_questionnaire.php',
+                data: formData,
+                success: function (response) {
+                    // Show success alert
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Question saved successfully.',
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then(() => {
+                        // Redirect after success
+                        window.location.href = 'manage_questionnaire.php';
+                    });
+
+                    // Reset the form after success
+                    $('#manage-question')[0].reset();
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    });
+                }
+            });
+        });
+
+        // Handle delete confirmation
+        $(document).on('submit', '.delete-form', function (e) {
+            e.preventDefault(); // Prevent form submission until confirmed
+            var form = this;
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'This action will permanently delete the question.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Submit the form after confirmation
+                    form.submit();
+                }
+            });
+        });
+    });
+</script>

@@ -17,7 +17,7 @@
 <body>
     <nav class="navbar navbar-expand-lg bg-navbar">
         <div class="container-fluid">
-            <a class="navbar-brand d-flex text-white align-items-center" href="#">
+            <a class="navbar-brand d-flex text-white align-items-center" href="./">
                 <img src="static/css/assets/images/spclog.png" alt="SPC Logo" width="30" height="30"
                     class="d-inline-block align-text-top me-2">
                 SPC Evaluation System
