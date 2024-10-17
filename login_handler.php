@@ -81,6 +81,7 @@ if ($_POST) {
         if (password_verify($password, $user['password'])) {
             $user['role'] = 'faculty';
             $_SESSION['user'] = $user;
+            $_SESSION['login_name'] = $user['firstname'] . ' ' . $user['lastname'];
             header('location: faculty/home.php');
             exit;
         }

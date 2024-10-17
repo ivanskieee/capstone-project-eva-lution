@@ -146,7 +146,8 @@
           </ul>
         </li>
         <li class="nav-item dropdown">
-          <a href="./index.php?page=report" class="nav-link nav-report">
+          <a href="report.php" class="nav-link nav-report <?php echo in_array(basename($_SERVER['PHP_SELF']), ['report.php']) ? 'active' : ''; ?>"
+          style="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['report.php']) ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
             <i class="nav-icon fas fa-list-alt"></i>
             <p>
               Evaluation Report

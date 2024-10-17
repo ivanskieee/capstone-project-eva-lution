@@ -19,7 +19,7 @@ include 'sidebar.php';
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                Welcome!
+                Welcome <?php echo $_SESSION['login_name'] ?>!
                 <br>
                 <div class="col-md-5">
                     <div class="callout callout-info" style="border-left-color: rgb(51, 128, 64);">
