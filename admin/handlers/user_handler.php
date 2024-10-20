@@ -53,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
     }
 
     if ($avatar) {
-        $target_dir = "uploads/";
+        $target_dir = "assets/uploads/";
         $target_file = $target_dir . basename($_FILES["img"]["name"]);
         move_uploaded_file($_FILES["img"]["tmp_name"], $target_file);
     }
@@ -144,7 +144,7 @@ function sendEmail($toEmail, $plainPassword) {
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         
         $mail->Port       = 587;                                    
 
-        $mail->setFrom('your_email@gmail.com', 'Your Name');
+        $mail->setFrom('your_email@gmail.com', 'SPC_EVAL');
         $mail->addAddress($toEmail);                                
 
         $mail->isHTML(true);                                        

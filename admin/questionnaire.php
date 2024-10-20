@@ -36,18 +36,9 @@ include "handlers/questionnaire_handler.php";
                             <?php
                             $i = 1;
                             foreach ($questionnaires as $row):
-                                // Check if 'id' exists in $row
-                                if (isset($row['id'])) {
-                                    // Fetch the number of questions
-                                    $question = $conn->query("SELECT * FROM question_list WHERE academic_id = {$row['id']}")->num_rows;
-
-                                    // Fetch the number of answers
-                                    $answers = $conn->query("SELECT * FROM evaluation_list WHERE academic_id = {$row['id']}")->num_rows;
-                                } else {
-                                    // Handle the case when 'id' is not set
-                                    $question = 0;
-                                    $answers = 0;
-                                }
+                                // Set the number of questions and answers from the fetched data
+                                $question = $row['total_questions'];
+                                $answers = $row['total_answers'];
                                 ?>
                                 <tr>
                                     <th class="text-center"><?php echo $i++ ?></th>
@@ -61,9 +52,9 @@ include "handlers/questionnaire_handler.php";
                                             data-toggle="dropdown" aria-expanded="true">
                                             Action
                                         </button>
-                                        <div class="dropdown-menu" style="">
+                                        <div class="dropdown-menu">
                                             <a class="dropdown-item manage_questionnaire"
-                                                href="manage_questionnaire.php?academic_id=<?php echo isset($row['academic_id']); ?>">Manage</a>
+                                                href="manage_questionnaire.php?academic_id=<?php echo $row['academic_id']; ?>">Manage</a>
                                         </div>
                                     </td>
                                 </tr>

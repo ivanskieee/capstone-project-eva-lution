@@ -13,6 +13,11 @@ include 'handlers/questionnaire_handler.php';
                         <form action="" id="manage-question" method="POST">
                             <input type="hidden" name="question_id"
                                 value="<?php echo isset($questionToEdit['question_id']) ? $questionToEdit['question_id'] : ''; ?>">
+
+                            <!-- Add academic_id field -->
+                            <input type="hidden" name="academic_id"
+                                value="<?php echo isset($_GET['academic_id']) ? $_GET['academic_id'] : ''; ?>">
+
                             <div class="form-group">
                                 <label for="criteria_id">Select Criteria:</label>
                                 <select name="criteria_id" id="criteria_id" class="form-control" required>
@@ -25,7 +30,6 @@ include 'handlers/questionnaire_handler.php';
                                     <?php endforeach; ?>
                                 </select>
                             </div>
-
                             <div class="form-group">
                                 <label for="question">Question</label>
                                 <textarea name="question" id="question" cols="30" rows="4" class="form-control"
@@ -37,9 +41,11 @@ include 'handlers/questionnaire_handler.php';
                         <div class="d-flex justify-content-end w-100">
                             <button type="submit" class="btn btn-sm btn-success btn-flat bg-gradient-success mx-1"
                                 form="manage-question" name="submit_question">Save</button>
-                            <button class="btn btn-sm btn-flat btn-secondary bg-gradient-secondary mx-1"
-                                form="manage-question" type="reset"
-                                onclick="window.location.href = './manage_questionnaire.php';">Cancel</button>
+                            <input type="hidden" id="academic_id" value="<?php echo $academic_id; ?>">
+                            <button class="btn btn-sm btn-flat btn-secondary bg-gradient-secondary mx-1" type="button"
+                                onclick="cancelAction();">
+                                Cancel
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -71,10 +77,10 @@ include 'handlers/questionnaire_handler.php';
                                 <tbody class="tr-sortable">
                                     <?php
                                     $hasQuestions = false;
-
                                     if (is_array($questions)) {
                                         foreach ($questions as $qRow) {
-                                            if (is_array($qRow) && $qRow['criteria_id'] == $row['criteria_id']) {
+                                            // Check if both criteria_id and academic_id match
+                                            if (is_array($qRow) && $qRow['criteria_id'] == $row['criteria_id'] && $qRow['academic_id'] == $academic_id) {
                                                 $hasQuestions = true;
                                                 ?>
                                                 <tr class="bg-white">
@@ -86,7 +92,7 @@ include 'handlers/questionnaire_handler.php';
                                                             </span>
                                                             <div class="dropdown-menu">
                                                                 <a class="dropdown-item edit_question"
-                                                                    href="manage_questionnaire.php?question_id=<?php echo $qRow['question_id']; ?>">Edit</a>
+                                                                    href="manage_questionnaire.php?question_id=<?php echo $qRow['question_id']; ?>&academic_id=<?php echo $academic_id; ?>">Edit</a>
                                                                 <div class="dropdown-divider"></div>
                                                                 <form method="post" action="manage_questionnaire.php"
                                                                     style="display: inline;" class="delete-form">
@@ -117,8 +123,8 @@ include 'handlers/questionnaire_handler.php';
                                     }
                                     if (!$hasQuestions): ?>
                                         <tr>
-                                            <td colspan="7" class="text-center">No questions available for the selected
-                                                criteria.</td>
+                                            <td colspan="7" class="text-center">No questions available for the selected criteria
+                                                and academic year.</td>
                                         </tr>
                                     <?php endif; ?>
                                 </tbody>
@@ -132,7 +138,7 @@ include 'handlers/questionnaire_handler.php';
 </nav>
 <script>
     $(document).ready(function () {
-        // Handle form submission for adding/updating question
+        // Handle form submission for adding/updating a question
         $('#manage-question').on('submit', function (e) {
             e.preventDefault();
             var formData = $(this).serialize();
@@ -150,8 +156,10 @@ include 'handlers/questionnaire_handler.php';
                         showConfirmButton: false,
                         timer: 2000
                     }).then(() => {
+                        // Get the academic_id from the form data
+                        var academic_id = $('#academic_id').val();
                         // Redirect after success
-                        window.location.href = 'manage_questionnaire.php';
+                        window.location.href = 'manage_questionnaire.php?academic_id=' + academic_id;
                     });
 
                     // Reset the form after success
@@ -182,10 +190,44 @@ include 'handlers/questionnaire_handler.php';
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    // Get the academic_id from the form data
+                    var academic_id = $('#academic_id').val();
                     // Submit the form after confirmation
-                    form.submit();
+                    $.ajax({
+                        type: 'POST',
+                        url: 'manage_questionnaire.php',
+                        data: $(form).serialize(),
+                        success: function () {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: 'Question has been deleted.',
+                                showConfirmButton: false,
+                                timer: 2000
+                            }).then(() => {
+                                // Redirect to the page with academic_id
+                                window.location.href = 'manage_questionnaire.php?academic_id=' + academic_id;
+                            });
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Failed to delete the question!',
+                            });
+                        }
+                    });
                 }
             });
         });
     });
+</script>
+
+<script>
+    function cancelAction() {
+        // Get the academic_id value from the hidden input field
+        var academicId = document.getElementById('academic_id').value;
+        // Redirect to the URL with the academic_id
+        window.location.href = 'manage_questionnaire.php?academic_id=' + academicId;
+    }
 </script>

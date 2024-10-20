@@ -106,7 +106,6 @@ include 'handlers/eval_handler.php';
 										}
 										?>
 									</tbody>
-
 								</table>
 							<?php endforeach; ?>
 						</form>

@@ -132,8 +132,33 @@ include 'handlers/criteria_handler.php';
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Submit the form after confirmation
-                    form.submit();
+                    // Get the criteria_id from the form data
+                    var criteria_id = $('#criteria_id').val(); // Assuming criteria_id is in the form
+                    // Submit the form via AJAX after confirmation
+                    $.ajax({
+                        type: 'POST',
+                        url: 'criteria_list.php', // Update with your actual endpoint
+                        data: $(form).serialize(),
+                        success: function () {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: 'Criteria has been deleted.',
+                                showConfirmButton: false,
+                                timer: 2000
+                            }).then(() => {
+                                // Redirect to the page with criteria_id
+                                window.location.href = 'criteria_list.php' // Update with your actual endpoint
+                            });
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Failed to delete the criteria!',
+                            });
+                        }
+                    });
                 }
             });
         });

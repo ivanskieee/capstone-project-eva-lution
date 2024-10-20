@@ -121,7 +121,7 @@
         <a class="nav-link" data-toggle="dropdown" aria-expanded="false" href="javascript:void(0)">
           <span>
             <div class="d-flex badge-pill align-items-center">
-              <span class="mr-1"><img src="assets/uploads/png.png" alt="User" class="user-img border"></span>
+              <span class="mr-1"><img src="assets/uploads/admin.jpg" alt="User" class="user-img border"></span>
               <span class="dropdown-text"><b><?php echo ucwords($_SESSION['login_name']) ?></b></span>
               <span class="fa fa-angle-down ml-2 dropdown-arrow"></span>
             </div>
