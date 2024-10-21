@@ -6,8 +6,9 @@ include 'handlers/class_handler.php';
     <div class="col-lg-12 mt-5">
         <div class="card">
             <div class="card-body">
-                <form method="POST" enctype="multipart/form-data" id="manage_class">
-                    <input type="hidden" name="class_id" value="<?php echo isset($classes['class_id']) ? $classes['class_id'] : '' ?>">
+                <form method="POST" enctype="multipart/form-data" id="manage-class">
+                    <input type="hidden" name="class_id"
+                        value="<?php echo isset($classes['class_id']) ? $classes['class_id'] : '' ?>">
                     <div id="msg" class="form-group"></div>
                     <div class="row">
                         <div class="col-md-6 border-right">
@@ -26,7 +27,8 @@ include 'handlers/class_handler.php';
                             <div class="form-group">
                                 <label for="section" class="control-label">Section</label>
                                 <input type="text" class="form-control form-control-sm" name="section" id="section"
-                                    value="<?php echo isset($classes['section']) ? $classes['section'] : '' ?>" required>
+                                    value="<?php echo isset($classes['section']) ? $classes['section'] : '' ?>"
+                                    required>
                             </div>
                         </div>
                     </div>
@@ -35,7 +37,8 @@ include 'handlers/class_handler.php';
                         <button type="submit" class="btn btn-success btn-secondary-blue mr-3">
                             <?php echo isset($id) ? 'Update' : 'Submit'; ?>
                         </button>
-                        <button type="button" class="btn btn-secondary" onclick="window.location.href = './class_list.php';">
+                        <button type="button" class="btn btn-secondary"
+                            onclick="window.location.href = './class_list.php';">
                             Cancel
                         </button>
                     </div>
@@ -47,27 +50,35 @@ include 'handlers/class_handler.php';
 
 <script>
     $(document).ready(function () {
-        $('#manage-class').submit(function (e) {
+        $('#manage-class').on('submit', function (e) {
             e.preventDefault();
-            start_load()
-            $('#msg').html('')
-            $.ajax({
-                url: 'ajax.php?action=save_class',
-                method: 'POST',
-                data: $(this).serialize(),
-                success: function (resp) {
-                    if (resp == 1) {
-                        alert_toast("Data successfully saved.", "success");
-                        setTimeout(function () {
-                            location.reload()
-                        }, 1750)
-                    } else if (resp == 2) {
-                        $('#msg').html('<div class="alert alert-danger"><i class="fa fa-exclamation-triangle"></i> Class already exist.</div>')
-                        end_load()
-                    }
-                }
-            })
-        })
-    })
+            var formData = $(this).serialize();
 
+            $.ajax({
+                type: 'POST',
+                url: 'manage_class.php',  // Adjust the URL as needed
+                data: formData,
+                success: function (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Class saved successfully.',
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then(() => {
+                        window.location.href = 'class_list.php';  // Redirect after saving
+                    });
+
+                    $('#manage-class')[0].reset();  // Reset the form after saving
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    });
+                }
+            });
+        });
+    });
 </script>

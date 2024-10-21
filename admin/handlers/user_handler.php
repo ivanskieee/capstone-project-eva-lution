@@ -6,7 +6,6 @@ if (!isset($_SESSION['user'])) {
 }
 
 if ($_SESSION['user']['role'] !== 'admin') {
-    // Redirect to an unauthorized page or login page if they don't have the correct role
     header('Location: unauthorized.php');
     exit;
 }
@@ -34,7 +33,6 @@ if ($id) {
     $admin = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
-// Handle form submission
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
     $firstname = $_POST['firstname'];
     $lastname = $_POST['lastname'];
@@ -59,7 +57,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
     }
 
     if ($id) {
-        // Update query
         $query = "UPDATE users 
                   SET firstname = :firstname, lastname = :lastname, email = :email";
 
@@ -74,7 +71,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
         $query .= " WHERE id = :id";
         $stmt = $conn->prepare($query);
 
-        // Bind parameters
         $stmt->bindParam(':firstname', $firstname);
         $stmt->bindParam(':lastname', $lastname);
         $stmt->bindParam(':email', $email);
@@ -90,12 +86,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
 
     } else {
-        // Insert query
         $query = "INSERT INTO users (firstname, lastname, email, password, avatar) 
                   VALUES (:firstname, :lastname, :email, :password, :avatar)";
         $stmt = $conn->prepare($query);
 
-        // Bind parameters for insert
         $stmt->bindParam(':firstname', $firstname);
         $stmt->bindParam(':lastname', $lastname);
         $stmt->bindParam(':email', $email);
@@ -111,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
         echo "<script>alert('Error saving data.');</script>";
     }
 
-    $conn = null; // Close connection
+    $conn = null; 
 }
 
 if (isset($_POST['delete_id'])) {

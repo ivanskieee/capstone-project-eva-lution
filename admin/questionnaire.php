@@ -36,7 +36,6 @@ include "handlers/questionnaire_handler.php";
                             <?php
                             $i = 1;
                             foreach ($questionnaires as $row):
-                                // Set the number of questions and answers from the fetched data
                                 $question = $row['total_questions'];
                                 $answers = $row['total_answers'];
                                 ?>

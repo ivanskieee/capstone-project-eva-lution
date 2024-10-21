@@ -54,6 +54,7 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.1.9/dist/sweetalert2.min.css" rel="stylesheet">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     .bars {
       background: none;
@@ -75,21 +76,21 @@
       }
 
       .dropdown-text,
-      /* Hide the text "Admin" */
+
       .dropdown-arrow {
-        /* Hide the arrow icon */
+       
         display: none;
       }
 
       .user-img {
         width: 25px;
-        /* Make the image smaller */
+        
         height: 25px;
       }
 
       .nav-link>.d-flex {
         justify-content: center;
-        /* Center the image */
+        
       }
     }
   </style>
@@ -97,7 +98,6 @@
 
 <body>
   <nav class="main-header navbar navbar-expand navbar-dark bg-navbar" style="background-color: rgb(51, 128, 64);">
-    <!-- Left navbar links -->
     <ul class="navbar-nav">
       <li class="nav-item">
         <a class="nav-link" data-widget="pushmenu" href="javascript:void(0)" role="button"><i
@@ -136,7 +136,6 @@
     </ul>
   </nav>
 
-  <!-- /.navbar -->
   <script>
     $('#manage_account').click(function () {
       uni_modal('Manage Account', 'manage_user.php?id=<?php echo $_SESSION['login_id'] ?>')

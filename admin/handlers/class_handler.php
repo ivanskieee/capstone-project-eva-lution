@@ -28,44 +28,48 @@ if ($id) {
     $stmt->execute([$id]);
     $classes = $stmt->fetch();
 }
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST['delete_id'])) {
-    $course = $_POST['course'];
-    $level = $_POST['level'];
-    $section = $_POST['section'];
 
-    if ($id) {
-        $query = "UPDATE class_list SET course = ?, level = ?, section = ? WHERE class_id = ?";
-        $stmt = $conn->prepare($query);
-        $stmt->execute([$course, $level, $section, $id]);
-    } else {
-        $query = "INSERT INTO class_list (course, level, section) VALUES (?, ?, ?)";
-        $stmt = $conn->prepare($query);
-        $stmt->execute([$course, $level, $section]);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Handle delete request
+    if (isset($_POST['delete_id'])) {
+        $delete_id = $_POST['delete_id'];
+        $stmt = $conn->prepare('DELETE FROM class_list WHERE class_id = :id');
+        $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            $_SESSION['flash_message'] = 'Class deleted successfully.';
+            $_SESSION['flash_type'] = 'success';
+        } else {
+            error_log('Error deleting class');
+            $_SESSION['flash_message'] = 'Error deleting class. Please try again.';
+            $_SESSION['flash_type'] = 'error';
+        }
+
+        echo "<script>window.location.replace('class_list.php');</script>";
     }
+    // Handle add/update request
+    elseif (isset($_POST['course'], $_POST['level'], $_POST['section'])) {
+        $course = $_POST['course'];
+        $level = $_POST['level'];
+        $section = $_POST['section'];
+        $id = $_POST['class_id'] ?? null;
 
-    $conn = null;
+        if ($id) {
+            $query = "UPDATE class_list SET course = ?, level = ?, section = ? WHERE class_id = ?";
+            $stmt = $conn->prepare($query);
+            $stmt->execute([$course, $level, $section, $id]);
+        } else {
+            $query = "INSERT INTO class_list (course, level, section) VALUES (?, ?, ?)";
+            $stmt = $conn->prepare($query);
+            $stmt->execute([$course, $level, $section]);
+        }
 
-    $_SESSION['flash_message'] = 'Data successfully saved.';
-    $_SESSION['flash_type'] = 'success';
+        $_SESSION['flash_message'] = 'Data successfully saved.';
+        $_SESSION['flash_type'] = 'success';
 
-    echo "<script>window.location.replace('class_list.php');</script>";
-
-    exit;
-}
-
-if (isset($_POST['delete_id'])) {
-    $delete_id = $_POST['delete_id'];
-
-    $stmt = $conn->prepare('DELETE FROM class_list WHERE class_id = :id');
-    $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
-
-    if ($stmt->execute()) {
-        echo "<script>alert('class is deleted successfully.');</script>";
-    } else {
-        echo "<script>alert('Error deleting class.');</script>";
+        echo "<script>window.location.replace('class_list.php');</script>";
+        exit;
     }
-
-    echo "<script>window.location.replace('class_list.php');</script>";
 }
 
 $conn = null;

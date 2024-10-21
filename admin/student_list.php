@@ -1,5 +1,5 @@
 <?php
-include "handlers/student_handler.php"; // Handle student-related operations
+include "handlers/student_handler.php";
 ?>
 
 <nav class="main-header">
@@ -47,11 +47,10 @@ include "handlers/student_handler.php"; // Handle student-related operations
                                             <a class="dropdown-item"
                                                 href="new_student.php?student_id=<?php echo $row['student_id']; ?>"">Edit</a>
                                             <div class="dropdown-divider"></div>
-                                            <form method="post" action="student_list.php" style="display: inline;">
+                                            <form method="post" action="student_list.php" style="display: inline;" class="delete-form">
                                                 <input type="hidden" name="delete_id"
                                                     value="<?php echo isset($row['student_id']) ? $row['student_id'] : ''; ?>">
-                                                <button type="submit" class="dropdown-item"
-                                                    onclick="return confirm('Are you sure you want to delete this student member?');">Delete</button>
+                                                <button type="submit" class="dropdown-item" onclick="confirmDeletion()">Delete</button>
                                             </form>
                                         </div>
                                     </td>
@@ -64,42 +63,48 @@ include "handlers/student_handler.php"; // Handle student-related operations
         </div>
     </div>
 </nav>
-
 <script>
-    $(document).ready(function () {
-        // Initialize DataTable
-        $('#student_list').DataTable();
+$(document).ready(function () {
+    $(document).on('submit', '.delete-form', function (e) {
+        e.preventDefault(); 
+        var form = this; 
 
-        // View student details
-        $('.view_student').click(function () {
-            var id = $(this).data('id');
-            uni_modal("<i class='fa fa-id-card'></i> Student Details", "<?php echo $_SESSION['login_view_folder']; ?>view_student.php?id=" + id);
-        });
-
-        // Delete student with confirmation
-        $('.delete_student').click(function () {
-            var id = $(this).data('id');
-            _conf("Are you sure you want to delete this student?", "delete_student", [id]);
-        });
-    });
-
-    function delete_student(id) {
-        start_load();
-        $.ajax({
-            url: 'ajax.php?action=delete_student',
-            method: 'POST',
-            data: { id: id },
-            success: function (resp) {
-                if (resp == 1) {
-                    alert_toast("Data successfully deleted", 'success');
-                    setTimeout(function () {
-                        location.reload();
-                    }, 1500);
-                } else {
-                    alert_toast("An error occurred.", 'danger');
-                    end_load();
-                }
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                
+                $.ajax({
+                    type: 'POST',
+                    url: 'student_list.php', 
+                    data: $(form).serialize(),
+                    success: function () {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Deleted!',
+                            text: 'Student deleted successfully.', 
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            window.location.href = 'student_list.php'; 
+                        });
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Error deleting the item. Please try again.',
+                        });
+                    }
+                });
             }
         });
-    }
+    });
+});
 </script>

@@ -67,6 +67,30 @@
         </li>
         <li class="nav-item">
           <a href="#"
+            class="nav-link nav-edit_user">
+            <i class="nav-icon fas fa-users"></i>
+            <p>
+              Head Teachers
+              <i class="right fas fa-angle-left"></i>
+            </p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item">
+              <a href="./" class="nav-link nav-new_user tree-item">
+                <i class="nav-icon"></i>
+                <p>Add New</p>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a href="./" class="nav-link nav-user_list tree-item">
+                <i class="nav-icon"></i>
+                <p>List</p>
+              </a>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a href="#"
             class="nav-link nav-edit_faculty <?php echo in_array(basename($_SERVER['PHP_SELF']), ['new_faculty.php', 'tertiary_faculty_list.php']) ? 'active' : ''; ?>"
             style="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['new_faculty.php', 'tertiary_faculty_list.php']) ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
             <i class="nav-icon fas fa-user-friends"></i>
@@ -77,7 +101,6 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <!-- this will be for Tertiary -->
               <a href="#" class="nav-link nav-edit_faculty">
                 <i class="right fas fa-angle-left"></i>
                 <p>Tertiary</p>
@@ -98,7 +121,6 @@
               </ul>
             </li>
             <li class="nav-item">
-              <!-- this will be for Secondary -->
               <a href="#" class="nav-link nav-edit_faculty">
                 <i class="right fas fa-angle-left"></i>
                 <p>Secondary</p>
@@ -111,7 +133,7 @@
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a href="./index.php?page=student_list" class="nav-link nav-faculty_list tree-item">
+                  <a href="./" class="nav-link nav-faculty_list tree-item">
                     <i class="nav-icon"></i>
                     <p>List</p>
                   </a>
@@ -204,14 +226,10 @@
   })
 
   document.addEventListener('DOMContentLoaded', function () {
-    // Get all nav links
     const navLinks = document.querySelectorAll('.nav-link');
 
-    // Loop through the links
     navLinks.forEach(link => {
-      // Check if the current link's href matches the current page URL
       if (link.href === window.location.href) {
-        // Add 'active' class to the matching link
         link.classList.add('active');
       }
     });

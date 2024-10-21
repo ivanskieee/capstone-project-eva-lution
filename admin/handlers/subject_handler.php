@@ -6,7 +6,6 @@ if (!isset($_SESSION['user'])) {
 }
 
 if ($_SESSION['user']['role'] !== 'admin') {
-    // Redirect to an unauthorized page or login page if they don't have the correct role
     header('Location: unauthorized.php');
     exit;
 }
@@ -56,16 +55,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $query = "UPDATE subject_list SET code = ?, subject = ?, description = ? WHERE subject_id = ?";
             $stmt = $conn->prepare($query);
             $stmt->execute([$code, $subject, $description, $id]);
-            $_SESSION['message'] = 'Subject updated successfully.';
+            header('Location: subject_list.php'); 
+            exit;
         } else {
             $query = "INSERT INTO subject_list (code, subject, description) VALUES (?, ?, ?)";
             $stmt = $conn->prepare($query);
             $stmt->execute([$code, $subject, $description]);
-            $_SESSION['message'] = 'Subject added successfully.';
+            header('Location: subject_list.php');
+            exit; 
         }
-
-        echo "<script>window.location.replace('subject_list.php');</script>";
-        exit;
     }
 }
 

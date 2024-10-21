@@ -6,7 +6,6 @@ if (!isset($_SESSION['user'])) {
 }
 
 if ($_SESSION['user']['role'] !== 'faculty') {
-    // Redirect to an unauthorized page or login page if they don't have the correct role
     header('Location: unauthorized.php');
     exit;
 }

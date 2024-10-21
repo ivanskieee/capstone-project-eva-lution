@@ -46,7 +46,8 @@ include 'handlers/subject_handler.php';
                                                 class="btn btn-success btn-flat manage_subject">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form method="post" action="subject_list.php" style="display: inline;" class="delete-form">
+                                            <form method="post" action="subject_list.php" style="display: inline;"
+                                                class="delete-form">
                                                 <input type="hidden" name="delete_id"
                                                     value="<?php echo isset($row['subject_id']) ? $row['subject_id'] : ''; ?>">
                                                 <button type="submit" class="btn btn-secondary btn-flat delete_subject">
@@ -66,39 +67,7 @@ include 'handlers/subject_handler.php';
 </nav>
 <script>
     $(document).ready(function () {
-        // Handle form submission for adding/updating subject
-        $('#manage-subject').on('submit', function (e) {
-            e.preventDefault();
-            var formData = $(this).serialize();
 
-            $.ajax({
-                type: 'POST',
-                url: 'subject_list.php',
-                data: formData,
-                success: function (response) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: 'Subject saved successfully.',
-                        showConfirmButton: false,
-                        timer: 2000
-                    }).then(() => {
-                        window.location.href = 'subject_list.php';
-                    });
-
-                    $('#manage-subject')[0].reset(); // Optionally reset form
-                },
-                error: function () {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Something went wrong!',
-                    });
-                }
-            });
-        });
-
-        // Delete confirmation
         $(document).on('submit', '.delete-form', function (e) {
             e.preventDefault();
             var form = this;
@@ -113,7 +82,31 @@ include 'handlers/subject_handler.php';
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    form.submit();
+                    var subject_id = $('#subject_id').val(); // You can adjust this line if subject_id is necessary
+                    $.ajax({
+                        type: 'POST',
+                        url: 'subject_list.php',  // Adjust the URL as per your endpoint
+                        data: $(form).serialize(),
+                        success: function () {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: 'Subject has been deleted.',
+                                showConfirmButton: false,
+                                timer: 2000
+                            }).then(() => {
+
+                                window.location.href = 'subject_list.php'; // Adjust the redirect URL if needed
+                            });
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Failed to delete the subject!',
+                            });
+                        }
+                    });
                 }
             });
         });

@@ -122,21 +122,16 @@ include "handlers/report_handler.php";
         font-weight: 700 !important;
     }
 
-    /* Disable scroll on the body */
     body {
         overflow-y: hidden;
     }
 
-    /* Allow scroll only on .main-header */
     .main-header {
         max-height: 100vh;
-        /* Adjust this based on your preference */
         overflow-y: scroll;
         scrollbar-width: none;
-        /* For Firefox */
     }
 
-    /* Hide scrollbar for Chrome, Safari, and Edge */
     .main-header::-webkit-scrollbar {
         display: none;
     }

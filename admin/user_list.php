@@ -43,11 +43,10 @@ include 'handlers/user_handler.php';
                                             <a class="dropdown-item"
                                                 href="new_users.php?id=<?php echo $row['id']; ?>">Edit</a>
                                             <div class="dropdown-divider"></div>
-                                            <form method="post" action="user_list.php" style="display: inline;">
+                                            <form method="post" action="user_list.php" style="display: inline;" class="delete-form">
                                                 <input type="hidden" name="delete_id"
                                                     value="<?php echo isset($row['id']) ? $row['id'] : ''; ?>">
-                                                <button type="submit" class="dropdown-item"
-                                                    onclick="return confirm('Are you sure you want to delete this admin?');">Delete</button>
+                                                <button type="submit" class="dropdown-item">Delete</button>
                                             </form>
                                         </div>
                                     </td>
@@ -60,3 +59,47 @@ include 'handlers/user_handler.php';
         </div>
     </div>
 </nav>
+<script>
+    $(document).ready(function () {
+        $(document).on('submit', '.delete-form', function (e) {
+            e.preventDefault();
+            var form = this;
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'This action will permanently delete the admin.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'user_list.php',
+                        data: $(form).serialize(),
+                        success: function () {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: 'Admin has been deleted.',
+                                showConfirmButton: false,
+                                timer: 2000
+                            }).then(() => {
+                                window.location.href = 'user_list.php';
+                            });
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Failed to delete the admin!',
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>

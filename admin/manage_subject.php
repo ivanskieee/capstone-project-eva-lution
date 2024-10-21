@@ -6,8 +6,9 @@ include 'handlers/subject_handler.php';
     <div class="col-lg-12 mt-5">
         <div class="card">
             <div class="card-body">
-                <form method="POST" id="manage_subject">
-                    <input type="hidden" name="subject_id" value="<?php echo isset($subjects['subject_id']) ? $subjects['subject_id'] : '' ?>">
+                <form method="POST" id="manage-subject">
+                    <input type="hidden" name="subject_id"
+                        value="<?php echo isset($subjects['subject_id']) ? $subjects['subject_id'] : '' ?>">
                     <div id="msg" class="form-group"></div>
                     <div class="row">
                         <div class="col-md-6 border-right">
@@ -19,7 +20,8 @@ include 'handlers/subject_handler.php';
                             <div class="form-group">
                                 <label for="subject" class="control-label">Subject</label>
                                 <input type="text" class="form-control form-control-sm" name="subject" id="subject"
-                                    value="<?php echo isset($subjects['subject']) ? $subjects['subject'] : '' ?>" required>
+                                    value="<?php echo isset($subjects['subject']) ? $subjects['subject'] : '' ?>"
+                                    required>
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -35,7 +37,8 @@ include 'handlers/subject_handler.php';
                         <button type="submit" class="btn btn-success btn-secondary-blue mr-3">
                             <?php echo isset($id) ? 'Update' : 'Submit'; ?>
                         </button>
-                        <button type="button" class="btn btn-secondary" onclick="window.location.href = './subject_list.php';">
+                        <button type="button" class="btn btn-secondary"
+                            onclick="window.location.href = './subject_list.php';">
                             Cancel
                         </button>
                     </div>
@@ -44,3 +47,37 @@ include 'handlers/subject_handler.php';
         </div>
     </div>
 </nav>
+<script>
+    $(document).ready(function () {
+        $('#manage-subject').on('submit', function (e) {
+            e.preventDefault();
+            var formData = $(this).serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: 'manage_subject.php',
+                data: formData,
+                success: function (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Subject saved successfully.',
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then(() => {
+                        window.location.href = 'subject_list.php';
+                    });
+
+                    $('#manage-subject')[0].reset();
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong!',
+                    });
+                }
+            });
+        });
+    });
+</script>

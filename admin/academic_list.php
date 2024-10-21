@@ -67,11 +67,11 @@ include 'handlers/academic_handler.php';
                                                 class="btn btn-success btn-flat manage_academic">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form method="post" action="academic_list.php" style="display: inline;">
+                                            <form method="post" action="academic_list.php" style="display: inline;"
+                                                class="delete-form">
                                                 <input type="hidden" name="delete_id"
                                                     value="<?php echo isset($row['academic_id']) ? $row['academic_id'] : ''; ?>">
-                                                <button type="submit" class="btn btn-secondary btn-flat delete_academic"
-                                                    onclick="return confirm('Are you sure you want to delete this academic year?');">
+                                                <button type="submit" class="btn btn-secondary btn-flat delete_academic">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -86,3 +86,48 @@ include 'handlers/academic_handler.php';
         </div>
     </div>
 </nav>
+<script>
+    $(document).ready(function () {
+
+        $(document).on('submit', '.delete-form', function (e) {
+            e.preventDefault();
+            var form = this;
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'This action will permanently delete the academic year.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'academic_list.php',  // Adjust the URL as needed
+                        data: $(form).serialize(),
+                        success: function () {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: 'Academic year has been deleted.',
+                                showConfirmButton: false,
+                                timer: 2000
+                            }).then(() => {
+                                window.location.href = 'academic_list.php'; // Adjust the redirect URL if needed
+                            });
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Failed to delete the academic year!',
+                            });
+                        }
+                    });
+                }
+            });
+        });
+    });
+</script>

@@ -14,7 +14,6 @@ include 'handlers/questionnaire_handler.php';
                             <input type="hidden" name="question_id"
                                 value="<?php echo isset($questionToEdit['question_id']) ? $questionToEdit['question_id'] : ''; ?>">
 
-                            <!-- Add academic_id field -->
                             <input type="hidden" name="academic_id"
                                 value="<?php echo isset($_GET['academic_id']) ? $_GET['academic_id'] : ''; ?>">
 
@@ -79,7 +78,6 @@ include 'handlers/questionnaire_handler.php';
                                     $hasQuestions = false;
                                     if (is_array($questions)) {
                                         foreach ($questions as $qRow) {
-                                            // Check if both criteria_id and academic_id match
                                             if (is_array($qRow) && $qRow['criteria_id'] == $row['criteria_id'] && $qRow['academic_id'] == $academic_id) {
                                                 $hasQuestions = true;
                                                 ?>
@@ -138,7 +136,6 @@ include 'handlers/questionnaire_handler.php';
 </nav>
 <script>
     $(document).ready(function () {
-        // Handle form submission for adding/updating a question
         $('#manage-question').on('submit', function (e) {
             e.preventDefault();
             var formData = $(this).serialize();
@@ -148,7 +145,6 @@ include 'handlers/questionnaire_handler.php';
                 url: 'manage_questionnaire.php',
                 data: formData,
                 success: function (response) {
-                    // Show success alert
                     Swal.fire({
                         icon: 'success',
                         title: 'Success!',
@@ -156,13 +152,10 @@ include 'handlers/questionnaire_handler.php';
                         showConfirmButton: false,
                         timer: 2000
                     }).then(() => {
-                        // Get the academic_id from the form data
                         var academic_id = $('#academic_id').val();
-                        // Redirect after success
                         window.location.href = 'manage_questionnaire.php?academic_id=' + academic_id;
                     });
 
-                    // Reset the form after success
                     $('#manage-question')[0].reset();
                 },
                 error: function () {
@@ -175,9 +168,8 @@ include 'handlers/questionnaire_handler.php';
             });
         });
 
-        // Handle delete confirmation
         $(document).on('submit', '.delete-form', function (e) {
-            e.preventDefault(); // Prevent form submission until confirmed
+            e.preventDefault(); 
             var form = this;
 
             Swal.fire({
@@ -190,9 +182,7 @@ include 'handlers/questionnaire_handler.php';
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Get the academic_id from the form data
                     var academic_id = $('#academic_id').val();
-                    // Submit the form after confirmation
                     $.ajax({
                         type: 'POST',
                         url: 'manage_questionnaire.php',
@@ -205,7 +195,6 @@ include 'handlers/questionnaire_handler.php';
                                 showConfirmButton: false,
                                 timer: 2000
                             }).then(() => {
-                                // Redirect to the page with academic_id
                                 window.location.href = 'manage_questionnaire.php?academic_id=' + academic_id;
                             });
                         },
@@ -225,9 +214,7 @@ include 'handlers/questionnaire_handler.php';
 
 <script>
     function cancelAction() {
-        // Get the academic_id value from the hidden input field
         var academicId = document.getElementById('academic_id').value;
-        // Redirect to the URL with the academic_id
         window.location.href = 'manage_questionnaire.php?academic_id=' + academicId;
     }
 </script>

@@ -47,11 +47,9 @@ if ($id) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Ensure academic_id is received in both cases
-    $academic_id = $_POST['academic_id']; // Get the academic_id from the form
+    $academic_id = $_POST['academic_id'];
 
     if (isset($_POST['delete_id'])) {
-        // Deleting a question
         $delete_id = $_POST['delete_id'];
         $stmt = $conn->prepare('DELETE FROM question_list WHERE question_id = :id');
         $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
@@ -63,32 +61,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['error'] = 'Error deleting question. Please try again.';
         }
 
-        // Redirect to the same page with academic_id after deletion
         echo "<script>window.location.replace('manage_questionnaire.php?academic_id=" . $academic_id . "');</script>";
         exit();
 
     } elseif (isset($_POST['question'])) {
-        // Updating or inserting a new question
         $criteria_id = $_POST['criteria_id'];
         $question = trim($_POST['question']);
-        $id = $_POST['question_id'] ?? null; // Check if it's an update (existing question)
+        $id = $_POST['question_id'] ?? null;
 
-        if (!empty($criteria_id) && !empty($question) && !empty($academic_id)) { // Ensure academic_id is not empty
+        if (!empty($criteria_id) && !empty($question) && !empty($academic_id)) { 
             if ($id) {
-                // Update existing question
                 $query = 'UPDATE question_list SET criteria_id = ?, question = ?, academic_id = ? WHERE question_id = ?';
                 $stmt = $conn->prepare($query);
                 $stmt->execute([$criteria_id, $question, $academic_id, $id]);
                 $_SESSION['message'] = 'Question updated successfully.';
             } else {
-                // Insert new question
                 $query = 'INSERT INTO question_list (criteria_id, question, academic_id) VALUES (?, ?, ?)';
                 $stmt = $conn->prepare($query);
                 $stmt->execute([$criteria_id, $question, $academic_id]);
                 $_SESSION['message'] = 'Question submitted successfully.';
             }
 
-            // Redirect to the same page with academic_id after insert/update
             header('Location: manage_questionnaire.php?academic_id=' . $academic_id);
             exit;
         } else {
@@ -97,7 +90,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Close the database connection
 $conn = null;
 
 

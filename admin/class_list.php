@@ -44,11 +44,11 @@ include 'handlers/class_handler.php';
                                                 class="btn btn-success  manage_class">
                                                 <i class="fas fa-edit"></i>
                                             </a>
-                                            <form method="post" action="class_list.php" style="display: inline;">
+                                            <form method="post" action="class_list.php" style="display: inline;"
+                                                class="delete-form">
                                                 <input type="hidden" name="delete_id"
                                                     value="<?php echo isset($row['class_id']) ? $row['class_id'] : ''; ?>">
-                                                <button type="submit" class="btn btn-secondary  delete_class"
-                                                    onclick="return confirm('Are you sure you want to delete this class?');">
+                                                <button type="submit" class="btn btn-secondary  delete_class">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
@@ -66,47 +66,45 @@ include 'handlers/class_handler.php';
 
 <script>
     $(document).ready(function () {
-        // Initialize DataTable
-        $('#list').dataTable();
+        $(document).on('submit', '.delete-form', function (e) {
+            e.preventDefault();
+            var form = this;
 
-        // Event for adding a new class
-        $('.new_class').on('click', function () {
-            uni_modal("New Class", "<?php echo $_SESSION['login_view_folder'] ?>manage_class.php");
-        });
-
-        // Event for managing a class (edit)
-        $('.manage_class').on('click', function () {
-            const classId = $(this).data('id');
-            uni_modal("Manage Class", "<?php echo $_SESSION['login_view_folder'] ?>manage_class.php?id=" + classId);
-        });
-
-        // Event for deleting a class
-        $('.delete_class').on('click', function () {
-            const classId = $(this).data('id');
-            _conf("Are you sure you want to delete this class?", "delete_class", [classId]);
+            Swal.fire({
+                title: 'Are you sure?',
+                text: 'This action will permanently delete the class.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: 'POST',
+                        url: 'class_list.php',  
+                        data: $(form).serialize(),
+                        success: function () {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: 'Class has been deleted.',
+                                showConfirmButton: false,
+                                timer: 2000
+                            }).then(() => {
+                                window.location.href = 'class_list.php'; 
+                            });
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Failed to delete the class!',
+                            });
+                        }
+                    });
+                }
+            });
         });
     });
-
-    // Function to delete a class using AJAX
-    function delete_class(id) {
-        start_load();
-        $.ajax({
-            url: 'ajax.php?action=delete_class',
-            method: 'POST',
-            data: { id: id },
-            success: function (response) {
-                if (response == 1) {
-                    alert_toast("Data successfully deleted", 'success');
-                    setTimeout(function () {
-                        location.reload(); // Reload the page after deletion
-                    }, 1500);
-                } else {
-                    alert_toast("Failed to delete data", 'error');
-                }
-            },
-            error: function (xhr, status, error) {
-                alert_toast("An error occurred: " + error, 'error');
-            }
-        });
-    }
 </script>

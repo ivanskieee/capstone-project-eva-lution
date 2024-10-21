@@ -83,7 +83,6 @@ include 'handlers/criteria_handler.php';
 </style>
 <script>
     $(document).ready(function () {
-        // Handle form submission for adding/updating criteria
         $('#manage-criteria').on('submit', function (e) {
             e.preventDefault();
             var formData = $(this).serialize();
@@ -93,7 +92,6 @@ include 'handlers/criteria_handler.php';
                 url: 'criteria_list.php',
                 data: formData,
                 success: function (response) {
-                    // Show success alert
                     Swal.fire({
                         icon: 'success',
                         title: 'Success!',
@@ -101,11 +99,9 @@ include 'handlers/criteria_handler.php';
                         showConfirmButton: false,
                         timer: 2000
                     }).then(() => {
-                        // Redirect to criteria_list.php after alert
                         window.location.href = 'criteria_list.php';
                     });
 
-                    // Reset the form to its initial state (in case you don't want to redirect)
                     $('#manage-criteria')[0].reset();
                 },
                 error: function () {
@@ -119,7 +115,7 @@ include 'handlers/criteria_handler.php';
         });
 
         $(document).on('submit', '.delete-form', function (e) {
-            e.preventDefault(); // Prevent form submission until confirmed
+            e.preventDefault(); 
             var form = this;
 
             Swal.fire({
@@ -132,12 +128,10 @@ include 'handlers/criteria_handler.php';
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Get the criteria_id from the form data
-                    var criteria_id = $('#criteria_id').val(); // Assuming criteria_id is in the form
-                    // Submit the form via AJAX after confirmation
+                    var criteria_id = $('#criteria_id').val();
                     $.ajax({
                         type: 'POST',
-                        url: 'criteria_list.php', // Update with your actual endpoint
+                        url: 'criteria_list.php', 
                         data: $(form).serialize(),
                         success: function () {
                             Swal.fire({
@@ -147,8 +141,8 @@ include 'handlers/criteria_handler.php';
                                 showConfirmButton: false,
                                 timer: 2000
                             }).then(() => {
-                                // Redirect to the page with criteria_id
-                                window.location.href = 'criteria_list.php' // Update with your actual endpoint
+                                
+                                window.location.href = 'criteria_list.php' 
                             });
                         },
                         error: function () {
