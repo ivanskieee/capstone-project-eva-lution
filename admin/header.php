@@ -78,20 +78,44 @@
       .dropdown-text,
 
       .dropdown-arrow {
-       
+
         display: none;
       }
 
       .user-img {
         width: 25px;
-        
+
         height: 25px;
       }
 
       .nav-link>.d-flex {
         justify-content: center;
-        
+
       }
+    }
+
+    .navbar-nav {
+      display: flex;
+      flex-wrap: nowrap;
+      /* Prevents wrapping of the list items */
+      overflow-x: auto;
+      /* Enables horizontal scrolling if content overflows */
+    }
+
+    .navbar-nav::-webkit-scrollbar {
+      height: 8px;
+      /* Adjust the scrollbar height */
+    }
+
+    .navbar-nav::-webkit-scrollbar-thumb {
+      background-color: rgba(0, 0, 0, 0.3);
+      /* Customize scrollbar appearance */
+      border-radius: 10px;
+    }
+
+    .navbar-nav::-webkit-scrollbar-track {
+      background-color: rgba(0, 0, 0, 0.1);
+      /* Customize scrollbar track */
     }
   </style>
 </head>

@@ -29,7 +29,7 @@ include "login_handler.php";
                                 </div>
                             </div>
                             <div class="mb-3 text-right">
-                                <a href="forgot_password.php" class="text-decoration-none">Forgot Your Password?</a>
+                                <a href="./" class="text-decoration-none">Forgot Your Password?</a>
                             </div>
                             <div class="icheck-primary mb-3 text-left">
                                 <input type="checkbox" id="remember" name="remember" <?php echo isset($_COOKIE['email']) ? 'checked' : ''; ?>>

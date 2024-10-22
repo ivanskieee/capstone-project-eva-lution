@@ -51,6 +51,7 @@
     <!-- summernote -->
     <link rel="stylesheet" href="assets/plugins/summernote/summernote-bs4.min.css">
     <!-- Jquery-UI -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> <!-- Include Axios -->
     <style>
         .bars {
             background: none;
@@ -94,7 +95,7 @@
             <a class="nav-link"  data-toggle="dropdown" aria-expanded="true" href="javascript:void(0)">
               <span>
                 <div class="d-felx badge-pill">
-                  <span class=""><img src="assets/uploads/png.png" alt="" class="user-img border "></span>
+                  <span class=""><img src="assets/uploads/def.png" alt="" class="user-img border "></span>
                   <span><b><?php echo ucwords($_SESSION['login_name']) ?></b></span>
                   <span class="fa fa-angle-down ml-2"></span>
                 </div>

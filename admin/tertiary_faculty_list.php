@@ -68,7 +68,7 @@ include "handlers/faculty_handler.php"; // Handle faculty-related operations
 
             Swal.fire({
                 title: 'Are you sure?',
-                text: 'This action will permanently delete the teacher.',
+                text: 'This action will permanently delete the faculty.',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#28a745',
@@ -85,7 +85,7 @@ include "handlers/faculty_handler.php"; // Handle faculty-related operations
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Deleted!',
-                                text: 'Teacher deleted successfully.',
+                                text: 'Faculty deleted successfully.',
                                 showConfirmButton: false,
                                 timer: 2000
                             }).then(() => {

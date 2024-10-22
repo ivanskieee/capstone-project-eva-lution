@@ -8,34 +8,28 @@ include 'handlers/eval_handler.php';
 			<div class="col-md-3">
 				<div class="list-group">
 					<?php
-					
 					$query = "SELECT cf.faculty_id as fid, cf.firstname, cf.lastname, s.subject_id as sid, s.code, s.subject 
-						FROM college_faculty_list cf
-						JOIN subject_list s ON s.subject_id = s.subject_id";  
-					
-					
+                        FROM college_faculty_list cf
+                        JOIN subject_list s ON s.subject_id = s.subject_id";
+
 					$stmt = $conn->prepare($query);
 					$stmt->execute();
 
-					
 					$active_rid = isset($_GET['rid']) ? $_GET['rid'] : null;
 					$active_sid = isset($_GET['sid']) ? $_GET['sid'] : null;
 
-					
 					while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
 						if (empty($rid)) {
-							$rid = $row['fid'];  
+							$rid = $row['fid'];
 							$faculty_id = $row['fid'];
 							$subject_id = $row['sid'];
 						}
 
-						
 						$is_active = ($active_rid == $row['fid'] && $active_sid == $row['sid']) ? 'list-group-item-success' : '';
 						?>
-						
+
 						<a class="list-group-item list-group-item-action <?php echo $is_active; ?>"
 							href="./evaluate.php?rid=<?php echo $row['fid'] ?>&sid=<?php echo $row['sid'] ?>">
-							
 							<?php echo ucwords($row['firstname'] . ' ' . $row['lastname']) . ' - (' . $row["code"] . ') ' . $row['subject'] ?>
 						</a>
 					<?php endwhile; ?>
@@ -46,8 +40,8 @@ include 'handlers/eval_handler.php';
 					<div class="card-header">
 						<b>Evaluation Questionnaire for Academic: </b>
 						<div class="card-tools">
-							<button class="btn btn-sm btn-flat btn-success bg-gradient-success mx-1"
-								form="manage-evaluation">Submit Evaluation</button>
+						<form id="evaluation-form" method="POST" action="evaluate.php">
+							<button type="submit" class="btn btn-sm btn-flat btn-success bg-gradient-success mx-1">Submit Evaluation</button>
 						</div>
 					</div>
 					<div class="card-body">
@@ -55,18 +49,18 @@ include 'handlers/eval_handler.php';
 							<legend class="w-auto">Rating Legend</legend>
 							<p>5 = Strongly Agree, 4 = Agree, 3 = Uncertain, 2 = Disagree, 1 = Strongly Disagree</p>
 						</fieldset>
-						<form id="manage-evaluation">
-							<input type="hidden" name="class_id" value="">
-							<input type="hidden" name="faculty_id" value="">
-							<input type="hidden" name="restriction_id" value="">
-							<input type="hidden" name="subject_id" value="">
-							<input type="hidden" name="academic_id" value="">
+							<input type="hidden" name="faculty_id" value="<?= isset($faculty_id) ? $faculty_id : '' ?>">
+							<input type="hidden" name="subject_id" value="<?= isset($subject_id) ? $subject_id : '' ?>">
+							<input type="hidden" name="evaluation_id"
+								value="<?= isset($evaluation_id) ? $evaluation_id : '' ?>">
+							<!-- Add evaluation_id here -->
 							<div class="clear-fix mt-2"></div>
+
 							<?php foreach ($criteriaList as $row): ?>
 								<table class="table table-condensed">
 									<thead>
 										<tr class="bg-gradient-secondary">
-											<th class=" p-1"><b><?php echo $row['criteria'] ?></b></th>
+											<th class="p-1"><b><?php echo $row['criteria'] ?></b></th>
 											<th class="text-center">1</th>
 											<th class="text-center">2</th>
 											<th class="text-center">3</th>
@@ -76,32 +70,27 @@ include 'handlers/eval_handler.php';
 									</thead>
 									<tbody class="tr-sortable">
 										<?php
-										$hasQuestions = false;
-
-										if (is_array($questions)) {
-											foreach ($questions as $qRow) {
-												if (is_array($qRow) && $qRow['criteria_id'] == $row['criteria_id']) {
-													$hasQuestions = true;
-													?>
-													<tr class="bg-white">
-														<td class="p-1" width="40%">
-															<?php echo htmlspecialchars($qRow['question']); // Display the question text ?>
-															<input type="hidden" name="qid[]"
-																value="<?php echo htmlspecialchars($qRow['question_id']); // Question ID ?>">
+										foreach ($questions as $qRow) {
+											if ($qRow['criteria_id'] == $row['criteria_id']) {
+												?>
+												<tr class="bg-white">
+													<td class="p-1" width="40%">
+														<?php echo htmlspecialchars($qRow['question']); ?>
+														<input type="hidden" name="question_id[]"
+															value="<?php echo htmlspecialchars($qRow['question_id']); ?>">
+														<!-- Change name to question_id[] -->
+													</td>
+													<?php for ($c = 1; $c <= 5; $c++): ?>
+														<td class="text-center">
+															<div class="icheck-success d-inline">
+																<input type="radio" name="rate[<?= $qRow['question_id'] ?>]"
+																	id="qradio<?= $qRow['question_id'] . '_' . $c ?>" value="<?= $c ?>">
+																<label for="qradio<?= $qRow['question_id'] . '_' . $c ?>"></label>
+															</div>
 														</td>
-														<?php for ($c = 0; $c < 5; $c++): ?>
-															<td class="text-center">
-																<div class="icheck-success d-inline">
-																	<input type="radio" name="rate[<?= $qRow['question_id'] ?>][]"
-																		id="qradio<?= $qRow['question_id'] . '_' . $c ?>"
-																		value="<?= $c + 1 ?>">
-																	<label for="qradio<?= $qRow['question_id'] . '_' . $c ?>"></label>
-																</div>
-															</td>
-														<?php endfor; ?>
-													</tr>
-													<?php
-												}
+													<?php endfor; ?>
+												</tr>
+												<?php
 											}
 										}
 										?>
@@ -116,34 +105,42 @@ include 'handlers/eval_handler.php';
 	</div>
 </nav>
 <script>
-	$(document).ready(function () {
-		if ('<?php echo $_SESSION['academic']['status'] ?>' == 0) {
-			uni_modal("Information", "<?php echo $_SESSION['login_view_folder'] ?>not_started.php")
-		} else if ('<?php echo $_SESSION['academic']['status'] ?>' == 2) {
-			uni_modal("Information", "<?php echo $_SESSION['login_view_folder'] ?>closed.php")
-		}
-		else if ('<?php echo $_SESSION['academic']['status'] ?>' == 2) {
-			uni_modal("Information", "<?php echo $_SESSION['login_view_folder'] ?>closed.php")
-		}
-		if (<?php echo empty($rid) ? 1 : 0 ?> == 1)
-			uni_modal("Information", "<?php echo $_SESSION['login_view_folder'] ?>done.php")
-	})
-	$('#manage-evaluation').submit(function (e) {
-		e.preventDefault();
-		start_load()
-		$.ajax({
-			url: 'ajax.php?action=save_evaluation',
-			method: 'POST',
-			data: $(this).serialize(),
-			success: function (resp) {
-				if (resp == 1) {
-					alert_toast("Data successfully saved.", "success");
-					setTimeout(function () {
-						location.reload()
-					}, 1750)
-				}
-			}
-		})
-	})
+    $(document).ready(function () {
+        $('#evaluation-form').on('submit', function (e) {
+            e.preventDefault(); // Prevent the default form submission
+
+            var formData = $(this).serialize(); // Serialize form data
+
+            $.ajax({
+                type: 'POST',
+                url: 'evaluate.php', // Change this to the path of your PHP script
+                data: formData,
+                success: function (response) {
+                    // Handle success response from the server
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Your answers have been saved successfully.',
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then(() => {
+                        window.location.href = 'evaluate.php'; // Redirect after saving
+                    });
+
+                    $('#evaluation-form')[0].reset(); // Reset the form after saving
+                },
+                error: function () {
+                    // Handle error response from the server
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong! Please try again.',
+                    });
+                }
+            });
+        });
+    });
 </script>
+
+
 <?php include 'footer.php'; ?>

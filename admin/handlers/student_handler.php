@@ -67,7 +67,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($avatar) {
-            $target_dir = "uploads/";
+            $target_dir = "assets/uploads/";
             $target_file = $target_dir . basename($_FILES["img"]["name"]);
             move_uploaded_file($_FILES["img"]["tmp_name"], $target_file);
         }

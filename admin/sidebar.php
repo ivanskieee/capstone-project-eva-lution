@@ -70,7 +70,7 @@
             class="nav-link nav-edit_user">
             <i class="nav-icon fas fa-users"></i>
             <p>
-              Head Teachers
+              Head Faculties
               <i class="right fas fa-angle-left"></i>
             </p>
           </a>
@@ -95,7 +95,7 @@
             style="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['new_faculty.php', 'tertiary_faculty_list.php']) ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
             <i class="nav-icon fas fa-user-friends"></i>
             <p>
-              Teachers
+              Faculties
               <i class="right fas fa-angle-left"></i>
             </p>
           </a>

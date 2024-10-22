@@ -1,7 +1,7 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <div class="dropdown">
         <a href="./" class="brand-link">
-            <h3 class="text-center p-0 m-0"><b>Teachers Panel</b></h3>
+            <h3 class="text-center p-0 m-0"><b>Tertiary Faculty</b></h3>
 
         </a>
 
@@ -19,7 +19,15 @@
                     </a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a href="evaluate.php"
+                    <a href="./"
+                        class="nav-link nav-evaluate <?php echo basename($_SERVER['PHP_SELF']) == 'evaluate.php' ? 'active' : ''; ?>"
+                        style="<?php echo basename($_SERVER['PHP_SELF']) == 'evaluate.php' ? 'background-color: rgb(51, 128, 64); color: #fff; border: 1px solid #343a40;' : 'background-color: #343a40; color: #fff; border: 1px solid #343a40;'; ?>">
+                        <i class="nav-icon fas fa-th-list"></i>
+                        <p>Evaluate</p>
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a href="./"
                         class="nav-link nav-evaluate <?php echo basename($_SERVER['PHP_SELF']) == 'evaluate.php' ? 'active' : ''; ?>"
                         style="<?php echo basename($_SERVER['PHP_SELF']) == 'evaluate.php' ? 'background-color: rgb(51, 128, 64); color: #fff; border: 1px solid #343a40;' : 'background-color: #343a40; color: #fff; border: 1px solid #343a40;'; ?>">
                         <i class="nav-icon fas fa-th-list"></i>

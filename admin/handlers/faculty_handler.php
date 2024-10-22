@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
        
         if ($avatar) {
-            $target_dir = "uploads/";
+            $target_dir = "assets/uploads/";
             $target_file = $target_dir . basename($_FILES["img"]["name"]);
             move_uploaded_file($_FILES["img"]["tmp_name"], $target_file);
         }
@@ -118,7 +118,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     Swal.fire({
                         icon: 'success',
                         title: 'Success!',
-                        text: 'Teacher information saved successfully.',
+                        text: 'Faculty information saved successfully.',
                         showConfirmButton: false,
                         timer: 2000
                     }).then(() => {
