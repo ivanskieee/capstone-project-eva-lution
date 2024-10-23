@@ -60,7 +60,7 @@ include "handlers/report_handler.php";
                     </div>
                     <fieldset class="border border-success p-2 w-100">
                         <legend class="w-auto">Rating Legend</legend>
-                        <p>5 = Strongly Agree, 4 = Agree, 3 = Uncertain, 2 = Disagree, 1 = Strongly Disagree</p>
+                        <p>4 = Strongly Agree, 3 = Agree, 2 = Disagree, 1 = Strongly Disagree</p>
                     </fieldset>
                     <div class="table-responsive">
                         <?php foreach ($criteriaList as $row): ?>
@@ -72,7 +72,6 @@ include "handlers/report_handler.php";
                                         <th width="5%" class="text-center">2</th>
                                         <th width="5%" class="text-center">3</th>
                                         <th width="5%" class="text-center">4</th>
-                                        <th width="5%" class="text-center">5</th>
                                     </tr>
                                 </thead>
                                 <tbody class="tr-sortable">
@@ -89,7 +88,7 @@ include "handlers/report_handler.php";
                                                         <?= htmlspecialchars($qRow['question']) ?>
                                                         <input type="hidden" name="qid[]" value="<?= $qRow['question_id'] ?>">
                                                     </td>
-                                                    <?php for ($c = 0; $c < 5; $c++): ?>
+                                                    <?php for ($c = 0; $c < 4; $c++): ?>
                                                         <td class="text-center">
                                                             <div class="icheck-success d-inline">
                                                                 <input type="radio" name="qid[<?= $qRow['question_id'] ?>][]"
