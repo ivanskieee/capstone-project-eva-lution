@@ -29,7 +29,7 @@ include "login_handler.php";
                                 </div>
                             </div>
                             <div class="mb-3 text-right">
-                                <a href="./" class="text-decoration-none">Forgot Your Password?</a>
+                                <a href="forgot_password.php?access=allowed" class="text-decoration-none">Forgot Your Password?</a>
                             </div>
                             <div class="icheck-primary mb-3 text-left">
                                 <input type="checkbox" id="remember" name="remember" <?php echo isset($_COOKIE['email']) ? 'checked' : ''; ?>>
@@ -73,6 +73,5 @@ include "login_handler.php";
         <?php endif; ?>
     </div>
 </div>
-
 
 <?php include 'includes/footer.php'; ?>
