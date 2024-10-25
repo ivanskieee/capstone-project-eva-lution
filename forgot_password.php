@@ -23,12 +23,10 @@ unset($_SESSION['allow_forgot_password']);
                             <i class="fas fa-arrow-left"></i> Back
                         </a>
                     </div>
-
                     <div class="card-body login-card-body">
                         <div class="login-logo">
                             <a href="forgot_password.php">Forgot Password</a>
                         </div>
-
                         <form action="forgot_password.php" method="POST" id="forgot-password-form">
                             <div class="input-group mb-2">
                                 <input type="email" class="form-control" name="email" required

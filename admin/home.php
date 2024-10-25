@@ -59,7 +59,7 @@ function ordinal_suffix1($num)
                         ?>
                     </h3>
 
-                    <p>Total Teachers</p>
+                    <p>Total Tertiary Faculties</p>
                 </div>
                 <div class="icon">
                     <i class="fa fa-user-friends"></i>
@@ -112,6 +112,30 @@ function ordinal_suffix1($num)
                 </div>
                 <div class="icon">
                     <i class="fa fa-list-alt"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="small-box bg-light shadow-sm border">
+                <div class="inner">
+                    <h3>0</h3>
+
+                    <p>Total Secondary Faculties</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-user-friends"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="small-box bg-light shadow-sm border">
+                <div class="inner">
+                    <h3>0</h3>
+
+                    <p>Total Head Faculties</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-users"></i>
                 </div>
             </div>
         </div>

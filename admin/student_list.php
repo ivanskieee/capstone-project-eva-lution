@@ -12,6 +12,12 @@ include "handlers/student_handler.php";
                     </a>
                 </div>
             </div>
+            <div class="row mb-3">
+                <div class="col-8 col-md-4 ms-auto mt-3 mr-3">
+                    <input type="text" id="searchInput" class="form-control form-control-sm"
+                        placeholder="Search Students">
+                </div>
+            </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered" id="student_list">
@@ -46,65 +52,101 @@ include "handlers/student_handler.php";
                                         <div class="dropdown-menu">
                                             <a class="dropdown-item"
                                                 href="new_student.php?student_id=<?php echo $row['student_id']; ?>"">Edit</a>
-                                            <div class="dropdown-divider"></div>
-                                            <form method="post" action="student_list.php" style="display: inline;" class="delete-form">
-                                                <input type="hidden" name="delete_id"
-                                                    value="<?php echo isset($row['student_id']) ? $row['student_id'] : ''; ?>">
-                                                <button type="submit" class="dropdown-item" onclick="confirmDeletion()">Delete</button>
-                                            </form>
+                                            <div class=" dropdown-divider">
                                         </div>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
+                                        <form method="post" action="student_list.php" style="display: inline;"
+                                            class="delete-form">
+                                            <input type="hidden" name="delete_id"
+                                                value="<?php echo isset($row['student_id']) ? $row['student_id'] : ''; ?>">
+                                            <button type="submit" class="dropdown-item"
+                                                onclick="confirmDeletion()">Delete</button>
+                                        </form>
+                    </div>
+                    </td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+                </table>
+                <p id="noRecordsMessage" style="display:none; color: black;" class="ml-1">No student found.</p>
             </div>
         </div>
     </div>
+    </div>
 </nav>
 <script>
-$(document).ready(function () {
-    $(document).on('submit', '.delete-form', function (e) {
-        e.preventDefault(); 
-        var form = this; 
+    $(document).ready(function () {
+        $(document).on('submit', '.delete-form', function (e) {
+            e.preventDefault();
+            var form = this;
 
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#28a745',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                
-                $.ajax({
-                    type: 'POST',
-                    url: 'student_list.php', 
-                    data: $(form).serialize(),
-                    success: function () {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Deleted!',
-                            text: 'Student deleted successfully.', 
-                            showConfirmButton: false,
-                            timer: 2000
-                        }).then(() => {
-                            window.location.href = 'student_list.php'; 
-                        });
-                    },
-                    error: function () {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Oops...',
-                            text: 'Error deleting the item. Please try again.',
-                        });
-                    }
-                });
-            }
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#28a745',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    $.ajax({
+                        type: 'POST',
+                        url: 'student_list.php',
+                        data: $(form).serialize(),
+                        success: function () {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Deleted!',
+                                text: 'Student deleted successfully.',
+                                showConfirmButton: false,
+                                timer: 2000
+                            }).then(() => {
+                                window.location.href = 'student_list.php';
+                            });
+                        },
+                        error: function () {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Error deleting the item. Please try again.',
+                            });
+                        }
+                    });
+                }
+            });
         });
     });
-});
+</script>
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        var searchValue = this.value.toLowerCase();
+        var rows = document.querySelectorAll('#list tbody tr');
+        var noRecordsMessage = document.getElementById('noRecordsMessage');
+        var matchesFound = false;
+
+        rows.forEach(function (row) {
+            var cells = row.querySelectorAll('td');
+            var matches = false;
+
+            cells.forEach(function (cell) {
+                if (cell.textContent.toLowerCase().includes(searchValue)) {
+                    matches = true;
+                }
+            });
+
+            if (matches) {
+                row.style.display = '';
+                matchesFound = true;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        if (matchesFound) {
+            noRecordsMessage.style.display = 'none';
+        } else {
+            noRecordsMessage.style.display = '';
+        }
+    });
 </script>

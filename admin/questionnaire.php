@@ -11,6 +11,11 @@ include "handlers/questionnaire_handler.php";
                         href="manage_questionnaire_academic.php"><i class="fa fa-plus"></i> Add New</a>
                 </div> -->
             </div>
+            <div class="row mb-3">
+                <div class="col-8 col-md-4 ms-auto mt-3 mr-3">
+                    <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Search">
+                </div>
+            </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-hover table-bordered" id="list">
@@ -60,8 +65,41 @@ include "handlers/questionnaire_handler.php";
                             <?php endforeach; ?>
                         </tbody>
                     </table>
+                    <p id="noRecordsMessage" style="display:none; color: black;" class="ml-1">No records found.</p>
                 </div>
             </div>
         </div>
     </div>
 </nav>
+<script>
+    document.getElementById('searchInput').addEventListener('keyup', function () {
+        var searchValue = this.value.toLowerCase();
+        var rows = document.querySelectorAll('#list tbody tr');
+        var noRecordsMessage = document.getElementById('noRecordsMessage');
+        var matchesFound = false;
+
+        rows.forEach(function (row) {
+            var cells = row.querySelectorAll('td');
+            var matches = false;
+
+            cells.forEach(function (cell) {
+                if (cell.textContent.toLowerCase().includes(searchValue)) {
+                    matches = true;
+                }
+            });
+
+            if (matches) {
+                row.style.display = '';
+                matchesFound = true;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        if (matchesFound) {
+            noRecordsMessage.style.display = 'none';
+        } else {
+            noRecordsMessage.style.display = '';
+        }
+    });
+</script>

@@ -6,7 +6,6 @@ if (!isset($_SESSION['user'])) {
 }
 
 if ($_SESSION['user']['role'] !== 'admin') {
-    // Redirect to an unauthorized page or login page if they don't have the correct role
     header('Location: unauthorized.php');
     exit;
 }
@@ -30,7 +29,6 @@ if ($id) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Handle delete request
     if (isset($_POST['delete_id'])) {
         $delete_id = $_POST['delete_id'];
         $stmt = $conn->prepare('DELETE FROM class_list WHERE class_id = :id');
@@ -47,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         echo "<script>window.location.replace('class_list.php');</script>";
     }
-    // Handle add/update request
+    
     elseif (isset($_POST['course'], $_POST['level'], $_POST['section'])) {
         $course = $_POST['course'];
         $level = $_POST['level'];

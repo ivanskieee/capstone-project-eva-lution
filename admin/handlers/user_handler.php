@@ -97,7 +97,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
         $stmt->bindParam(':avatar', $avatar);
     }
 
-    // Execute query
     if ($stmt->execute()) {
         sendEmail($email, $password);
         echo "<script>window.location.replace('user_list.php');</script>";

@@ -29,7 +29,6 @@ if ($id) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Handle delete request
     if (isset($_POST['delete_id'])) {
         $delete_id = $_POST['delete_id'];
         $stmt = $conn->prepare('DELETE FROM subject_list WHERE subject_id = :id');
@@ -44,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         echo "<script>window.location.replace('subject_list.php');</script>";
     } 
-    // Handle add/update request
+
     elseif (isset($_POST['code'], $_POST['subject'], $_POST['description'])) {
         $code = $_POST['code'];
         $subject = $_POST['subject'];
