@@ -56,7 +56,7 @@ include 'handlers/class_handler.php';
 
             $.ajax({
                 type: 'POST',
-                url: 'manage_class.php',  // Adjust the URL as needed
+                url: 'manage_class.php',  
                 data: formData,
                 success: function (response) {
                     Swal.fire({
@@ -66,10 +66,10 @@ include 'handlers/class_handler.php';
                         showConfirmButton: false,
                         timer: 2000
                     }).then(() => {
-                        window.location.href = 'class_list.php';  // Redirect after saving
+                        window.location.href = 'class_list.php';  
                     });
 
-                    $('#manage-class')[0].reset();  // Reset the form after saving
+                    $('#manage-class')[0].reset();  
                 },
                 error: function () {
                     Swal.fire({

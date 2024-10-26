@@ -61,7 +61,7 @@ include 'handlers/academic_handler.php';
 
             $.ajax({
                 type: 'POST',
-                url: 'manage_academic.php',  // Adjust the URL as needed
+                url: 'manage_academic.php',  
                 data: formData,
                 success: function (response) {
                     Swal.fire({
@@ -71,10 +71,10 @@ include 'handlers/academic_handler.php';
                         showConfirmButton: false,
                         timer: 2000
                     }).then(() => {
-                        window.location.href = 'academic_list.php';  // Redirect after saving
+                        window.location.href = 'academic_list.php';  
                     });
 
-                    $('#manage-academic')[0].reset();  // Reset the form after saving
+                    $('#manage-academic')[0].reset();  
                 },
                 error: function () {
                     Swal.fire({

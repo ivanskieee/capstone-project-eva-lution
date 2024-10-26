@@ -53,7 +53,6 @@ include 'handlers/eval_handler.php';
 							<input type="hidden" name="subject_id" value="<?= isset($subject_id) ? $subject_id : '' ?>">
 							<input type="hidden" name="evaluation_id"
 								value="<?= isset($evaluation_id) ? $evaluation_id : '' ?>">
-							<!-- Add evaluation_id here -->
 							<div class="clear-fix mt-2"></div>
 
 							<?php foreach ($criteriaList as $row): ?>
@@ -77,7 +76,6 @@ include 'handlers/eval_handler.php';
 														<?php echo htmlspecialchars($qRow['question']); ?>
 														<input type="hidden" name="question_id[]"
 															value="<?php echo htmlspecialchars($qRow['question_id']); ?>">
-														<!-- Change name to question_id[] -->
 													</td>
 													<?php for ($c = 1; $c <= 4; $c++): ?>
 														<td class="text-center">
@@ -106,16 +104,15 @@ include 'handlers/eval_handler.php';
 <script>
     $(document).ready(function () {
         $('#evaluation-form').on('submit', function (e) {
-            e.preventDefault(); // Prevent the default form submission
+            e.preventDefault(); 
 
-            var formData = $(this).serialize(); // Serialize form data
+            var formData = $(this).serialize(); 
 
             $.ajax({
                 type: 'POST',
-                url: 'evaluate.php', // Change this to the path of your PHP script
+                url: 'evaluate.php', 
                 data: formData,
                 success: function (response) {
-                    // Handle success response from the server
                     Swal.fire({
                         icon: 'success',
                         title: 'Success!',
@@ -123,13 +120,12 @@ include 'handlers/eval_handler.php';
                         showConfirmButton: false,
                         timer: 2000
                     }).then(() => {
-                        window.location.href = 'evaluate.php'; // Redirect after saving
+                        window.location.href = 'evaluate.php'; 
                     });
 
-                    $('#evaluation-form')[0].reset(); // Reset the form after saving
+                    $('#evaluation-form')[0].reset(); 
                 },
                 error: function () {
-                    // Handle error response from the server
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',

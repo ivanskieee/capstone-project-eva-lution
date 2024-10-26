@@ -229,7 +229,6 @@ function ordinal_suffix1($num)
             }
         });
 
-        // Smooth scrolling for charts on scroll
         let charts = document.querySelectorAll('canvas');
         let options = {
             threshold: 0.3

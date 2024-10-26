@@ -1,5 +1,5 @@
 <?php
-include "handlers/faculty_handler.php"; // Handle faculty-related operations
+include "handlers/faculty_handler.php"; 
 ?>
 
 <nav class="main-header">

@@ -29,7 +29,6 @@ if ($id) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Handle delete request
     if (isset($_POST['delete_id'])) {
         $delete_id = $_POST['delete_id'];
         $stmt = $conn->prepare('DELETE FROM academic_list WHERE academic_id = :id');
@@ -46,7 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         echo "<script>window.location.replace('academic_list.php');</script>";
     } 
-    // Handle add/update request
     elseif (isset($_POST['year'], $_POST['semester'])) {
         $year = $_POST['year'];
         $semester = $_POST['semester'];
