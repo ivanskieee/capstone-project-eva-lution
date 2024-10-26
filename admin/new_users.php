@@ -6,7 +6,7 @@ include "handlers/user_handler.php";
 	<div class="col-lg-12 mt-5">
 		<div class="card">
 			<div class="card-body">
-				<form method="POST" id="manage_user" enctype="multipart/form-data">
+				<form method="POST" id="new_users" enctype="multipart/form-data">
 					<input type="hidden" id="id" name="id"
 						value="<?php echo isset($admin['id']) ? $admin['id'] : ''; ?>">
 					<div class="row">

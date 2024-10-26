@@ -58,7 +58,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $id = $_POST['student_id'] ?? null; 
 
         if (!empty($password) && $password !== $cpass) {
-            echo "<script>alert('Passwords do not match');</script>";
+            echo "<script>
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Passwords do not match.',
+                    });
+                  </script>";
             return;
         }
 

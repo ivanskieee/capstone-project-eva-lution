@@ -67,7 +67,8 @@
         </li>
         <li class="nav-item">
           <a href="#"
-            class="nav-link nav-edit_user">
+            class="nav-link nav-edit_user <?php echo in_array(basename($_SERVER['PHP_SELF']), ['new_head_faculty.php', 'head_faculty_list.php']) ? 'active' : ''; ?>"
+            style="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['new_head_faculty.php', 'head_faculty_list.php']) ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
             <i class="nav-icon fas fa-users"></i>
             <p>
               Head Faculties
@@ -76,13 +77,13 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="./" class="nav-link nav-new_user tree-item">
+              <a href="new_head_faculty.php" class="nav-link nav-new_user tree-item">
                 <i class="nav-icon"></i>
                 <p>Add New</p>
               </a>
             </li>
             <li class="nav-item">
-              <a href="./" class="nav-link nav-user_list tree-item">
+              <a href="head_faculty_list.php" class="nav-link nav-user_list tree-item">
                 <i class="nav-icon"></i>
                 <p>List</p>
               </a>

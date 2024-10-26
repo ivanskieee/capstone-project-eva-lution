@@ -33,96 +33,141 @@ if ($id) {
     $admin = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['delete_id'])) {
-    $firstname = $_POST['firstname'];
-    $lastname = $_POST['lastname'];
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    $cpass = $_POST['cpass'];
-    $avatar = isset($_FILES['img']['name']) ? $_FILES['img']['name'] : null;
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (!isset($_POST['delete_id'])) {
+        $firstname = $_POST['firstname'];
+        $lastname = $_POST['lastname'];
+        $email = $_POST['email'];
+        $password = $_POST['password'];
+        $cpass = $_POST['cpass'];
+        $avatar = isset($_FILES['img']['name']) ? $_FILES['img']['name'] : null;
+        $id = $_POST['id'] ?? null;
 
-    if (!empty($password) && $password !== $cpass) {
-        echo "<script>alert('Passwords do not match');</script>";
-        return;
-    }
-
-    if (!empty($password)) {
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-    }
-
-    if ($avatar) {
-        $target_dir = "assets/uploads/";
-        $target_file = $target_dir . basename($_FILES["img"]["name"]);
-        move_uploaded_file($_FILES["img"]["tmp_name"], $target_file);
-    }
-
-    if ($id) {
-        $query = "UPDATE users 
-                  SET firstname = :firstname, lastname = :lastname, email = :email";
-
-        if (!empty($password)) {
-            $query .= ", password = :password";
+        // Check if passwords match
+        if (!empty($password) && $password !== $cpass) {
+            echo "<script>
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Passwords do not match.',
+                    });
+                  </script>";
+            return;
         }
 
+        // Hash password if not empty
+        if (!empty($password)) {
+            $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        }
+
+        // Upload avatar if provided
         if ($avatar) {
-            $query .= ", avatar = :avatar";
+            $target_dir = "assets/uploads/";
+            $target_file = $target_dir . basename($_FILES["img"]["name"]);
+            move_uploaded_file($_FILES["img"]["tmp_name"], $target_file);
         }
 
-        $query .= " WHERE id = :id";
-        $stmt = $conn->prepare($query);
+        // Update or Insert
+        if ($id) {
+            $query = "UPDATE users 
+                      SET firstname = :firstname, lastname = :lastname, email = :email";
 
-        $stmt->bindParam(':firstname', $firstname);
-        $stmt->bindParam(':lastname', $lastname);
-        $stmt->bindParam(':email', $email);
+            if (!empty($password)) {
+                $query .= ", password = :password";
+            }
 
-        if (!empty($password)) {
+            if ($avatar) {
+                $query .= ", avatar = :avatar";
+            }
+
+            $query .= " WHERE id = :id";
+            $stmt = $conn->prepare($query);
+
+            $stmt->bindParam(':firstname', $firstname);
+            $stmt->bindParam(':lastname', $lastname);
+            $stmt->bindParam(':email', $email);
+
+            if (!empty($password)) {
+                $stmt->bindParam(':password', $hashed_password);
+            }
+
+            if ($avatar) {
+                $stmt->bindParam(':avatar', $avatar);
+            }
+
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        } else {
+            $query = "INSERT INTO users (firstname, lastname, email, password, avatar) 
+                      VALUES (:firstname, :lastname, :email, :password, :avatar)";
+            $stmt = $conn->prepare($query);
+
+            $stmt->bindParam(':firstname', $firstname);
+            $stmt->bindParam(':lastname', $lastname);
+            $stmt->bindParam(':email', $email);
             $stmt->bindParam(':password', $hashed_password);
-        }
-
-        if ($avatar) {
             $stmt->bindParam(':avatar', $avatar);
         }
 
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        // Execute and send feedback
+        if ($stmt->execute()) {
+            sendEmail($email, $password);
 
-    } else {
-        $query = "INSERT INTO users (firstname, lastname, email, password, avatar) 
-                  VALUES (:firstname, :lastname, :email, :password, :avatar)";
-        $stmt = $conn->prepare($query);
+            echo "<script>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'User information saved successfully.',
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then(() => {
+                        window.location.replace('user_list.php');
+                    });
+                  </script>";
+        } else {
+            echo "<script>
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Error saving data. Please try again.',
+                    });
+                  </script>";
+        }
 
-        $stmt->bindParam(':firstname', $firstname);
-        $stmt->bindParam(':lastname', $lastname);
-        $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':password', $hashed_password);
-        $stmt->bindParam(':avatar', $avatar);
+        $conn = null;
     }
 
-    if ($stmt->execute()) {
-        sendEmail($email, $password);
-        echo "<script>window.location.replace('user_list.php');</script>";
-    } else {
-        echo "<script>alert('Error saving data.');</script>";
+    if (isset($_POST['delete_id'])) {
+        $delete_id = $_POST['delete_id'];
+
+        $stmt = $conn->prepare('DELETE FROM users WHERE id = :id');
+        $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            echo "<script>
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Deleted!',
+                        text: 'User deleted successfully.',
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then(() => {
+                        window.location.replace('user_list.php');
+                    });
+                  </script>";
+        } else {
+            echo "<script>
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Error deleting user. Please try again.',
+                    });
+                  </script>";
+        }
     }
-
-    $conn = null; 
-}
-
-if (isset($_POST['delete_id'])) {
-    $delete_id = $_POST['delete_id'];
-
-    $stmt = $conn->prepare('DELETE FROM users WHERE id = :id');
-    $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
-
-    if ($stmt->execute()) {
-        echo "<script>alert('Admin deleted successfully.');</script>";
-    } else {
-        echo "<script>alert('Error deleting admin.');</script>";
-    }
-
-    echo "<script>window.location.replace('user_list.php');</script>";
 }
 
 $conn = null;
+
 
 function sendEmail($toEmail, $plainPassword) {
     $mail = new PHPMailer(true);

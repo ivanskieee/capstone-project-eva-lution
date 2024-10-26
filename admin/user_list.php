@@ -74,7 +74,7 @@ include 'handlers/user_handler.php';
 
             Swal.fire({
                 title: 'Are you sure?',
-                text: 'This action will permanently delete the admin.',
+                text: 'This action will permanently delete the user.',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#28a745',
@@ -90,7 +90,7 @@ include 'handlers/user_handler.php';
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Deleted!',
-                                text: 'Admin has been deleted.',
+                                text: 'User has been deleted.',
                                 showConfirmButton: false,
                                 timer: 2000
                             }).then(() => {
@@ -111,34 +111,36 @@ include 'handlers/user_handler.php';
     });
 </script>
 <script>
-    document.getElementById('searchInput').addEventListener('keyup', function () {
-        var searchValue = this.value.toLowerCase();
-        var rows = document.querySelectorAll('#list tbody tr');
-        var noRecordsMessage = document.getElementById('noRecordsMessage');
-        var matchesFound = false;
+    $(document).ready(function () {
+        $('#searchInput').on('keyup', function () {
+            var searchValue = this.value.toLowerCase();
+            var rows = document.querySelectorAll('#student_list tbody tr');
+            var noRecordsMessage = document.getElementById('noRecordsMessage');
+            var matchesFound = false;
 
-        rows.forEach(function (row) {
-            var cells = row.querySelectorAll('td');
-            var matches = false;
+            rows.forEach(function (row) {
+                var cells = row.querySelectorAll('td');
+                var matches = false;
 
-            cells.forEach(function (cell) {
-                if (cell.textContent.toLowerCase().includes(searchValue)) {
-                    matches = true;
+                cells.forEach(function (cell) {
+                    if (cell.textContent.toLowerCase().includes(searchValue)) {
+                        matches = true;
+                    }
+                });
+
+                if (matches) {
+                    row.style.display = '';
+                    matchesFound = true;
+                } else {
+                    row.style.display = 'none';
                 }
             });
 
-            if (matches) {
-                row.style.display = '';
-                matchesFound = true;
+            if (matchesFound) {
+                noRecordsMessage.style.display = 'none';
             } else {
-                row.style.display = 'none';
+                noRecordsMessage.style.display = '';
             }
         });
-
-        if (matchesFound) {
-            noRecordsMessage.style.display = 'none';
-        } else {
-            noRecordsMessage.style.display = '';
-        }
     });
 </script>

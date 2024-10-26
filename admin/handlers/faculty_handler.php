@@ -49,7 +49,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         
         if (!empty($password) && $password !== $cpass) {
-            echo "<script>alert('Passwords do not match');</script>";
+            echo "<script>
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Passwords do not match.',
+                    });
+                  </script>";
             return;
         }
 
@@ -146,7 +152,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
 
         if ($stmt->execute()) {
-            $_SESSION['message'] = 'Teacher deleted successfully.';
+            $_SESSION['message'] = 'Faculty deleted successfully.';
         } else {
             error_log('Error deleting faculty');
             $_SESSION['error'] = 'Error deleting faculty. Please try again.';

@@ -31,10 +31,10 @@ include "login_handler.php";
                             <div class="mb-3 text-right">
                                 <a href="forgot_password.php?access=allowed" class="text-decoration-none">Forgot Your Password?</a>
                             </div>
-                            <div class="icheck-primary mb-3 text-left">
+                            <!-- <div class="icheck-primary mb-3 text-left">
                                 <input type="checkbox" id="remember" name="remember" <?php echo isset($_COOKIE['email']) ? 'checked' : ''; ?>>
                                 <label for="remember">Remember Me</label>
-                            </div>
+                            </div> -->
                             <div id="loading-spinner" style="display: none;">
                                 <i class="fas fa-spinner fa-spin"></i> Logging in...
                             </div>

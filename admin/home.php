@@ -130,7 +130,11 @@ function ordinal_suffix1($num)
         <div class="col-12 col-sm-6 col-md-4">
             <div class="small-box bg-light shadow-sm border">
                 <div class="inner">
-                    <h3>0</h3>
+                    <h3><?php
+                    $stmt = $conn->query("SELECT * FROM head_faculty_list");
+                    $totalHead_Faculty = $stmt->rowCount();
+                    echo $totalHead_Faculty;
+                    ?></h3>
 
                     <p>Total Head Faculties</p>
                 </div>

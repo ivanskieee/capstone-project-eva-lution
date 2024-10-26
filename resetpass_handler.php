@@ -29,6 +29,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $stmt->execute([$newPassword, $email]);
         }
 
+        if ($stmt->rowCount() == 0) {
+            $stmt = $conn->prepare("UPDATE head_faculty_list SET password = ? WHERE email = ?");
+            $stmt->execute([$newPassword, $email]);
+        }
+
         if ($stmt->rowCount() > 0) {
             $stmt = $conn->prepare("DELETE FROM password_resets WHERE token = ?");
             $stmt->execute([$token]);
