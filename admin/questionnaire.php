@@ -103,3 +103,23 @@ include "handlers/questionnaire_handler.php";
         }
     });
 </script>
+<style>
+    .list-group-item:hover {
+        color: black !important;
+        font-weight: 700 !important;
+    }
+
+    body {
+        overflow-y: hidden;
+    }
+
+    .main-header {
+        max-height: 100vh;
+        overflow-y: scroll;
+        scrollbar-width: none;
+    }
+
+    .main-header::-webkit-scrollbar {
+        display: none;
+    }
+</style>

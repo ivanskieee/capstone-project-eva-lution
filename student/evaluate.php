@@ -81,7 +81,7 @@ include 'handlers/eval_handler.php';
 														<td class="text-center">
 															<div class="icheck-success d-inline">
 																<input type="radio" name="rate[<?= $qRow['question_id'] ?>]"
-																	id="qradio<?= $qRow['question_id'] . '_' . $c ?>" value="<?= $c ?>">
+																	id="qradio<?= $qRow['question_id'] . '_' . $c ?>" value="<?= $c ?>" required>
 																<label for="qradio<?= $qRow['question_id'] . '_' . $c ?>"></label>
 															</div>
 														</td>

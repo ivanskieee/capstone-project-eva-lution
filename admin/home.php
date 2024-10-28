@@ -118,7 +118,11 @@ function ordinal_suffix1($num)
         <div class="col-12 col-sm-6 col-md-4">
             <div class="small-box bg-light shadow-sm border">
                 <div class="inner">
-                    <h3>0</h3>
+                    <h3><?php
+                    $stmt = $conn->query("SELECT * FROM secondary_faculty_list");
+                    $totalSecondary_Faculty = $stmt->rowCount();
+                    echo $totalSecondary_Faculty;
+                    ?></h3>
 
                     <p>Total Secondary Faculties</p>
                 </div>

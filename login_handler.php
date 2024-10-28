@@ -20,6 +20,8 @@ if (isset($_SESSION['user'])) {
         header('Location: faculty/home.php');
     } elseif ($_SESSION['user']['role'] === 'head_faculty') {
         header('Location: head_faculty/home.php');
+    } elseif ($_SESSION['user']['role'] === 'secondary_faculty') {
+        header('Location: secondary_faculty/home.php');
     }
     exit;
 }
@@ -80,6 +82,24 @@ if ($_POST) {
             $_SESSION['user'] = $user;
             $_SESSION['login_name'] = $user['firstname'] . ' ' . $user['lastname'];
             header('location: faculty/home.php');
+            exit;
+        }
+    }
+
+    $query = 'SELECT * FROM secondary_faculty_list WHERE email = :email';
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':email', $email);
+    $stmt->execute();
+
+    if ($stmt->rowCount() > 0) {
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $user = $stmt->fetch();
+
+        if (password_verify($password, $user['password'])) {
+            $user['role'] = 'secondary_faculty';
+            $_SESSION['user'] = $user;
+            $_SESSION['login_name'] = $user['firstname'] . ' ' . $user['lastname'];
+            header('location: secondary_faculty/home.php');
             exit;
         }
     }

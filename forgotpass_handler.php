@@ -34,6 +34,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user = $stmt->fetch();
     }
 
+    if (!$user) {
+        $stmt = $conn->prepare("SELECT * FROM secondary_faculty_list WHERE email = ?");
+        $stmt->execute([$email]);
+        $user = $stmt->fetch();
+    }
+
     if ($user) {
         $token = bin2hex(random_bytes(50));
         $expiry = date("Y-m-d H:i:s", strtotime('+24 hours'));

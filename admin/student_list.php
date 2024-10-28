@@ -152,3 +152,28 @@ include "handlers/student_handler.php";
         });
     });
 </script>
+<style>
+    .list-group-item:hover {
+        color: black !important;
+        font-weight: 700 !important;
+    }
+
+    body {
+        overflow-y: hidden;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    .main-header {
+        max-height: 100vh;
+        overflow-y: scroll;
+        scrollbar-width: none;
+        scroll-behavior: smooth;
+    }
+
+    .main-header::-webkit-scrollbar {
+        display: none;
+    }
+</style>
