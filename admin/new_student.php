@@ -33,7 +33,7 @@ include "handlers/student_handler.php";
                             </div>
                             <div class="form-group">
                                 <label for="" class="control-label">Class</label>
-                                <select name="class_id" id="class_id" class="form-control form-control-sm select2">
+                                <select name="class_id" id="class_id" class="form-control form-control-sm select2" required>
                                     <option value=""></option>
                                     <?php foreach ($classes as $class): ?>
                                         <option value="<?php echo $class['class_id']; ?>"
@@ -94,6 +94,24 @@ include "handlers/student_handler.php";
         width: 15vh;
         object-fit: cover;
         border-radius: 100% 100%;
+    }
+    .list-group-item:hover {
+        color: black !important;
+        font-weight: 700 !important;
+    }
+
+    body {
+        overflow-y: hidden;
+    }
+
+    .main-header {
+        max-height: 90vh;
+        overflow-y: scroll;
+        scrollbar-width: none;
+    }
+
+    .main-header::-webkit-scrollbar {
+        display: none;
     }
 </style>
 <script>

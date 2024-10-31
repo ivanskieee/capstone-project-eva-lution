@@ -178,7 +178,7 @@ function sendEmail($toEmail, $plainPassword) {
         $mail->Host       = 'smtp.gmail.com';                       
         $mail->SMTPAuth   = true;                                   
         $mail->Username   = 'evaluationspc@gmail.com';                 
-        $mail->Password   = 'ctet pnsr jirf ohpl';                    
+        $mail->Password   = 'zjwz wnqx oyew nwst';                    
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;         
         $mail->Port       = 587;                                    
 
@@ -187,8 +187,8 @@ function sendEmail($toEmail, $plainPassword) {
 
         $mail->isHTML(true);                                        
         $mail->Subject = 'Account Created';
-        $mail->Body    = "Dear Student,<br>Your account has been created successfully.<br><b>Email:</b> $toEmail<br><b>Password:</b> $plainPassword<br><br>Thank you!";
-        $mail->AltBody = "Dear Student,\nYour account has been created successfully.\nEmail: $toEmail\nPassword: $plainPassword\n\nThank you!";
+        $mail->Body    = "Dear Admin,<br>Your account has been created successfully.<br><b>Email:</b> $toEmail<br><b>Password:</b> $plainPassword<br><br>Thank you!";
+        $mail->AltBody = "Dear Admin,\nYour account has been created successfully.\nEmail: $toEmail\nPassword: $plainPassword\n\nThank you!";
 
         $mail->send();
         echo 'Email has been sent';

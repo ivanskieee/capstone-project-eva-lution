@@ -289,7 +289,7 @@ function ordinal_suffix1($num)
     }
 
     .main-header {
-        max-height: 100vh;
+        max-height: 95vh;
         overflow-y: scroll;
         scrollbar-width: none;
     }

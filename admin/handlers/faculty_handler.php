@@ -173,11 +173,11 @@ function sendEmail($toEmail, $plainPassword)
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
         $mail->Username = 'evaluationspc@gmail.com';
-        $mail->Password = 'ctet pnsr jirf ohpl';
+        $mail->Password = 'zjwz wnqx oyew nwst';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
-        $mail->setFrom('your_email@gmail.com', 'Your Name');
+        $mail->setFrom('your_email@gmail.com', 'SPC_EVAL');
         $mail->addAddress($toEmail);
 
         $mail->isHTML(true);

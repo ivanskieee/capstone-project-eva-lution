@@ -80,6 +80,24 @@ include "handlers/faculty_handler.php";
 		object-fit: cover;
 		border-radius: 100% 100%;
 	}
+    .list-group-item:hover {
+        color: black !important;
+        font-weight: 700 !important;
+    }
+
+    body {
+        overflow-y: hidden;
+    }
+
+    .main-header {
+        max-height: 90vh;
+        overflow-y: scroll;
+        scrollbar-width: none;
+    }
+
+    .main-header::-webkit-scrollbar {
+        display: none;
+    }
 </style>
 <script>
 	$('[name="password"],[name="cpass"]').keyup(function(){
