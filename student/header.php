@@ -102,7 +102,7 @@
         <a class="nav-link" data-toggle="dropdown" aria-expanded="false" href="javascript:void(0)">
           <span>
             <div class="d-flex badge-pill align-items-center">
-              <span class="mr-1"><img src="assets/uploads/png.png" alt="User" class="user-img border"></span>
+              <span class="mr-1"><img src="assets/uploads/def.png" alt="User" class="user-img border"></span>
               <span class="dropdown-text"><b><?php echo ucwords($_SESSION['login_name']) ?></b></span>
               <span class="fa fa-angle-down ml-2 dropdown-arrow"></span>
             </div>
@@ -116,8 +116,71 @@
       </li>
     </ul>
   </nav>
+  <div class="modal fade" id="manageAccountModal" tabindex="-1" aria-labelledby="manageAccountModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="manageAccountModalLabel">Manage Account</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body" id="manageAccountContent">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="saveAccountChanges">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
     $('#manage_account').click(function () {
       uni_modal('Manage Account', 'manage_user.php?id=<?php echo $_SESSION['login_id'] ?>')
     })
+  </script>
+  <script>
+    $(document).ready(function () {
+      $('#manage_account').on('click', function () {
+        $.ajax({
+          url: 'fetch_account_data.php',
+          type: 'GET',
+          success: function (data) {
+            $('#manageAccountContent').html(data);
+            $('#manageAccountModal').modal('show');
+          },
+          error: function () {
+            alert('Failed to load account data.');
+          }
+        });
+      });
+
+      $('#saveAccountChanges').on('click', function () {
+        const formData = new FormData($('#accountForm')[0]);
+
+        $.ajax({
+          url: 'update_account.php',
+          type: 'POST',
+          data: formData,
+          contentType: false,
+          processData: false,
+          dataType: 'json', 
+          success: function (response) {
+            if (response.success) {
+              alert('Account updated successfully.');
+              $('#manageAccountModal').modal('hide');
+              location.reload();
+            } else {
+              alert(response.message || 'Failed to update account.');
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error(xhr.responseText); 
+            alert('An error occurred while updating the account.');
+          }
+        });
+      });
+    });
   </script>
