@@ -126,7 +126,7 @@ include "handlers/report_handler.php";
     }
 
     .main-header {
-        max-height: 100vh;
+        max-height: 90vh;
         overflow-y: scroll;
         scrollbar-width: none;
     }

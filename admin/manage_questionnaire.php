@@ -58,7 +58,7 @@ include 'handlers/questionnaire_handler.php';
                     <div class="card-body">
                         <fieldset class="border border-success p-2 w-100">
                             <legend class="w-auto">Rating Legend</legend>
-                            <p>5 = Strongly Agree, 4 = Agree, 3 = Uncertain, 2 = Disagree, 1 = Strongly Disagree</p>
+                            <p>4 = Strongly Agree, 3 = Agree, 2 = Disagree, 1 = Strongly Disagree</p>
                         </fieldset>
                         <div class="clear-fix mt-2"></div>
                         <?php foreach ($criteriaList as $row): ?>
@@ -66,7 +66,6 @@ include 'handlers/questionnaire_handler.php';
                                 <thead>
                                     <tr class="bg-gradient-secondary">
                                         <th colspan="2" class="p-1"><b><?php echo $row['criteria'] ?></b></th>
-                                        <th class="text-center">5</th>
                                         <th class="text-center">4</th>
                                         <th class="text-center">3</th>
                                         <th class="text-center">2</th>
@@ -105,7 +104,7 @@ include 'handlers/questionnaire_handler.php';
                                                         <?= htmlspecialchars($qRow['question']) ?>
                                                         <input type="hidden" name="qid[]" value="<?= $qRow['question_id'] ?>">
                                                     </td>
-                                                    <?php for ($c = 0; $c < 5; $c++): ?>
+                                                    <?php for ($c = 0; $c < 4; $c++): ?>
                                                         <td class="text-center">
                                                             <div class="icheck-success d-inline">
                                                                 <input type="radio" name="qid[<?= $qRow['question_id'] ?>][]"
@@ -218,3 +217,24 @@ include 'handlers/questionnaire_handler.php';
         window.location.href = 'manage_questionnaire.php?academic_id=' + academicId;
     }
 </script>
+
+<style>
+    .list-group-item:hover {
+        color: black !important;
+        font-weight: 700 !important;
+    }
+
+    body {
+        overflow-y: hidden;
+    }
+
+    .main-header {
+        max-height: 95vh;
+        overflow-y: scroll;
+        scrollbar-width: none;
+    }
+
+    .main-header::-webkit-scrollbar {
+        display: none;
+    }
+</style>

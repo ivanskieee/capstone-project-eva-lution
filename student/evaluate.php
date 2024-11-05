@@ -136,6 +136,21 @@ include 'handlers/eval_handler.php';
         });
     });
 </script>
+<!-- <style>
+	body {
+        overflow-y: hidden;
+    }
+
+    .main-header {
+        max-height: 95vh;
+        overflow-y: scroll;
+        scrollbar-width: none;
+    }
+
+    .main-header::-webkit-scrollbar {
+        display: none;
+    }
+</style> -->
 
 
 <?php include 'footer.php'; ?>

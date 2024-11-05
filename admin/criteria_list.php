@@ -80,6 +80,24 @@ include 'handlers/criteria_handler.php';
     .dropright a:hover {
         color: black !important;
     }
+    .list-group-item:hover {
+        color: black !important;
+        font-weight: 700 !important;
+    }
+
+    body {
+        overflow-y: hidden;
+    }
+
+    .main-header {
+        max-height: 95vh;
+        overflow-y: scroll;
+        scrollbar-width: none;
+    }
+
+    .main-header::-webkit-scrollbar {
+        display: none;
+    }
 </style>
 <script>
     $(document).ready(function () {
