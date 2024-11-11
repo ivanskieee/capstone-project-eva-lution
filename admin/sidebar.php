@@ -18,6 +18,14 @@
           </a>
         </li>
         <li class="nav-item dropdown">
+          <a href="admin_generate_link.php"
+            class="nav-link nav-subject_list <?php echo in_array(basename($_SERVER['PHP_SELF']), ['admin_generate_link.php']) ? 'active' : ''; ?>"
+            style="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['admin_generate_link.php']) ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
+            <i class="nav-icon fas fa-th-list"></i>
+            <p>Account Links</p>
+          </a>
+        </li>
+        <li class="nav-item dropdown">
           <a href="subject_list.php"
             class="nav-link nav-subject_list <?php echo in_array(basename($_SERVER['PHP_SELF']), ['subject_list.php']) ? 'active' : ''; ?>"
             style="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['subject_list.php', 'manage_subject.php']) ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
