@@ -26,6 +26,14 @@
           </a>
         </li>
         <li class="nav-item dropdown">
+          <a href="verify_accounts.php"
+            class="nav-link nav-subject_list <?php echo in_array(basename($_SERVER['PHP_SELF']), ['verify_accounts.php']) ? 'active' : ''; ?>"
+            style="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['verify_accounts.php']) ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
+            <i class="nav-icon fas fa-th-list"></i>
+            <p>Pending Accounts</p>
+          </a>
+        </li>
+        <li class="nav-item dropdown">
           <a href="subject_list.php"
             class="nav-link nav-subject_list <?php echo in_array(basename($_SERVER['PHP_SELF']), ['subject_list.php']) ? 'active' : ''; ?>"
             style="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['subject_list.php', 'manage_subject.php']) ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
