@@ -101,17 +101,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $stmt->bindParam(':faculty_id', $id, PDO::PARAM_INT);
-        } else {
-            $query = "INSERT INTO college_faculty_list (school_id, firstname, lastname, email, password, avatar) 
-                      VALUES (:school_id, :firstname, :lastname, :email, :password, :avatar)";
+        } 
+        else {
+            $query = "INSERT INTO college_faculty_list (school_id, firstname, lastname, section, email, password, avatar) 
+                      VALUES (:school_id, :firstname, :lastname, :section, :email, :password, :avatar)";
             $stmt = $conn->prepare($query);
 
             $stmt->bindParam(':school_id', $school_id);
             $stmt->bindParam(':firstname', $firstname);
             $stmt->bindParam(':lastname', $lastname);
+            $stmt->bindParam(':section', $section);
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':password', $hashed_password);
             $stmt->bindParam(':avatar', $avatar);
+            
         }
 
         

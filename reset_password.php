@@ -56,7 +56,7 @@ include "resetpass_handler.php";
                                 <input type="password" class="form-control" name="password" required
                                     placeholder="New Password">
                             </div>
-                            <button type="submit" class="btn btn-primary btn-block">Reset Password</button>
+                            <button type="submit" class="btn btn-success btn-block">Reset Password</button>
                         </form>
                     </div>
                 </div>

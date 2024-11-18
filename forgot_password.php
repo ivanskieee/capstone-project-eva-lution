@@ -37,7 +37,7 @@ unset($_SESSION['allow_forgot_password']);
                                     </div>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-block">Send Reset Link</button>
+                            <button type="submit" class="btn btn-success btn-block">Send Reset Link</button>
                         </form>
                     </div>
                 </div>

@@ -13,8 +13,26 @@ include "submit_registration.php";
                         </div>
                         <form action="submit_registration.php" method="POST" id="registration-form">
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" name="student_id" required
+                                <input type="text" class="form-control" name="school_id" required
                                     placeholder="Student ID">
+                                <div class="input-group-append">
+                                    <div class="input-group-text">
+                                        <i class="fas fa-id-badge"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" name="firstname" required
+                                    placeholder="Firstname">
+                                <div class="input-group-append">
+                                    <div class="input-group-text">
+                                        <i class="fas fa-id-badge"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" name="lastname" required
+                                    placeholder="Lastname">
                                 <div class="input-group-append">
                                     <div class="input-group-text">
                                         <i class="fas fa-id-badge"></i>

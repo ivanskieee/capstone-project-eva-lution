@@ -38,7 +38,8 @@ include "login_handler.php";
                             <div id="loading-spinner" style="display: none;">
                                 <i class="fas fa-spinner fa-spin"></i> Logging in...
                             </div>
-                            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+                            <br>
+                            <button type="submit" class="btn btn-success btn-block">Sign In</button>
                         </form>
                     </div>
                 </div>

@@ -22,14 +22,14 @@ include '../database/connection.php';
 
 $id = isset($_GET['student_id']) ? $_GET['student_id'] : null;
 
-$stmt = $conn->prepare("
-    SELECT student_list.*, 
-           CONCAT(class_list.course, ' ', class_list.level, ' - ', class_list.section) as class_name
-    FROM student_list
-    JOIN class_list ON student_list.class_id = class_list.class_id
-");
-$stmt->execute();
-$students = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// $stmt = $conn->prepare("
+//     SELECT student_list.*, 
+//            CONCAT(class_list.course, ' ', class_list.level, ' - ', class_list.section) as class_name
+//     FROM student_list
+//     JOIN class_list ON student_list.class_id = class_list.class_id
+// ");
+// $stmt->execute();
+// $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $classes = [];
 $stmt = $conn->query("SELECT class_id, concat(course, ' ', level, ' - ', section) as class_name FROM class_list");

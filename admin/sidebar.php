@@ -26,32 +26,6 @@
           </a>
         </li>
         <li class="nav-item dropdown">
-          <a href="verify_accounts.php"
-            class="nav-link nav-subject_list <?php echo in_array(basename($_SERVER['PHP_SELF']), ['verify_accounts.php']) ? 'active' : ''; ?>"
-            style="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['verify_accounts.php']) ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
-            <i class="nav-icon fas fa-th-list"></i>
-            <p>Pending Accounts</p>
-          </a>
-        </li>
-        <li class="nav-item dropdown">
-          <a href="subject_list.php"
-            class="nav-link nav-subject_list <?php echo in_array(basename($_SERVER['PHP_SELF']), ['subject_list.php']) ? 'active' : ''; ?>"
-            style="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['subject_list.php', 'manage_subject.php']) ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
-            <i class="nav-icon fas fa-th-list"></i>
-            <p>Subjects</p>
-          </a>
-        </li>
-        <li class="nav-item dropdown">
-          <a href="class_list.php"
-            class="nav-link nav-class_list <?php echo in_array(basename($_SERVER['PHP_SELF']), ['class_list.php']) ? 'active' : ''; ?>"
-            style="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['class_list.php', 'manage_class.php']) ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
-            <i class="nav-icon fas fa-list-alt"></i>
-            <p>
-              Classes
-            </p>
-          </a>
-        </li>
-        <li class="nav-item dropdown">
           <a href="academic_list.php"
             class="nav-link nav-academic_list <?php echo in_array(basename($_SERVER['PHP_SELF']), ['academic_list.php']) ? 'active' : ''; ?>"
             style="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['academic_list.php', 'manage_academic.php']) ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
@@ -170,12 +144,6 @@
             </p>
           </a>
           <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a href="new_student.php" class="nav-link nav-new_student tree-item">
-                <i class="nav-icon"></i>
-                <p>Add New</p>
-              </a>
-            </li>
             <li class="nav-item">
               <a href="student_list.php" class="nav-link nav-student_list tree-item">
                 <i class="nav-icon"></i>

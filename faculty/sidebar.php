@@ -19,6 +19,14 @@
                     </a>
                 </li>
                 <li class="nav-item dropdown">
+                    <a href="verify_accounts.php"
+                        class="nav-link nav-evaluate <?php echo basename($_SERVER['PHP_SELF']) == 'verify_accounts.php' ? 'active' : ''; ?>"
+                        style="<?php echo basename($_SERVER['PHP_SELF']) == 'verify_accounts.php' ? 'background-color: rgb(51, 128, 64); color: #fff; border: 1px solid #343a40;' : 'background-color: #343a40; color: #fff; border: 1px solid #343a40;'; ?>">
+                        <i class="nav-icon fas fa-th-list"></i>
+                        <p>Pending Accounts</p>
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
                     <a href="./"
                         class="nav-link nav-evaluate <?php echo basename($_SERVER['PHP_SELF']) == 'evaluate.php' ? 'active' : ''; ?>"
                         style="<?php echo basename($_SERVER['PHP_SELF']) == 'evaluate.php' ? 'background-color: rgb(51, 128, 64); color: #fff; border: 1px solid #343a40;' : 'background-color: #343a40; color: #fff; border: 1px solid #343a40;'; ?>">

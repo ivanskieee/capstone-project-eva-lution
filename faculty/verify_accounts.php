@@ -29,6 +29,7 @@ include "handlers/verify_actions_handler.php";
                                 <tr>
                                     <th>Student ID</th>
                                     <th>Email</th>
+                                    <th>Name</th>
                                     <th>Subject</th>
                                     <th>Section</th>
                                     <th>Actions</th>
@@ -38,13 +39,14 @@ include "handlers/verify_actions_handler.php";
                                 <?php
                                 foreach ($result as $row) {
                                     echo "<tr>";
-                                    echo "<td>" . htmlspecialchars($row['student_id']) . "</td>";
+                                    echo "<td>" . htmlspecialchars($row['school_id']) . "</td>";
                                     echo "<td>" . htmlspecialchars($row['email']) . "</td>";
+                                    echo "<td>" . htmlspecialchars(ucwords($row['firstname'] . ' ' . $row['lastname'])) . "</td>";
                                     echo "<td>" . htmlspecialchars($row['subject']) . "</td>";
                                     echo "<td>" . htmlspecialchars($row['section']) . "</td>";
                                     echo "<td>
                                         <form method='POST' action='verify_accounts.php'>
-                                            <input type='hidden' name='student_id' value='" . htmlspecialchars($row['student_id']) . "'>
+                                            <input type='hidden' name='school_id' value='" . htmlspecialchars($row['school_id']) . "'>
                                             <button type='submit' name='action' value='confirm' class='btn btn-success'>Confirm</button>
                                             <button type='submit' name='action' value='remove' class='btn btn-danger'>Reject</button>
                                         </form>

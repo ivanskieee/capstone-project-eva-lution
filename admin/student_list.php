@@ -1,5 +1,15 @@
 <?php
 include "handlers/student_handler.php";
+include "../faculty/handlers/verify_actions_handler.php";
+
+$query = "
+    SELECT 
+        school_id, email, firstname, lastname, subject, section
+    FROM student_list
+";
+$stmt = $conn->prepare($query);
+$stmt->execute();
+$student_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <nav class="main-header">
@@ -7,9 +17,9 @@ include "handlers/student_handler.php";
         <div class="card card-outline card-success">
             <div class="card-header">
                 <div class="card-tools">
-                    <a class="btn btn-block btn-sm btn-default btn-flat border-success" href="new_student.php">
+                    <!-- <a class="btn btn-block btn-sm btn-default btn-flat border-success" href="new_student.php">
                         <i class="fa fa-plus"></i> Add New Student
-                    </a>
+                    </a> -->
                 </div>
             </div>
             <div class="row mb-3">
@@ -24,24 +34,26 @@ include "handlers/student_handler.php";
                         <thead>
                             <tr>
                                 <th class="text-center">#</th>
-                                <th>School ID</th>
+                                <th>Student ID</th>
                                 <th>Name</th>
                                 <th>Email</th>
-                                <th>Current Class</th>
+                                <th>Subject</th>
+                                <th>Section</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php
                             $i = 1;
-                            foreach ($students as $row): ?>
+                            foreach ($student_data as $row): ?>
                                 <tr>
                                     <th class="text-center"><?php echo $i++; ?></th>
                                     <td><b><?php echo htmlspecialchars($row['school_id']); ?></b></td>
                                     <td><b><?php echo htmlspecialchars(ucwords($row['firstname'] . ' ' . $row['lastname'])); ?></b>
                                     </td>
                                     <td><b><?php echo htmlspecialchars($row['email']); ?></b></td>
-                                    <td><b><?php echo htmlspecialchars($row['class_name']); ?></b></td>
+                                    <td><b><?php echo htmlspecialchars($row['subject']); ?></b></td>
+                                    <td><b><?php echo htmlspecialchars($row['section']); ?></b></td>
                                     </td>
                                     <td class="text-center">
                                         <button type="button"
