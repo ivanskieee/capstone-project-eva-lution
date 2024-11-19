@@ -36,7 +36,7 @@ if ($id) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    
+
     if (!isset($_POST['delete_id'])) {
         $school_id = $_POST['school_id'];
         $firstname = $_POST['firstname'];
@@ -44,10 +44,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $email = $_POST['email'];
         $password = $_POST['password'];
         $cpass = $_POST['cpass'];
+        $section = $_POST['section'] ?? null; // Get the section input
         $avatar = isset($_FILES['img']['name']) ? $_FILES['img']['name'] : null;
-        $id = $_POST['faculty_id'] ?? null; 
+        $id = $_POST['faculty_id'] ?? null;
 
-        
+        // Check if passwords match
         if (!empty($password) && $password !== $cpass) {
             echo "<script>
                     Swal.fire({
@@ -59,22 +60,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             return;
         }
 
-        
+        // Hash the password if provided
         if (!empty($password)) {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         }
 
-       
+        // Handle file upload for avatar
         if ($avatar) {
             $target_dir = "assets/uploads/";
             $target_file = $target_dir . basename($_FILES["img"]["name"]);
             move_uploaded_file($_FILES["img"]["tmp_name"], $target_file);
         }
 
-        
+        // Check if updating or inserting
         if ($id) {
+            // Update query
             $query = "UPDATE college_faculty_list 
-                      SET school_id = :school_id, firstname = :firstname, lastname = :lastname, email = :email";
+                      SET school_id = :school_id, firstname = :firstname, lastname = :lastname, section = :section, email = :email";
 
             if (!empty($password)) {
                 $query .= ", password = :password";
@@ -90,6 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindParam(':school_id', $school_id);
             $stmt->bindParam(':firstname', $firstname);
             $stmt->bindParam(':lastname', $lastname);
+            $stmt->bindParam(':section', $section);
             $stmt->bindParam(':email', $email);
 
             if (!empty($password)) {
@@ -101,8 +104,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             $stmt->bindParam(':faculty_id', $id, PDO::PARAM_INT);
-        } 
-        else {
+        } else {
+            // Insert query
             $query = "INSERT INTO college_faculty_list (school_id, firstname, lastname, section, email, password, avatar) 
                       VALUES (:school_id, :firstname, :lastname, :section, :email, :password, :avatar)";
             $stmt = $conn->prepare($query);
@@ -114,15 +117,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':password', $hashed_password);
             $stmt->bindParam(':avatar', $avatar);
-            
         }
 
-        
+        // Execute query and handle response
         if ($stmt->execute()) {
-            
             sendEmail($email, $password);
 
-            
             echo "<script>
                     Swal.fire({
                         icon: 'success',
@@ -144,10 +144,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   </script>";
         }
 
-       
         $conn = null;
     }
 
+    // Handle delete request
     if (isset($_POST['delete_id'])) {
         $delete_id = $_POST['delete_id'];
 
@@ -164,6 +164,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "<script>window.location.replace('tertiary_faculty_list.php');</script>";
     }
 }
+
+
 
 
 function sendEmail($toEmail, $plainPassword)

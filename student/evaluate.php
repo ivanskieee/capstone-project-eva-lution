@@ -7,18 +7,13 @@ include 'handlers/eval_handler.php';
 		<div class="row">
 			<div class="col-md-3">
 				<div class="list-group">
-					<?php
-					// Get the student's section (this could be passed through a session or GET parameter)
-					$student_section = $_GET['section']; // Or fetch from the database based on school_id
-					
-					// Query only faculty whose section matches the student's section
-					$query = "
-						SELECT 'college' AS type, cf.faculty_id AS fid, cf.firstname, cf.lastname
-						FROM college_faculty_list cf
-						WHERE cf.section = :section
-					";
+				<?php
+					// Query only from college_faculty_list
+					$query = "SELECT 'college' AS type, cf.faculty_id AS fid, cf.firstname, cf.lastname
+						FROM college_faculty_list cf";
+
 					$stmt = $conn->prepare($query);
-					$stmt->execute(['section' => $student_section]);
+					$stmt->execute();
 
 					$active_rid = isset($_GET['rid']) ? $_GET['rid'] : null;
 

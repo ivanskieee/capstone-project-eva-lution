@@ -2,9 +2,9 @@
 include "student_signup_handler.php";
 include "submit_registration.php";
 ?>
-<div class="container mt-1">
+<div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-6 mt-4">
+        <div class="col-md-6">
             <div class="login-box">
                 <div class="card">
                     <div class="card-body login-card-body">
@@ -75,7 +75,7 @@ include "submit_registration.php";
                                     </div>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                            <button type="submit" class="btn btn-success btn-block">Submit</button>
                         </form>
                     </div>
                 </div>

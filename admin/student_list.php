@@ -39,7 +39,6 @@ $student_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <th>Email</th>
                                 <th>Subject</th>
                                 <th>Section</th>
-                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -55,7 +54,7 @@ $student_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     <td><b><?php echo htmlspecialchars($row['subject']); ?></b></td>
                                     <td><b><?php echo htmlspecialchars($row['section']); ?></b></td>
                                     </td>
-                                    <td class="text-center">
+                                    <!-- <td class="text-center">
                                         <button type="button"
                                             class="btn btn-default btn-sm btn-flat border-info wave-effect text-info dropdown-toggle"
                                             data-toggle="dropdown" aria-expanded="true">
@@ -74,7 +73,7 @@ $student_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                                 onclick="confirmDeletion()">Delete</button>
                                         </form>
                     </div>
-                    </td>
+                    </td> -->
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
