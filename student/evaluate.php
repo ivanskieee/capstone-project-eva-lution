@@ -7,31 +7,30 @@ include 'handlers/eval_handler.php';
 		<div class="row">
 			<div class="col-md-3">
 				<div class="list-group">
-				<?php
-					// Query only from college_faculty_list
-					$query = "SELECT 'college' AS type, cf.faculty_id AS fid, cf.firstname, cf.lastname
-						FROM college_faculty_list cf";
-
+					<?php
+					// Get the subject from the URL
+					$subject = $_GET['subject'] ?? ''; // Default to an empty string if not provided
+					
+					// Prepare and execute query
+					$query = "
+							SELECT 'college' AS type, cf.faculty_id AS fid, cf.firstname, cf.lastname
+							FROM college_faculty_list cf
+							WHERE cf.subject = :subject
+						";
 					$stmt = $conn->prepare($query);
-					$stmt->execute();
+					$stmt->execute(['subject' => $subject]);
 
-					$active_rid = isset($_GET['rid']) ? $_GET['rid'] : null;
-
+					// Display results
 					while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
-						if (empty($rid)) {
-							$rid = $row['fid'];
-						}
-
 						// Determine if the current row is active
-						$is_active = ($active_rid == $row['fid']) ? 'list-group-item-success' : '';
+						$is_active = (isset($_GET['rid']) && $_GET['rid'] == $row['fid']) ? 'list-group-item-success' : '';
 						?>
-
 						<a class="list-group-item list-group-item-action <?php echo $is_active; ?>"
-							href="./evaluate.php?rid=<?php echo $row['fid'] ?>">
+							href="./evaluate.php?rid=<?php echo $row['fid']; ?>&subject=<?php echo $subject; ?>">
 							<?php echo ucwords($row['firstname'] . ' ' . $row['lastname']); ?>
 						</a>
-
 					<?php endwhile; ?>
+
 				</div>
 			</div>
 			<div class="col-md-9">

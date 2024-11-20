@@ -44,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $email = $_POST['email'];
         $password = $_POST['password'];
         $cpass = $_POST['cpass'];
-        $section = $_POST['section'] ?? null; // Get the section input
+        $subject = $_POST['subject'] ?? null; // Get the subject input
         $avatar = isset($_FILES['img']['name']) ? $_FILES['img']['name'] : null;
         $id = $_POST['faculty_id'] ?? null;
 
@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($id) {
             // Update query
             $query = "UPDATE college_faculty_list 
-                      SET school_id = :school_id, firstname = :firstname, lastname = :lastname, section = :section, email = :email";
+                      SET school_id = :school_id, firstname = :firstname, lastname = :lastname, subject = :subject, email = :email";
 
             if (!empty($password)) {
                 $query .= ", password = :password";
@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindParam(':school_id', $school_id);
             $stmt->bindParam(':firstname', $firstname);
             $stmt->bindParam(':lastname', $lastname);
-            $stmt->bindParam(':section', $section);
+            $stmt->bindParam(':subject', $subject);
             $stmt->bindParam(':email', $email);
 
             if (!empty($password)) {
@@ -106,14 +106,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindParam(':faculty_id', $id, PDO::PARAM_INT);
         } else {
             // Insert query
-            $query = "INSERT INTO college_faculty_list (school_id, firstname, lastname, section, email, password, avatar) 
-                      VALUES (:school_id, :firstname, :lastname, :section, :email, :password, :avatar)";
+            $query = "INSERT INTO college_faculty_list (school_id, firstname, lastname, subject, email, password, avatar) 
+                      VALUES (:school_id, :firstname, :lastname, :subject, :email, :password, :avatar)";
             $stmt = $conn->prepare($query);
 
             $stmt->bindParam(':school_id', $school_id);
             $stmt->bindParam(':firstname', $firstname);
             $stmt->bindParam(':lastname', $lastname);
-            $stmt->bindParam(':section', $section);
+            $stmt->bindParam(':subject', $subject);
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':password', $hashed_password);
             $stmt->bindParam(':avatar', $avatar);

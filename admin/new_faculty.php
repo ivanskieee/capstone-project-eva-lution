@@ -41,8 +41,8 @@ include "handlers/faculty_handler.php";
                             <small id="msg"></small>
                         </div>
                         <div class="form-group">
-                            <label for="section" class="control-label">Section</label>
-                            <input type="text" class="form-control form-control-sm" name="section" required value="<?php echo isset($faculty['section']) ? $faculty['section'] : ''; ?>">
+                            <label for="subject" class="control-label">Subject</label>
+                            <input type="text" class="form-control form-control-sm" name="subject" required value="<?php echo isset($faculty['subject']) ? $faculty['subject'] : ''; ?>">
                             <small id="msg"></small>
                         </div>
                         <div class="form-group">

@@ -1,6 +1,6 @@
 <?php
 include "handlers/student_handler.php";
-include "../faculty/handlers/verify_actions_handler.php";
+include "handlers/verify_actions_handler.php";
 
 $query = "
     SELECT 
