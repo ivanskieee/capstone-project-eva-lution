@@ -18,11 +18,20 @@
                     </a>
                 </li>
                 <?php
-                $subject = $_GET['subject'] ?? 'cc101';
-                ?>
+                include '../database/connection.php';
 
+                // Retrieve the current user's student ID
+                $student_id = $_SESSION['user']['student_id'];
+                $query = "SELECT subject FROM student_list WHERE student_id = :student_id";
+                $stmt = $conn->prepare($query);
+                $stmt->execute(['student_id' => $student_id]);
+                $student = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                // Get all subjects as a single string (comma-separated)
+                $subjects = $student['subject'] ?? ''; // Default to empty string if no subject
+                ?>
                 <li class="nav-item dropdown">
-                    <a href="evaluate.php?subject=<?php echo $subject; ?>"
+                    <a href="evaluate.php?subjects=<?php echo urlencode($subjects); ?>"
                         class="nav-link nav-evaluate <?php echo basename($_SERVER['PHP_SELF']) == 'evaluate.php' ? 'active' : ''; ?>"
                         style="<?php echo basename($_SERVER['PHP_SELF']) == 'evaluate.php' ? 'background-color: rgb(51, 128, 64); color: #fff; border: 1px solid #343a40;' : 'background-color: #343a40; color: #fff; border: 1px solid #343a40;'; ?>">
                         <i class="nav-icon fas fa-th-list"></i>

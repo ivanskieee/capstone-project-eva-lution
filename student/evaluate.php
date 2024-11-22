@@ -8,28 +8,58 @@ include 'handlers/eval_handler.php';
 			<div class="col-md-3">
 				<div class="list-group">
 					<?php
-					// Get the subject from the URL
-					$subject = $_GET['subject'] ?? ''; // Default to an empty string if not provided
+					// Retrieve and process subjects from the query parameter
+					$subjects = $_GET['subjects'] ?? ''; // Get the subjects string
+					$subjectArray = explode(',', $subjects); // Convert to an array
 					
-					// Prepare and execute query
-					$query = "
-							SELECT 'college' AS type, cf.faculty_id AS fid, cf.firstname, cf.lastname
-							FROM college_faculty_list cf
-							WHERE cf.subject = :subject
-						";
-					$stmt = $conn->prepare($query);
-					$stmt->execute(['subject' => $subject]);
+					if (empty($subjects)) {
+						echo '<div class="alert alert-warning">No subjects available for evaluation.</div>';
+					} else {
+						// Initialize an array to track the faculty members already displayed
+						$displayedFaculty = [];
 
-					// Display results
-					while ($row = $stmt->fetch(PDO::FETCH_ASSOC)):
-						// Determine if the current row is active
-						$is_active = (isset($_GET['rid']) && $_GET['rid'] == $row['fid']) ? 'list-group-item-success' : '';
-						?>
-						<a class="list-group-item list-group-item-action <?php echo $is_active; ?>"
-							href="./evaluate.php?rid=<?php echo $row['fid']; ?>&subject=<?php echo $subject; ?>">
-							<?php echo ucwords($row['firstname'] . ' ' . $row['lastname']); ?>
-						</a>
-					<?php endwhile; ?>
+						foreach ($subjectArray as $subject) {
+							$subject = trim($subject); // Clean up whitespace
+					
+							// Prepare the SQL query to join college_faculty_list and student_list based on the subject
+							$query = "
+            SELECT cf.faculty_id AS fid, cf.firstname, cf.lastname
+            FROM college_faculty_list cf
+            INNER JOIN student_list sl ON FIND_IN_SET(:subject, sl.subject) > 0
+            WHERE FIND_IN_SET(:subject, cf.subject) > 0
+        ";
+
+							// Prepare and execute the query
+							$stmt = $conn->prepare($query);
+							$stmt->execute(['subject' => $subject]);
+
+							// Check if results exist for the current subject
+							if ($stmt->rowCount() === 0) {
+								echo '<div class="alert alert-warning">No faculty members found for ' . htmlspecialchars($subject, ENT_QUOTES, 'UTF-8') . '.</div>';
+							} else {
+								// Display results
+								while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+									// Skip faculty already displayed
+									if (in_array($row['fid'], $displayedFaculty)) {
+										continue;
+									}
+
+									// Mark the faculty as displayed
+									$displayedFaculty[] = $row['fid'];
+
+									// Determine if the current row is active
+									$is_active = (isset($_GET['rid']) && $_GET['rid'] == $row['fid']) ? 'list-group-item-success' : '';
+									?>
+									<a class="list-group-item list-group-item-action <?php echo $is_active; ?>"
+										href="./evaluate.php?rid=<?php echo $row['fid']; ?>&subjects=<?php echo urlencode($subjects); ?>">
+										<?php echo htmlspecialchars(ucwords($row['firstname'] . ' ' . $row['lastname']), ENT_QUOTES, 'UTF-8'); ?>
+									</a>
+									<?php
+								}
+							}
+						}
+					}
+					?>
 
 				</div>
 			</div>

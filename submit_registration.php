@@ -2,11 +2,11 @@
 include 'database/connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $school_id = $_POST['school_id']; // Updated variable name
-    $firstname = $_POST['firstname']; // New field
-    $lastname = $_POST['lastname'];   // New field
+    $school_id = $_POST['school_id'];
+    $firstname = $_POST['firstname'];
+    $lastname = $_POST['lastname'];
     $email = $_POST['email'];
-    $subject = $_POST['subject'];
+    $subjects = implode(',', $_POST['subjects']); // Join subjects array into a string
     $section = $_POST['section'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
@@ -14,12 +14,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
               VALUES (:school_id, :firstname, :lastname, :email, :subject, :section, :password)";
     
     $stmt = $conn->prepare($query);
-    
-    $stmt->bindParam(':school_id', $school_id); // Updated bindParam
-    $stmt->bindParam(':firstname', $firstname); // Bind the firstname
-    $stmt->bindParam(':lastname', $lastname);   // Bind the lastname
+
+    $stmt->bindParam(':school_id', $school_id);
+    $stmt->bindParam(':firstname', $firstname);
+    $stmt->bindParam(':lastname', $lastname);
     $stmt->bindParam(':email', $email);
-    $stmt->bindParam(':subject', $subject);
+    $stmt->bindParam(':subject', $subjects); // Bind the joined subjects string
     $stmt->bindParam(':section', $section);
     $stmt->bindParam(':password', $password);
 

@@ -15,7 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 password,
                 firstname,
                 lastname,
-                subject
+                subject,
+                section
             FROM pending_students
             WHERE school_id = :school_id
         ";
@@ -28,17 +29,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $faculty_query = "
                 SELECT faculty_id 
                 FROM college_faculty_list 
-                WHERE subject = :subject
+                WHERE :subject LIKE CONCAT('%', subject, '%')
             ";
             $faculty_stmt = $conn->prepare($faculty_query);
             $faculty_stmt->execute(['subject' => $student_data['subject']]);
             $faculty_data = $faculty_stmt->fetch(PDO::FETCH_ASSOC);
-
+        
             if ($faculty_data) {
                 // Insert the student into `student_list`
                 $insert_query = "
-                    INSERT INTO student_list (school_id, email, password, firstname, lastname, subject) 
-                    VALUES (:school_id, :email, :password, :firstname, :lastname, :subject)
+                    INSERT INTO student_list (school_id, email, password, firstname, lastname, subject, section) 
+                    VALUES (:school_id, :email, :password, :firstname, :lastname, :subject, :section)
                 ";
                 $stmt = $conn->prepare($insert_query);
                 $stmt->execute([
@@ -47,9 +48,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     'password' => $student_data['password'],
                     'firstname' => $student_data['firstname'],
                     'lastname' => $student_data['lastname'],
-                    'subject' => $student_data['subject']
+                    'subject' => $student_data['subject'],
+                    'section' => $student_data['section']
                 ]);
-
+        
                 // Remove the student from `pending_students`
                 $delete_query = "DELETE FROM pending_students WHERE school_id = :school_id";
                 $stmt = $conn->prepare($delete_query);

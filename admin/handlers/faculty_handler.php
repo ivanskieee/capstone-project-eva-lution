@@ -36,7 +36,6 @@ if ($id) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-
     if (!isset($_POST['delete_id'])) {
         $school_id = $_POST['school_id'];
         $firstname = $_POST['firstname'];
@@ -44,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $email = $_POST['email'];
         $password = $_POST['password'];
         $cpass = $_POST['cpass'];
-        $subject = $_POST['subject'] ?? null; // Get the subject input
+        $subjects = $_POST['subjects'] ?? []; // Multiple subjects array
         $avatar = isset($_FILES['img']['name']) ? $_FILES['img']['name'] : null;
         $id = $_POST['faculty_id'] ?? null;
 
@@ -72,57 +71,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             move_uploaded_file($_FILES["img"]["tmp_name"], $target_file);
         }
 
-        // Check if updating or inserting
-        if ($id) {
-            // Update query
-            $query = "UPDATE college_faculty_list 
-                      SET school_id = :school_id, firstname = :firstname, lastname = :lastname, subject = :subject, email = :email";
+        // Handle subjects
+        if (is_array($subjects) && count($subjects) > 1) {
+            // Multiple subjects, store as comma-separated string
+            $subjects_data = implode(", ", $subjects);
+        } else {
+            // Single subject, store as string
+            $subjects_data = $subjects[0] ?? '';
+        }
 
-            if (!empty($password)) {
-                $query .= ", password = :password";
-            }
+        try {
+            if ($id) {
+                // Update query
+                $query = "UPDATE college_faculty_list 
+                          SET school_id = :school_id, firstname = :firstname, lastname = :lastname, 
+                              email = :email, subject = :subject";
 
-            if ($avatar) {
-                $query .= ", avatar = :avatar";
-            }
+                if (!empty($password)) {
+                    $query .= ", password = :password";
+                }
 
-            $query .= " WHERE faculty_id = :faculty_id";
-            $stmt = $conn->prepare($query);
+                if ($avatar) {
+                    $query .= ", avatar = :avatar";
+                }
 
-            $stmt->bindParam(':school_id', $school_id);
-            $stmt->bindParam(':firstname', $firstname);
-            $stmt->bindParam(':lastname', $lastname);
-            $stmt->bindParam(':subject', $subject);
-            $stmt->bindParam(':email', $email);
+                $query .= " WHERE faculty_id = :faculty_id";
+                $stmt = $conn->prepare($query);
 
-            if (!empty($password)) {
+                $stmt->bindParam(':school_id', $school_id);
+                $stmt->bindParam(':firstname', $firstname);
+                $stmt->bindParam(':lastname', $lastname);
+                $stmt->bindParam(':email', $email);
+                $stmt->bindParam(':subject', $subjects_data);
+
+                if (!empty($password)) {
+                    $stmt->bindParam(':password', $hashed_password);
+                }
+
+                if ($avatar) {
+                    $stmt->bindParam(':avatar', $avatar);
+                }
+
+                $stmt->bindParam(':faculty_id', $id, PDO::PARAM_INT);
+            } else {
+                // Insert query
+                $query = "INSERT INTO college_faculty_list (school_id, firstname, lastname, email, subject, password, avatar) 
+                          VALUES (:school_id, :firstname, :lastname, :email, :subject, :password, :avatar)";
+                $stmt = $conn->prepare($query);
+
+                $stmt->bindParam(':school_id', $school_id);
+                $stmt->bindParam(':firstname', $firstname);
+                $stmt->bindParam(':lastname', $lastname);
+                $stmt->bindParam(':email', $email);
+                $stmt->bindParam(':subject', $subjects_data);
                 $stmt->bindParam(':password', $hashed_password);
-            }
-
-            if ($avatar) {
                 $stmt->bindParam(':avatar', $avatar);
             }
 
-            $stmt->bindParam(':faculty_id', $id, PDO::PARAM_INT);
-        } else {
-            // Insert query
-            $query = "INSERT INTO college_faculty_list (school_id, firstname, lastname, subject, email, password, avatar) 
-                      VALUES (:school_id, :firstname, :lastname, :subject, :email, :password, :avatar)";
-            $stmt = $conn->prepare($query);
+            // Execute query
+            $stmt->execute();
 
-            $stmt->bindParam(':school_id', $school_id);
-            $stmt->bindParam(':firstname', $firstname);
-            $stmt->bindParam(':lastname', $lastname);
-            $stmt->bindParam(':subject', $subject);
-            $stmt->bindParam(':email', $email);
-            $stmt->bindParam(':password', $hashed_password);
-            $stmt->bindParam(':avatar', $avatar);
-        }
-
-        // Execute query and handle response
-        if ($stmt->execute()) {
-            sendEmail($email, $password);
-
+            // Success message
             echo "<script>
                     Swal.fire({
                         icon: 'success',
@@ -134,12 +143,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         window.location.replace('tertiary_faculty_list.php');
                     });
                   </script>";
-        } else {
+        } catch (Exception $e) {
             echo "<script>
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
-                        text: 'Error saving data. Please try again.',
+                        text: 'Error saving data: {$e->getMessage()}',
                     });
                   </script>";
         }
@@ -151,19 +160,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['delete_id'])) {
         $delete_id = $_POST['delete_id'];
 
-        $stmt = $conn->prepare('DELETE FROM college_faculty_list WHERE faculty_id = :id');
-        $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
+        try {
+            $stmt = $conn->prepare('DELETE FROM college_faculty_list WHERE faculty_id = :id');
+            $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
+            $stmt->execute();
 
-        if ($stmt->execute()) {
             $_SESSION['message'] = 'Faculty deleted successfully.';
-        } else {
-            error_log('Error deleting faculty');
+        } catch (Exception $e) {
+            error_log("Error deleting faculty: " . $e->getMessage());
             $_SESSION['error'] = 'Error deleting faculty. Please try again.';
         }
 
         echo "<script>window.location.replace('tertiary_faculty_list.php');</script>";
     }
 }
+
 
 
 
