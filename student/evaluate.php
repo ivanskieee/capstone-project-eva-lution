@@ -8,46 +8,42 @@ include 'handlers/eval_handler.php';
 			<div class="col-md-3">
 				<div class="list-group">
 					<?php
-					// Retrieve and process subjects from the query parameter
-					$subjects = $_GET['subjects'] ?? ''; // Get the subjects string
-					$subjectArray = explode(',', $subjects); // Convert to an array
+					$subjects = $_GET['subjects'] ?? ''; 
+					$subjectArray = explode(',', strtolower($subjects));
 					
 					if (empty($subjects)) {
 						echo '<div class="alert alert-warning">No subjects available for evaluation.</div>';
 					} else {
-						// Initialize an array to track the faculty members already displayed
 						$displayedFaculty = [];
 
 						foreach ($subjectArray as $subject) {
-							$subject = trim($subject); // Clean up whitespace
+							$subject = trim($subject); 
 					
-							// Prepare the SQL query to join college_faculty_list and student_list based on the subject
 							$query = "
-            SELECT cf.faculty_id AS fid, cf.firstname, cf.lastname
-            FROM college_faculty_list cf
-            INNER JOIN student_list sl ON FIND_IN_SET(:subject, sl.subject) > 0
-            WHERE FIND_IN_SET(:subject, cf.subject) > 0
-        ";
+								SELECT cf.faculty_id AS fid, cf.firstname, cf.lastname
+								FROM college_faculty_list cf
+								WHERE EXISTS (
+									SELECT 1
+									FROM student_list sl
+									WHERE sl.student_id = :student_id
+									AND FIND_IN_SET(:subject, cf.subject) > 0
+								)
+							";
 
-							// Prepare and execute the query
 							$stmt = $conn->prepare($query);
-							$stmt->execute(['subject' => $subject]);
+							$stmt->execute([
+								'student_id' => $_SESSION['user']['student_id'], 
+								'subject' => $subject,
+							]);
 
-							// Check if results exist for the current subject
-							if ($stmt->rowCount() === 0) {
-								echo '<div class="alert alert-warning">No faculty members found for ' . htmlspecialchars($subject, ENT_QUOTES, 'UTF-8') . '.</div>';
-							} else {
-								// Display results
+							if ($stmt->rowCount() > 0) {
 								while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-									// Skip faculty already displayed
 									if (in_array($row['fid'], $displayedFaculty)) {
 										continue;
 									}
 
-									// Mark the faculty as displayed
 									$displayedFaculty[] = $row['fid'];
 
-									// Determine if the current row is active
 									$is_active = (isset($_GET['rid']) && $_GET['rid'] == $row['fid']) ? 'list-group-item-success' : '';
 									?>
 									<a class="list-group-item list-group-item-action <?php echo $is_active; ?>"
@@ -60,7 +56,6 @@ include 'handlers/eval_handler.php';
 						}
 					}
 					?>
-
 				</div>
 			</div>
 			<div class="col-md-9">

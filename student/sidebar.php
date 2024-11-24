@@ -8,7 +8,7 @@
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column nav-flat" data-widget="treeview" role="menu"
                 data-accordion="false">
-                <!-- Dashboard Link -->
+
                 <li class="nav-item dropdown">
                     <a href="home.php"
                         class="nav-link nav-home <?php echo basename($_SERVER['PHP_SELF']) == 'home.php' ? 'active' : ''; ?>"
@@ -20,18 +20,20 @@
                 <?php
                 include '../database/connection.php';
 
-                // Retrieve the current user's student ID
                 $student_id = $_SESSION['user']['student_id'];
-                $query = "SELECT subject FROM student_list WHERE student_id = :student_id";
+
+                $query = "SELECT LOWER(subject) AS subject FROM student_list WHERE student_id = :student_id";
                 $stmt = $conn->prepare($query);
                 $stmt->execute(['student_id' => $student_id]);
                 $student = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                // Get all subjects as a single string (comma-separated)
-                $subjects = $student['subject'] ?? ''; // Default to empty string if no subject
+                $subjects = $student['subject'] ?? '';
+
+                $normalizedSubjects = array_map('trim', explode(',', strtolower($subjects)));
+                $normalizedSubjectsString = implode(',', $normalizedSubjects);
                 ?>
                 <li class="nav-item dropdown">
-                    <a href="evaluate.php?subjects=<?php echo urlencode($subjects); ?>"
+                    <a href="evaluate.php?subjects=<?php echo urlencode($normalizedSubjectsString); ?>"
                         class="nav-link nav-evaluate <?php echo basename($_SERVER['PHP_SELF']) == 'evaluate.php' ? 'active' : ''; ?>"
                         style="<?php echo basename($_SERVER['PHP_SELF']) == 'evaluate.php' ? 'background-color: rgb(51, 128, 64); color: #fff; border: 1px solid #343a40;' : 'background-color: #343a40; color: #fff; border: 1px solid #343a40;'; ?>">
                         <i class="nav-icon fas fa-th-list"></i>

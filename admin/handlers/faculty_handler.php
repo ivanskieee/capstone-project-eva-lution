@@ -47,7 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $avatar = isset($_FILES['img']['name']) ? $_FILES['img']['name'] : null;
         $id = $_POST['faculty_id'] ?? null;
 
-        // Check if passwords match
         if (!empty($password) && $password !== $cpass) {
             echo "<script>
                     Swal.fire({
@@ -59,30 +58,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             return;
         }
 
-        // Hash the password if provided
         if (!empty($password)) {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         }
 
-        // Handle file upload for avatar
         if ($avatar) {
             $target_dir = "assets/uploads/";
             $target_file = $target_dir . basename($_FILES["img"]["name"]);
             move_uploaded_file($_FILES["img"]["tmp_name"], $target_file);
         }
 
-        // Handle subjects
         if (is_array($subjects) && count($subjects) > 1) {
-            // Multiple subjects, store as comma-separated string
             $subjects_data = implode(", ", $subjects);
         } else {
-            // Single subject, store as string
+           
             $subjects_data = $subjects[0] ?? '';
         }
 
         try {
             if ($id) {
-                // Update query
+              
                 $query = "UPDATE college_faculty_list 
                           SET school_id = :school_id, firstname = :firstname, lastname = :lastname, 
                               email = :email, subject = :subject";
@@ -114,7 +109,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $stmt->bindParam(':faculty_id', $id, PDO::PARAM_INT);
             } else {
-                // Insert query
                 $query = "INSERT INTO college_faculty_list (school_id, firstname, lastname, email, subject, password, avatar) 
                           VALUES (:school_id, :firstname, :lastname, :email, :subject, :password, :avatar)";
                 $stmt = $conn->prepare($query);
@@ -128,10 +122,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->bindParam(':avatar', $avatar);
             }
 
-            // Execute query
+
             $stmt->execute();
 
-            // Success message
+
             echo "<script>
                     Swal.fire({
                         icon: 'success',
@@ -156,7 +150,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $conn = null;
     }
 
-    // Handle delete request
     if (isset($_POST['delete_id'])) {
         $delete_id = $_POST['delete_id'];
 
