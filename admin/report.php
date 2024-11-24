@@ -48,15 +48,16 @@ include "handlers/report_handler.php";
                                 </td>
                             </tr>
                             <tr>
-                                <td width="50%">
-                                    <p><b>Class: <span id="classField"></span></b></p>
-                                </td>
-                                <td width="50%">
-                                    <p><b>Subject: <span id="subjectField"></span></b></p>
-                                </td>
                             </tr>
                         </table>
-                        <p class=""><b>Total Student Evaluated: <span id="tse"></span></b></p>
+                        <p class=""><b>Total Student Evaluated: <span id="tse">
+                                    <?php
+                                    // Assuming you have a database connection in $conn
+                                    $stmt = $conn->query("SELECT COUNT(DISTINCT student_id) FROM evaluation_answers"); // Use DISTINCT to count unique student_ids
+                                    $totalStudentsEvaluated = $stmt->fetchColumn(); // fetchColumn() is used to get the result of COUNT
+                                    echo $totalStudentsEvaluated;
+                                    ?>
+                                </span></b></p>
                     </div>
                     <fieldset class="border border-success p-2 w-100">
                         <legend class="w-auto">Rating Legend</legend>

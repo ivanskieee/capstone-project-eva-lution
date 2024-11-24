@@ -8,42 +8,41 @@ include 'handlers/eval_handler.php';
 			<div class="col-md-3">
 				<div class="list-group">
 					<?php
-					$subjects = $_GET['subjects'] ?? ''; 
+					$subjects = $_GET['subjects'] ?? '';
 					$subjectArray = explode(',', strtolower($subjects));
 					
 					if (empty($subjects)) {
 						echo '<div class="alert alert-warning">No subjects available for evaluation.</div>';
 					} else {
 						$displayedFaculty = [];
-
+					
 						foreach ($subjectArray as $subject) {
 							$subject = trim($subject); 
 					
 							$query = "
-								SELECT cf.faculty_id AS fid, cf.firstname, cf.lastname
-								FROM college_faculty_list cf
-								WHERE EXISTS (
-									SELECT 1
-									FROM student_list sl
-									WHERE sl.student_id = :student_id
-									AND FIND_IN_SET(:subject, cf.subject) > 0
-								)
-							";
-
+									SELECT cf.faculty_id AS fid, cf.firstname, cf.lastname
+									FROM college_faculty_list cf
+									WHERE EXISTS (
+										SELECT 1
+										FROM student_list sl
+										WHERE sl.student_id = :student_id
+									)
+									AND cf.subject REGEXP :subject
+								";
 							$stmt = $conn->prepare($query);
+
 							$stmt->execute([
-								'student_id' => $_SESSION['user']['student_id'], 
-								'subject' => $subject,
+								'student_id' => $_SESSION['user']['student_id'],
+								'subject' => '\\b' . strtolower($subject) . '\\b', 
 							]);
 
 							if ($stmt->rowCount() > 0) {
 								while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 									if (in_array($row['fid'], $displayedFaculty)) {
-										continue;
+										continue; 
 									}
 
-									$displayedFaculty[] = $row['fid'];
-
+									$displayedFaculty[] = $row['fid']; 
 									$is_active = (isset($_GET['rid']) && $_GET['rid'] == $row['fid']) ? 'list-group-item-success' : '';
 									?>
 									<a class="list-group-item list-group-item-action <?php echo $is_active; ?>"
@@ -52,6 +51,8 @@ include 'handlers/eval_handler.php';
 									</a>
 									<?php
 								}
+							} else {
+								echo '<div class="alert alert-warning">No faculty members found for ' . htmlspecialchars($subject, ENT_QUOTES, 'UTF-8') . '.</div>';
 							}
 						}
 					}

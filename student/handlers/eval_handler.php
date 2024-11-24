@@ -26,23 +26,23 @@ $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $evaluation_id = $_POST['evaluation_id'];
-    $question_ids = $_POST['question_id']; // This is now an array
-    $ratings = $_POST['rate']; // Renamed for clarity
+    $faculty_id = $_POST['faculty_id'];  // Assuming you have this from the form
+    $student_id = $_SESSION['user']['student_id'];  // Fetch student_id from session
+    $question_ids = $_POST['question_id']; // This is an array of question ids
+    $ratings = $_POST['rate']; // Ratings for each question
 
     // Prepare the SQL statement
-    $stmt = $conn->prepare('INSERT INTO evaluation_answers (evaluation_id, question_id, rate) VALUES (?, ?, ?)');
+    $stmt = $conn->prepare('INSERT INTO evaluation_answers (evaluation_id, faculty_id, student_id, question_id, rate) VALUES (?, ?, ?, ?, ?)');
 
     $success = true; // Variable to track overall success
 
     foreach ($question_ids as $question_id) {
-        // Make sure to get the corresponding rating for the current question_id
         if (isset($ratings[$question_id])) {
             $rate = $ratings[$question_id];
 
             // Execute the prepared statement
-            if (!$stmt->execute([$evaluation_id, $question_id, $rate])) {
+            if (!$stmt->execute([$evaluation_id, $faculty_id, $student_id, $question_id, $rate])) {
                 $success = false; // Set success to false if an insertion fails
-                // Optionally log the error message or handle it
             }
         }
     }
@@ -53,5 +53,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo json_encode(['status' => 'error', 'message' => 'Some answers could not be inserted.']);
     }
 }
+
 
 ?>
