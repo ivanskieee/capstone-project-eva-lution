@@ -10,15 +10,15 @@ include 'handlers/eval_handler.php';
 					<?php
 					$subjects = $_GET['subjects'] ?? '';
 					$subjectArray = explode(',', strtolower($subjects));
-					
+
 					if (empty($subjects)) {
 						echo '<div class="alert alert-warning">No subjects available for evaluation.</div>';
 					} else {
 						$displayedFaculty = [];
-					
+
 						foreach ($subjectArray as $subject) {
-							$subject = trim($subject); 
-					
+							$subject = trim($subject);
+
 							$query = "
 									SELECT cf.faculty_id AS fid, cf.firstname, cf.lastname
 									FROM college_faculty_list cf
@@ -33,16 +33,16 @@ include 'handlers/eval_handler.php';
 
 							$stmt->execute([
 								'student_id' => $_SESSION['user']['student_id'],
-								'subject' => '\\b' . strtolower($subject) . '\\b', 
+								'subject' => '\\b' . strtolower($subject) . '\\b',
 							]);
 
 							if ($stmt->rowCount() > 0) {
 								while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
 									if (in_array($row['fid'], $displayedFaculty)) {
-										continue; 
+										continue;
 									}
 
-									$displayedFaculty[] = $row['fid']; 
+									$displayedFaculty[] = $row['fid'];
 									$is_active = (isset($_GET['rid']) && $_GET['rid'] == $row['fid']) ? 'list-group-item-success' : '';
 									?>
 									<a class="list-group-item list-group-item-action <?php echo $is_active; ?>"
@@ -59,12 +59,17 @@ include 'handlers/eval_handler.php';
 					?>
 				</div>
 			</div>
+			<?php
+			// Retrieve faculty_id from URL
+			$faculty_id = $_GET['rid'] ?? null;
+			?>
+
 			<div class="col-md-9">
 				<div class="card card-outline card-success">
 					<div class="card-header">
-						<b>Evaluation Questionnaire for Academic: </b>
+						<b>Evaluation Questionnaire for Academic:</b>
 						<div class="card-tools">
-							<form id="evaluation-form" method="POST" action="evaluate.php">
+							<form id="evaluation-form" method="POST" action="eval_handler.php">
 								<button type="submit"
 									class="btn btn-sm btn-flat btn-success bg-gradient-success mx-1">Submit
 									Evaluation</button>
@@ -75,10 +80,12 @@ include 'handlers/eval_handler.php';
 							<legend class="w-auto">Rating Legend</legend>
 							<p>4 = Strongly Agree, 3 = Agree, 2 = Disagree, 1 = Strongly Disagree</p>
 						</fieldset>
-						<input type="hidden" name="faculty_id" value="<?= isset($faculty_id) ? $faculty_id : '' ?>">
-						<input type="hidden" name="subject_id" value="<?= isset($subject_id) ? $subject_id : '' ?>">
+						<input type="hidden" name="faculty_id"
+							value="<?= htmlspecialchars($faculty_id, ENT_QUOTES, 'UTF-8') ?>">
+						<input type="hidden" name="subject_id"
+							value="<?= htmlspecialchars($subject_id ?? '', ENT_QUOTES, 'UTF-8') ?>">
 						<input type="hidden" name="evaluation_id"
-							value="<?= isset($evaluation_id) ? $evaluation_id : '' ?>">
+							value="<?= htmlspecialchars($evaluation_id ?? '', ENT_QUOTES, 'UTF-8') ?>">
 						<div class="clear-fix mt-2"></div>
 
 						<?php foreach ($criteriaList as $row): ?>

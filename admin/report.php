@@ -10,8 +10,14 @@ include "handlers/report_handler.php";
                 <label for="faculty">Select Faculty</label>
                 <div class=" mx-2 col-md-4">
                     <select name="" id="faculty_id" class="form-control form-control-sm select2">
-                        <option value=""></option>
-
+                        <option value="">Select Faculty</option>
+                        <?php
+                        $stmt = $conn->query("SELECT faculty_id, firstname, lastname FROM college_faculty_list");
+                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                            $fullName = htmlspecialchars($row['firstname'] . ' ' . $row['lastname']);
+                            echo '<option value="' . $row['faculty_id'] . '" data-name="' . $fullName . '">' . $fullName . '</option>';
+                        }
+                        ?>
                     </select>
                 </div>
             </div>
@@ -51,12 +57,6 @@ include "handlers/report_handler.php";
                             </tr>
                         </table>
                         <p class=""><b>Total Student Evaluated: <span id="tse">
-                                    <?php
-                                    // Assuming you have a database connection in $conn
-                                    $stmt = $conn->query("SELECT COUNT(DISTINCT student_id) FROM evaluation_answers"); // Use DISTINCT to count unique student_ids
-                                    $totalStudentsEvaluated = $stmt->fetchColumn(); // fetchColumn() is used to get the result of COUNT
-                                    echo $totalStudentsEvaluated;
-                                    ?>
                                 </span></b></p>
                     </div>
                     <fieldset class="border border-success p-2 w-100">
@@ -135,6 +135,20 @@ include "handlers/report_handler.php";
     .main-header::-webkit-scrollbar {
         display: none;
     }
+
+    .circle {
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #d4edda;
+        color: #155724;
+        font-size: 14px;
+        font-weight: bold;
+        border: 1px solid #155724;
+    }
 </style>
 <noscript>
     <style>
@@ -168,3 +182,103 @@ include "handlers/report_handler.php";
         }
     </style>
 </noscript>
+<script>
+    document.getElementById('faculty_id').addEventListener('change', function () {
+        // Get the selected option
+        const selectedOption = this.options[this.selectedIndex];
+        // Get the faculty name from the `data-name` attribute
+        const facultyName = selectedOption.getAttribute('data-name') || '';
+        // Update the span content
+        document.getElementById('fname').textContent = facultyName;
+    });
+</script>
+<script>
+    $(document).ready(function () {
+        $('#faculty_id').change(function () {
+            const facultyId = $(this).val();
+            if (facultyId) {
+                $.ajax({
+                    url: 'get_total_evaluated.php',
+                    method: 'GET',
+                    data: { faculty_id: facultyId },
+                    success: function (response) {
+                        $('#tse').text(response);
+                    },
+                    error: function () {
+                        alert('Failed to fetch data.');
+                    }
+                });
+            } else {
+                $('#tse').text(0);
+            }
+        });
+    });
+</script>
+<script>
+    document.getElementById('faculty_id').addEventListener('change', function () {
+        const facultyId = this.value;
+
+        const ratingsTable = document.querySelector('#printable .table-responsive');
+        
+        if (facultyId) {
+            fetch(`get_faculty_ratings.php?faculty_id=${facultyId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        ratingsTable.innerHTML = ''; // Clear previous data
+
+                        // Generate table structure
+                        const table = document.createElement('table');
+                        table.className = 'table table-condensed wborder';
+
+                        // Add table header
+                        const thead = `
+                        <thead>
+                            <tr class="bg-gradient-secondary">
+                                <th class="p-1"><b>Question</b></th>
+                                <th width="5%" class="text-center">1</th>
+                                <th width="5%" class="text-center">2</th>
+                                <th width="5%" class="text-center">3</th>
+                                <th width="5%" class="text-center">4</th>
+                            </tr>
+                        </thead>`;
+                        table.innerHTML = thead;
+
+                        // Add table body
+                        const tbody = document.createElement('tbody');
+                        data.data.forEach(row => {
+                            const questionRow = `
+                            <tr class="bg-white">
+                                <td class="p-1" width="20%">${row.question}</td>
+                                <td class="text-center">
+                                    <div class="circle">${row.rate1}%</div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="circle">${row.rate2}%</div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="circle">${row.rate3}%</div>
+                                </td>
+                                <td class="text-center">
+                                    <div class="circle">${row.rate4}%</div>
+                                </td>
+                            </tr>`;
+                            tbody.innerHTML += questionRow;
+                        });
+                        table.appendChild(tbody);
+
+                        // Append the complete table to the ratings container
+                        ratingsTable.appendChild(table);
+                    } else {
+                        console.error(data.message);
+                    }
+                })
+                .catch(error => console.error('Error fetching ratings:', error));
+        } else {
+            // Reset the table to its normal state
+            ratingsTable.innerHTML = `<br>
+                <p class="text-center text-muted">Select a faculty to view evaluation ratings.</p>
+            `;
+        }
+    });
+</script>
