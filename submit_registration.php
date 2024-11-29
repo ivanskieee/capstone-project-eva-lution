@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bindParam(':password', $password);
 
     if ($stmt->execute()) {
-        echo "Your registration is pending approval.";
+        echo "Your registration is pending approval. Stay tuned and wait for the message in your email.";
     } else {
         echo "There was an error with your registration.";
     }

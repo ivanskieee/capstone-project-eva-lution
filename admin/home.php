@@ -14,288 +14,216 @@ include 'header.php';
 include 'sidebar.php';
 include '../database/connection.php';
 
-function ordinal_suffix1($num)
+function fetchFacultyList($conn)
 {
-    $num = $num % 100;
-    if ($num < 11 || $num > 13) {
-        switch ($num % 10) {
-            case 1:
-                return $num . 'st';
-            case 2:
-                return $num . 'nd';
-            case 3:
-                return $num . 'rd';
-        }
-    }
-    return $num . 'th';
+    $stmt = $conn->query("SELECT faculty_id, CONCAT(firstname, ' ', lastname) AS faculty_name FROM college_faculty_list");
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+$facultyList = fetchFacultyList($conn);
 ?>
 <nav class="main-header">
-    <div class="col-12 mt-5">
-        <div class="card">
-            <div class="card-body">
-                Welcome <?php echo $_SESSION['login_name'] ?>!
-                <br>
-                <div class="col-md-5">
-                    <div class="callout callout-info" style="border-left-color: rgb(51, 128, 64);">
-                        <h5><b>Academic Year:
-                                <!-- <?php echo $_SESSION['academic_info'] ?> -->
-                                Semester</b></h5>
-                        <h6><b>Evaluation Status:</b></h6>
+    <div class="container-fluid mt-3">
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow-sm rounded">
+                    <div class="card-body">
+                        <h4>Welcome, <?php echo $_SESSION['login_name']; ?>!</h4>
+                        <div class="col-md-5 mt-3">
+                            <div class="callout callout-info" style="border-left: 5px solid rgb(51, 128, 64);">
+                                <h5><b>Academic Year: Semester</b></h5>
+                                <h6><b>Evaluation Status:</b> Ongoing</h6>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="row mx-3">
-        <div class="col-12 col-sm-6 col-md-4">
-            <div class="small-box bg-light shadow-sm border">
-                <div class="inner">
-                    <h3>
-                        <?php
-                        $stmt = $conn->query("SELECT * FROM college_faculty_list");
-                        $totalFaculties = $stmt->rowCount();
-                        echo $totalFaculties;
-                        ?>
-                    </h3>
 
-                    <p>Total Tertiary Faculties</p>
-                </div>
-                <div class="icon">
-                    <i class="fa fa-user-friends"></i>
+        <div class="row mt-3">
+            <?php
+            $dashboardData = [
+                ["Total Tertiary Faculties", "college_faculty_list", "fa-user-friends"],
+                ["Total Students", "student_list", "ion-ios-people-outline"],
+                ["Total Users", "users", "fa-users"],
+                ["Total Secondary Faculties", "secondary_faculty_list", "fa-user-friends"],
+                ["Total Head Faculties", "head_faculty_list", "fa-users"],
+            ];
+
+            foreach ($dashboardData as $data) {
+                $stmt = $conn->query("SELECT * FROM {$data[1]}");
+                $total = $stmt->rowCount();
+                echo "
+                    <div class='col-12 col-sm-6 col-md-4 mb-3'>
+                        <div class='small-box bg-white shadow-sm rounded border'>
+                            <div class='inner'>
+                                <h3>{$total}</h3>
+                                <p>{$data[0]}</p>
+                            </div>
+                            <div class='icon'>
+                                <i class='fa {$data[2]}'></i>
+                            </div>
+                        </div>
+                    </div>";
+            }
+            ?>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-8 offset-md-2">
+                <div class="card shadow-sm rounded">
+                    <div class="card-header text-center py-2">
+                        <h5 class="mb-0">Select Faculty to Monitor</h5>
+                    </div>
+                    <div class="card-body py-3">
+                        <form id="facultyForm">
+                            <div class="form-group">
+                                <label for="facultySelect" class="form-label">Faculty:</label>
+                                <select class="form-control form-control-sm" id="facultySelect" name="faculty_id">
+                                    <option value="" selected disabled>Select Faculty</option>
+                                    <?php foreach ($facultyList as $faculty): ?>
+                                        <option value="<?php echo $faculty['faculty_id']; ?>">
+                                            <?php echo $faculty['faculty_name']; ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-sm-6 col-md-4">
-            <div class="small-box bg-light shadow-sm border">
-                <div class="inner">
-                    <h3><?php
 
-                    $stmt = $conn->query("SELECT * FROM student_list");
-                    $totalStudents = $stmt->rowCount();
-                    echo $totalStudents;
-                    ?></h3>
-
-                    <p>Total Students</p>
+        <div class="row mt-3">
+            <div class="col-md-8 offset-md-2">
+                <div class="card shadow-sm rounded">
+                    <div class="card-header text-center py-2">
+                        <h5 class="mb-0">Faculty Performance Over Time</h5>
+                    </div>
+                    <div class="card-body py-3">
+                        <canvas id="facultyLineChart" style="max-height: 400px;"></canvas>
+                    </div>
                 </div>
-                <div class="icon">
-                    <i class="fa ion-ios-people-outline"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-sm-6 col-md-4">
-            <div class="small-box bg-light shadow-sm border">
-                <div class="inner">
-                    <h3><?php
-                    $stmt = $conn->query("SELECT * FROM users");
-                    $totalUsers = $stmt->rowCount();
-                    echo $totalUsers;
-                    ?></h3>
-
-                    <p>Total Users</p>
-                </div>
-                <div class="icon">
-                    <i class="fa fa-users"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-sm-6 col-md-4">
-            <div class="small-box bg-light shadow-sm border">
-                <div class="inner">
-                    <h3> <?php
-                    $stmt = $conn->query("SELECT * FROM class_list");
-                    $totalClasses = $stmt->rowCount();
-                    echo $totalClasses;
-                    ?></h3>
-
-                    <p>Total Classes</p>
-                </div>
-                <div class="icon">
-                    <i class="fa fa-list-alt"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-sm-6 col-md-4">
-            <div class="small-box bg-light shadow-sm border">
-                <div class="inner">
-                    <h3><?php
-                    $stmt = $conn->query("SELECT * FROM secondary_faculty_list");
-                    $totalSecondary_Faculty = $stmt->rowCount();
-                    echo $totalSecondary_Faculty;
-                    ?></h3>
-
-                    <p>Total Secondary Faculties</p>
-                </div>
-                <div class="icon">
-                    <i class="fa fa-user-friends"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-sm-6 col-md-4">
-            <div class="small-box bg-light shadow-sm border">
-                <div class="inner">
-                    <h3><?php
-                    $stmt = $conn->query("SELECT * FROM head_faculty_list");
-                    $totalHead_Faculty = $stmt->rowCount();
-                    echo $totalHead_Faculty;
-                    ?></h3>
-
-                    <p>Total Head Faculties</p>
-                </div>
-                <div class="icon">
-                    <i class="fa fa-users"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-12 mt-5">
-        <div class="card">
-            <div class="card-body">
-                <canvas id="lineChart"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-12 mt-5">
-        <div class="card">
-            <div class="card-body">
-                <canvas id="pieChart"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-12 mt-5">
-        <div class="card">
-            <div class="card-body">
-                <canvas id="barChart"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-12 mt-5">
-        <div class="card">
-            <div class="card-body">
-                <canvas id="histogramChart"></canvas>
             </div>
         </div>
     </div>
 </nav>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Initialize Charts
-        const lineChart = new Chart(document.getElementById('lineChart').getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: ['January', 'February', 'March', 'April', 'May'],
-                datasets: [{
-                    label: 'Data',
-                    data: [65, 59, 80, 81, 56],
-                    borderColor: 'rgb(51, 128, 64)',
-                    tension: 0.1
-                }]
-            }
-        });
+    document.getElementById('facultySelect').addEventListener('change', function () {
+        const facultyId = this.value;
 
-        const pieChart = new Chart(document.getElementById('pieChart').getContext('2d'), {
-            type: 'pie',
-            data: {
-                labels: ['Red', 'Blue', 'Yellow'],
-                datasets: [{
-                    data: [300, 50, 100],
-                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56']
-                }]
-            }
-        });
-
-        const barChart = new Chart(document.getElementById('barChart').getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-                datasets: [{
-                    label: 'Dataset 1',
-                    data: [10, 20, 30, 40, 50],
-                    backgroundColor: 'rgb(51, 128, 64)'
-                }]
-            }
-        });
-
-        const histogramChart = new Chart(document.getElementById('histogramChart').getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: ['Group 1', 'Group 2', 'Group 3', 'Group 4'],
-                datasets: [{
-                    label: 'Scores',
-                    data: [12, 19, 3, 5],
-                    backgroundColor: 'rgb(51, 128, 64)'
-                }]
-            }
-        });
-
-        let charts = document.querySelectorAll('canvas');
-        let options = {
-            threshold: 0.3
-        };
-
-        let chartObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('fade-in');
-                } else {
-                    entry.target.classList.remove('fade-in');
-                }
-            });
-        }, options);
-
-        charts.forEach(chart => {
-            chartObserver.observe(chart);
-        });
-
+        if (facultyId) {
+            fetch(`fetch_faculty_data.php?faculty_id=${facultyId}`)
+                .then(response => response.json())
+                .then(data => {
+                    updateLineChart(data.labels, data.dataset);
+                })
+                .catch(error => console.error('Error fetching faculty data:', error));
+        }
     });
+
+    const ctx = document.getElementById('facultyLineChart').getContext('2d');
+    const lineChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Faculty Ratings',
+                data: [],
+                borderColor: 'rgb(51, 128, 64)',
+                tension: 0.1,
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Rating (1-4)'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Evaluation Sequence'
+                    }
+                }
+            }
+        }
+    });
+
+    function updateLineChart(labels, dataset) {
+        lineChart.data.labels = labels;
+        lineChart.data.datasets[0].data = dataset;
+        lineChart.update();
+    }
 </script>
 
 <style>
-    canvas {
-        opacity: 0;
-        transform: translateY(20px);
-        transition: all 1s ease-out;
+    .card {
+        border-radius: 10px;
+        overflow: hidden;
     }
 
-    canvas.fade-in {
-        opacity: 1;
-        transform: translateY(0);
+    .card-header {
+        background: rgb(51, 128, 64);
+        color: white;
     }
 
-    .main-header {
-        position: sticky;
-        top: 0;
-        z-index: 1000;
-        background-color: white;
-        box-shadow: 0px 4px 2px -2px gray;
+    .card-header h5 {
+        font-size: 1rem;
+    }
+
+    #facultySelect {
+        border: 1px solid rgb(51, 128, 64);
+        border-radius: 5px;
+        font-size: 0.9rem;
+    }
+
+    .container-fluid {
+        max-width: 90%;
+    }
+
+    .form-label {
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    body {
+        font-size: 0.9rem;
+        overflow-y: hidden;
     }
 
     html {
         scroll-behavior: smooth;
     }
 
-    .list-group-item:hover {
-        color: black !important;
-        font-weight: 700 !important;
-    }
-
-    body {
-        overflow-y: hidden;
-    }
-
     .main-header {
-        max-height: 95vh;
+        max-height: 90vh;
         overflow-y: scroll;
-        scrollbar-width: none;
+        scrollbar-width: thin;
     }
 
     .main-header::-webkit-scrollbar {
-        display: none;
+        width: 4px;
+    }
+
+    .main-header::-webkit-scrollbar-thumb {
+        background: rgb(51, 128, 64);
+        border-radius: 10px;
+    }
+
+    .card-body {
+        padding: 0.75rem;
+    }
+
+    .form-control-sm {
+        height: calc(1.5em + 0.5rem + 2px);
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
     }
 </style>
 
