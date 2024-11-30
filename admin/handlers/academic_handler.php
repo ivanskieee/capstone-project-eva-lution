@@ -21,7 +21,6 @@ $stmt = $conn->prepare('SELECT * FROM academic_list');
 $stmt->execute();
 $academics = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-
 if ($id) {
     $stmt = $conn->prepare("SELECT * FROM academic_list WHERE academic_id = ?");
     $stmt->execute([$id]);
@@ -64,6 +63,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['flash_type'] = 'success';
 
         echo "<script>window.location.replace('academic_list.php');</script>";
+        exit;
+    } 
+    elseif (isset($_POST['update_status'])) {
+        $academic_id = $_POST['academic_id'];
+        $status = $_POST['status'];
+
+        if ($status == 1) { // Starting Evaluation
+            // Set the start and end dates
+            $start_date = date('Y-m-d');
+            $end_date = date('Y-m-d', strtotime('+1 year')); // Adjust duration as needed
+
+            // Reset other evaluations to "Not Yet Started"
+            $conn->query('UPDATE academic_list SET status = 0 WHERE status != 2');
+
+            // Update the selected academic year
+            $stmt = $conn->prepare('UPDATE academic_list SET status = ?, start_date = ?, end_date = ? WHERE academic_id = ?');
+            $stmt->execute([$status, $start_date, $end_date, $academic_id]);
+        } elseif ($status == 2) { // Closing Evaluation
+            // Update the selected academic year to closed
+            $stmt = $conn->prepare('UPDATE academic_list SET status = ?, start_date = NULL, end_date = NULL WHERE academic_id = ?');
+            $stmt->execute([$status, $academic_id]);
+        }
+
+        echo json_encode(['success' => true]);
         exit;
     }
 }
