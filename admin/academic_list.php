@@ -60,12 +60,14 @@ include 'handlers/academic_handler.php';
                                     <td class="text-center">
                                         <?php if ($row['status'] == 0): ?>
                                             <button class="btn btn-secondary update_status"
-                                                data-id="<?php echo $row['academic_id']; ?>" data-status="1">Start</button>
+                                                data-id="<?php echo $row['academic_id']; ?>"
+                                                data-status="1">Start</button>
                                         <?php elseif ($row['status'] == 1): ?>
                                             <span class="badge badge-success">Active (Ends:
                                                 <?php echo $row['end_date']; ?>)</span>
                                             <button class="btn btn-primary update_status"
-                                                data-id="<?php echo $row['academic_id']; ?>" data-status="2">Close</button>
+                                                data-id="<?php echo $row['academic_id']; ?>"
+                                                data-status="2">Close</button>
                                         <?php elseif ($row['status'] == 2): ?>
                                             <span class="badge badge-primary">Closed</span>
                                         <?php endif; ?>
@@ -197,46 +199,46 @@ include 'handlers/academic_handler.php';
 </style>
 <script>
     $(document).on('click', '.update_status', function () {
-    var academicId = $(this).data('academic_id');
-    var newStatus = $(this).data('status');
-    var statusText = newStatus === 1 ? 'Start Evaluation' : 'Close Evaluation';
+        var academicId = $(this).data('id');
+        var newStatus = $(this).data('status');
+        var statusText = newStatus === 1 ? 'Start Evaluation' : 'Close Evaluation';
 
-    Swal.fire({
-        title: statusText + '?',
-        text: newStatus === 1
-            ? 'This will start the evaluation period and associate new users with this semester.'
-            : 'This will close the evaluation period. Users can no longer log in or evaluate under this semester.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#28a745',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                type: 'POST',
-                url: 'handlers/academic_handler.php',
-                data: { update_status: true, academic_id: academicId, status: newStatus },
-                success: function () {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Status Updated!',
-                        text: `The academic year is now ${newStatus === 1 ? 'active' : 'closed'}.`,
-                        showConfirmButton: false,
-                        timer: 2000
-                    }).then(() => {
-                        window.location.reload();
-                    });
-                },
-                error: function () {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error!',
-                        text: 'Failed to update the status.',
-                    });
-                }
-            });
-        }
+        Swal.fire({
+            title: statusText + '?',
+            text: newStatus === 1
+                ? 'This will start the evaluation period and assign the current semester.'
+                : 'This will close the evaluation period. Data will remain stored.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: 'POST',
+                    url: 'academic_list.php',
+                    data: { update_status: true, academic_id: academicId, status: newStatus },
+                    success: function () {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Status Updated!',
+                            text: `The academic year is now ${newStatus === 1 ? 'active' : 'closed'}.`,
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    },
+                    error: function () {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: 'Failed to update the status. Please try again.',
+                        });
+                    }
+                });
+            }
+        });
     });
-});
 </script>

@@ -11,14 +11,14 @@ function flash($message, $type = 'info')
 
 include 'includes/header.php';
 
-$query = 'SELECT * FROM academic_list WHERE is_default = 1 AND status = 1 AND start_date <= CURDATE() AND end_date >= CURDATE()';
-$stmt = $conn->query($query);
+// $query = 'SELECT * FROM academic_list WHERE is_default = 1 AND status = 1 AND start_date <= CURDATE() AND end_date >= CURDATE()';
+// $stmt = $conn->query($query);
 
-if ($stmt->rowCount() === 0) {
-    flash('Login is not allowed as the evaluation period is closed or not started.', 'danger');
-    header('location: index.php');
-    exit;
-}
+// if ($stmt->rowCount() === 0) {
+//     flash('Login is not allowed as the evaluation period is closed or not started.', 'danger');
+//     header('location: index.php');
+//     exit;
+// }
 
 if (isset($_SESSION['user'])) {
     if ($_SESSION['user']['role'] === 'admin') {
