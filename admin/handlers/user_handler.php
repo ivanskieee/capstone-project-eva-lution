@@ -67,10 +67,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             move_uploaded_file($_FILES["img"]["tmp_name"], $target_file);
         }
 
+        // Fetch the current active academic_id
+        $query = 'SELECT academic_id FROM academic_list WHERE status = 1 AND start_date <= CURDATE() AND end_date >= CURDATE()';
+        $stmt = $conn->query($query);
+        $academic = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$academic) {
+            echo "<script>
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'No Active Academic Year!',
+                        text: 'Registration is not allowed as there is no active academic year.',
+                    });
+                  </script>";
+            return;
+        }
+
+        $academic_id = $academic['academic_id']; // Active academic ID
+
         // Update or Insert
         if ($id) {
             $query = "UPDATE users 
-                      SET firstname = :firstname, lastname = :lastname, email = :email";
+                      SET firstname = :firstname, lastname = :lastname, email = :email, academic_id = :academic_id";
 
             if (!empty($password)) {
                 $query .= ", password = :password";
@@ -86,6 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bindParam(':firstname', $firstname);
             $stmt->bindParam(':lastname', $lastname);
             $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':academic_id', $academic_id);
 
             if (!empty($password)) {
                 $stmt->bindParam(':password', $hashed_password);
@@ -97,8 +116,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         } else {
-            $query = "INSERT INTO users (firstname, lastname, email, password, avatar) 
-                      VALUES (:firstname, :lastname, :email, :password, :avatar)";
+            $query = "INSERT INTO users (firstname, lastname, email, password, avatar, academic_id) 
+                      VALUES (:firstname, :lastname, :email, :password, :avatar, :academic_id)";
             $stmt = $conn->prepare($query);
 
             $stmt->bindParam(':firstname', $firstname);
@@ -106,11 +125,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':password', $hashed_password);
             $stmt->bindParam(':avatar', $avatar);
+            $stmt->bindParam(':academic_id', $academic_id);
         }
 
         // Execute and send feedback
         if ($stmt->execute()) {
-            sendEmail($email, $password);
+            sendEmail($email, $password); // Optional: send email to the user
 
             echo "<script>
                     Swal.fire({
@@ -165,6 +185,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 }
+
 
 $conn = null;
 

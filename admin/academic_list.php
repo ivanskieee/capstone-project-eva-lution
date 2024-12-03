@@ -72,7 +72,6 @@ include 'handlers/academic_handler.php';
                                             <span class="badge badge-primary">Closed</span>
                                         <?php endif; ?>
                                     </td>
-
                                     <td class="text-center">
                                         <div class="btn-group">
                                             <a href="manage_academic.php?academic_id=<?php echo $row['academic_id']; ?>"

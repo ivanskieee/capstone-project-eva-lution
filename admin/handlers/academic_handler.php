@@ -68,27 +68,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     elseif (isset($_POST['update_status'])) {
         $academic_id = $_POST['academic_id'];
         $status = $_POST['status'];
-
+    
         if ($status == 1) { // Start Evaluation
             // Set start and end dates
             $start_date = date('Y-m-d'); // Today's date
             $end_date = date('Y-m-d', strtotime('+1 year')); // One year from today
-
-            // Reset all other academic years to "Not Yet Started" (status = 0)
-            $conn->query('UPDATE academic_list SET status = 0, start_date = NULL, end_date = NULL WHERE status != 2');
-
-            // Activate the selected academic year
-            $stmt = $conn->prepare('UPDATE academic_list SET status = ?, start_date = ?, end_date = ? WHERE academic_id = ?');
+    
+            // Reset all other academic years to "Not Yet Started" and is_default to 0
+            $conn->query('UPDATE academic_list SET status = 0, is_default = 0, start_date = NULL, end_date = NULL WHERE status != 2');
+    
+            // Activate the selected academic year and set is_default to 1
+            $stmt = $conn->prepare('UPDATE academic_list SET status = ?, is_default = 1, start_date = ?, end_date = ? WHERE academic_id = ?');
             $stmt->execute([$status, $start_date, $end_date, $academic_id]);
         } elseif ($status == 2) { // Close Evaluation
-            // Mark the selected academic year as closed (status = 2)
-            $stmt = $conn->prepare('UPDATE academic_list SET status = ?, start_date = NULL, end_date = NULL WHERE academic_id = ?');
+            // Mark the selected academic year as closed (status = 2) and reset is_default to 0
+            $stmt = $conn->prepare('UPDATE academic_list SET status = ?, is_default = 0, start_date = NULL, end_date = NULL WHERE academic_id = ?');
             $stmt->execute([$status, $academic_id]);
         }
-
+    
         echo json_encode(['success' => true]);
         exit;
-    }
+    }    
 }
 
 $conn = null;
