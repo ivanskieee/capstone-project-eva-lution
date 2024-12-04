@@ -35,6 +35,24 @@ function sendVerificationEmail($recipientEmail, $subject, $body)
     }
 }
 
+// Fetch the current active academic_id
+$query = 'SELECT academic_id FROM academic_list WHERE status = 1 AND start_date <= CURDATE() AND end_date >= CURDATE()';
+$stmt = $conn->query($query);
+$academic = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$academic) {
+    echo "<script>
+            Swal.fire({
+                icon: 'error',
+                title: 'No Active Academic Year!',
+                text: 'Registration is not allowed as there is no active academic year.',
+            });
+          </script>";
+    return;
+}
+
+$academic_id = $academic['academic_id']; // Active academic ID
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $school_id = $_POST['school_id'];
     $action = $_POST['action'];
@@ -69,10 +87,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $faculty_data = $faculty_stmt->fetch(PDO::FETCH_ASSOC);
         
             if ($faculty_data) {
-                // Insert the student into `student_list`
+                // Insert the student into `student_list` and associate it with the active `academic_id`
                 $insert_query = "
-                    INSERT INTO student_list (school_id, email, password, firstname, lastname, subject, section) 
-                    VALUES (:school_id, :email, :password, :firstname, :lastname, :subject, :section)
+                    INSERT INTO student_list (school_id, email, password, firstname, lastname, subject, section, academic_id) 
+                    VALUES (:school_id, :email, :password, :firstname, :lastname, :subject, :section, :academic_id)
                 ";
                 $stmt = $conn->prepare($insert_query);
                 $stmt->execute([
@@ -82,7 +100,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     'firstname' => $student_data['firstname'],
                     'lastname' => $student_data['lastname'],
                     'subject' => $student_data['subject'],
-                    'section' => $student_data['section']
+                    'section' => $student_data['section'],
+                    'academic_id' => $academic_id // Add the active academic_id
                 ]);
         
                 // Remove the student from `pending_students`
