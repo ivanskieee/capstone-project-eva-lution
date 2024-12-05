@@ -148,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 We regret to inform you that your account registration has been declined.<br><br>
                 Thank you!
             ";
-            sendEmail($student_data['email'], 'Account Rejected', $emailBody);
+            sendVerificationEmail($student_data['email'], 'Account Rejected', $emailBody);
         }
 
         header('Location: verify_accounts.php?status=rejected');

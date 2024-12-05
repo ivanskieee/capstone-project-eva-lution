@@ -12,7 +12,7 @@ include 'handlers/eval_handler.php';
 					$subjectArray = explode(',', strtolower($subjects));
 
 					if (empty($subjects)) {
-						echo '<div class="alert alert-warning">No subjects available for evaluation.</div>';
+						echo '<div class="alert alert-success">Successfully evaluated the faculty member.</div>';
 					} else {
 						$displayedFaculty = [];
 
@@ -20,17 +20,16 @@ include 'handlers/eval_handler.php';
 							$subject = trim($subject);
 
 							$query = "
-									SELECT cf.faculty_id AS fid, cf.firstname, cf.lastname
-									FROM college_faculty_list cf
-									WHERE EXISTS (
-										SELECT 1
-										FROM student_list sl
-										WHERE sl.student_id = :student_id
-									)
-									AND cf.subject REGEXP :subject
-								";
+										SELECT cf.faculty_id AS fid, cf.firstname, cf.lastname
+										FROM college_faculty_list cf
+										WHERE EXISTS (
+											SELECT 1
+											FROM student_list sl
+											WHERE sl.student_id = :student_id
+										)
+										AND cf.subject REGEXP :subject
+									";
 							$stmt = $conn->prepare($query);
-
 							$stmt->execute([
 								'student_id' => $_SESSION['user']['student_id'],
 								'subject' => '\\b' . strtolower($subject) . '\\b',
@@ -38,6 +37,16 @@ include 'handlers/eval_handler.php';
 
 							if ($stmt->rowCount() > 0) {
 								while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+									// Check if the student has already evaluated this faculty
+									$evaluationStmt = $conn->prepare('SELECT COUNT(*) FROM evaluation_answers WHERE faculty_id = ? AND student_id = ?');
+									$evaluationStmt->execute([$row['fid'], $_SESSION['user']['student_id']]);
+									$evaluationExists = $evaluationStmt->fetchColumn();
+
+									// If the student has already evaluated this faculty, skip this faculty
+									if ($evaluationExists > 0) {
+										continue;
+									}
+
 									if (in_array($row['fid'], $displayedFaculty)) {
 										continue;
 									}
@@ -135,38 +144,54 @@ include 'handlers/eval_handler.php';
 	</div>
 </nav>
 <script>
-	$(document).ready(function () {
-		$('#evaluation-form').on('submit', function (e) {
-			e.preventDefault();
+    $(document).ready(function () {
+        $('#evaluation-form').on('submit', function (e) {
+            // Prevent form submission to handle validation
+            e.preventDefault();
 
-			var formData = $(this).serialize();
+            // Check if a faculty member is selected
+            const selectedFaculty = $('input[name="faculty_id"]').val();
 
-			$.ajax({
-				type: 'POST',
-				url: 'evaluate.php',
-				data: formData,
-				success: function (response) {
-					Swal.fire({
-						icon: 'success',
-						title: 'Success!',
-						text: 'Your answers have been saved successfully.',
-						showConfirmButton: false,
-						timer: 2000
-					}).then(() => {
-						window.location.href = 'evaluate.php';
-					});
+            // If no faculty is selected, show SweetAlert
+            if (!selectedFaculty) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Faculty Not Selected',
+                    text: 'Please select a faculty member before submitting your evaluation.',
+                    confirmButtonText: 'Okay'
+                });
+                return; // Exit the function if no faculty is selected
+            }
 
-					$('#evaluation-form')[0].reset();
-				},
-				error: function () {
-					Swal.fire({
-						icon: 'error',
-						title: 'Oops...',
-						text: 'Something went wrong! Please try again.',
-					});
-				}
-			});
-		});
-	});
+            // If faculty is selected, proceed with form submission (AJAX)
+            var formData = $(this).serialize();
+
+            $.ajax({
+                type: 'POST',
+                url: 'evaluate.php',
+                data: formData,
+                success: function (response) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Your answers have been saved successfully.',
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then(() => {
+                        window.location.href = 'evaluate.php';
+                    });
+
+                    $('#evaluation-form')[0].reset();  // Optionally reset the form after success
+                },
+                error: function () {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Something went wrong! Please try again.',
+                    });
+                }
+            });
+        });
+    });
 </script>
 <?php include 'footer.php'; ?>
