@@ -174,3 +174,24 @@ include "handlers/report_handler.php";
             .catch(error => console.error('Error fetching total evaluations:', error));
     }
 </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        fetchAcademicInfo(); // Automatically fetch academic information on page load
+    });
+
+    function fetchAcademicInfo() {
+        fetch('get_academic_info.php') // Modify URL if needed to include specific faculty_id
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Update the academic year and semester display
+                    const academicYearDisplay = document.getElementById('ay');
+                    academicYearDisplay.innerText = `${data.year} - ${data.semester}`;
+                } else {
+                    console.error('Error:', data.message);
+                    document.getElementById('ay').innerText = 'No academic information available.';
+                }
+            })
+            .catch(error => console.error('Error fetching academic information:', error));
+    }
+</script>

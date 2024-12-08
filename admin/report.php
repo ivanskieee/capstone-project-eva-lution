@@ -282,3 +282,27 @@ include "handlers/report_handler.php";
         }
     });
 </script>
+<script>
+    document.getElementById('faculty_id').addEventListener('change', function () {
+    const facultyId = this.value;
+    const academicYearDisplay = document.getElementById('ay');
+
+    if (facultyId) {
+        fetch(`get_academic_info.php?faculty_id=${facultyId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    academicYearDisplay.innerHTML = `${data.year} - ${data.semester}`;
+                } else {
+                    academicYearDisplay.innerHTML = 'No academic information available.';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching academic information:', error);
+                academicYearDisplay.innerHTML = 'Error fetching academic information.';
+            });
+    } else {
+        academicYearDisplay.innerHTML = 'Select a faculty to view academic year and semester.';
+    }
+});
+</script>

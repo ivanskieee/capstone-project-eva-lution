@@ -77,17 +77,21 @@ if ($_POST) {
     }
 
     if ($user) {
-        // Check if student's account is closed (only for 'student' role)
-        if ($role === 'student' && isset($user['account_status']) && $user['account_status'] == 0) {
+        // Check if the account is closed (applicable for 'student' and 'faculty' roles)
+        if (
+            in_array($role, ['student', 'faculty']) && 
+            isset($user['account_status']) && 
+            $user['account_status'] == 0
+        ) {
             flash('Your account has been closed. Please contact the administrator.', 'danger');
             header('location: index.php');
             exit;
         }
-
+    
         $user['role'] = $role;
         $_SESSION['user'] = $user;
         $_SESSION['login_name'] = $user['firstname'] . ' ' . $user['lastname'];
-
+    
         // Handle student-specific logic
         if ($role === 'student') {
             $student_id = $user['student_id']; // Use student ID from login
@@ -95,13 +99,13 @@ if ($_POST) {
             $stmtStudent = $conn->prepare($studentQuery);
             $stmtStudent->execute([':student_id' => $student_id]);
             $studentAcademicId = $stmtStudent->fetchColumn();
-
+    
             if (!$studentAcademicId) {
                 flash('Student record not found. Please contact the administrator.', 'danger');
                 header('location: index.php');
                 exit;
             }
-
+    
             // Validate active academic period
             $query = 'SELECT * FROM academic_list 
                       WHERE status = 1 
@@ -110,14 +114,14 @@ if ($_POST) {
                       AND academic_id = :academic_id';
             $stmt = $conn->prepare($query);
             $stmt->execute([':academic_id' => $studentAcademicId]);
-
+    
             if ($stmt->rowCount() === 0) {
                 flash('Login is not allowed as the evaluation period is closed or not started for your academic year.', 'danger');
                 header('location: index.php');
                 exit;
             }
         }
-
+    
         // Redirect based on role
         switch ($role) {
             case 'admin':
@@ -138,6 +142,7 @@ if ($_POST) {
         }
         exit;
     }
+    
 
     // Invalid login
     flash('Username or password is incorrect.', 'danger');

@@ -69,33 +69,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $academic_id = $_POST['academic_id'];
         $status = $_POST['status'];
     
-        if ($status == 1) { // Start Evaluation
-            // Set start and end dates
-            $start_date = date('Y-m-d'); // Today's date
-            $end_date = date('Y-m-d', strtotime('+1 year')); // One year from today
+        if ($status == 1) { 
+            $start_date = date('Y-m-d'); 
+            $end_date = date('Y-m-d', strtotime('+1 year'));
     
-            // Reset all other academic years to "Not Yet Started" and is_default to 0
             $conn->query('UPDATE academic_list SET status = 0, is_default = 0, start_date = NULL, end_date = NULL WHERE status != 2');
     
-            // Activate the selected academic year and set is_default to 1
             $stmt = $conn->prepare('UPDATE academic_list SET status = ?, is_default = 1, start_date = ?, end_date = ? WHERE academic_id = ?');
             $stmt->execute([$status, $start_date, $end_date, $academic_id]);
     
-            // Update the academic_id for all users
             $stmt = $conn->prepare('UPDATE users SET academic_id = ?');
             $stmt->execute([$academic_id]);
     
-            // Update the account_status for all students to active (1) when the academic year starts
             $stmt = $conn->prepare('UPDATE student_list SET account_status = 1 WHERE academic_id = ?');
             $stmt->execute([$academic_id]);
+
+            $stmt = $conn->prepare('UPDATE college_faculty_list SET account_status = 1 WHERE academic_id = ?');
+            $stmt->execute([$academic_id]);
     
-        } elseif ($status == 2) { // Close Evaluation
-            // Mark the selected academic year as closed (status = 2) and reset is_default to 0
+        } elseif ($status == 2) { 
+            
             $stmt = $conn->prepare('UPDATE academic_list SET status = ?, is_default = 0, start_date = NULL, end_date = NULL WHERE academic_id = ?');
             $stmt->execute([$status, $academic_id]);
     
-            // Close the accounts of all students in this academic year (set account_status to 0)
             $stmt = $conn->prepare('UPDATE student_list SET account_status = 0 WHERE academic_id = ?');
+            $stmt->execute([$academic_id]);
+
+            $stmt = $conn->prepare('UPDATE college_faculty_list SET account_status = 0 WHERE academic_id = ?');
             $stmt->execute([$academic_id]);
         }
     

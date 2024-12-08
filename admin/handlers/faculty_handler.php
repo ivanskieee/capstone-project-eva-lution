@@ -67,6 +67,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $target_file = $target_dir . basename($_FILES["img"]["name"]);
             move_uploaded_file($_FILES["img"]["tmp_name"], $target_file);
         }
+        
+        $query = 'SELECT academic_id FROM academic_list WHERE status = 1 AND start_date <= CURDATE() AND end_date >= CURDATE()';
+        $stmt = $conn->query($query);
+        $academic = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$academic) {
+            echo "<script>
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'No Active Academic Year!',
+                        text: 'Registration is not allowed as there is no active academic year.',
+                    });
+                  </script>";
+            return;
+        }
+
+        $academic_id = $academic['academic_id'];
 
         if (is_array($subjects) && count($subjects) > 1) {
             $subjects_data = implode(", ", $subjects);
@@ -80,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               
                 $query = "UPDATE college_faculty_list 
                           SET school_id = :school_id, firstname = :firstname, lastname = :lastname, 
-                              email = :email, subject = :subject";
+                              email = :email, subject = :subject, academic_id = :academic_id";
 
                 if (!empty($password)) {
                     $query .= ", password = :password";
@@ -98,6 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->bindParam(':lastname', $lastname);
                 $stmt->bindParam(':email', $email);
                 $stmt->bindParam(':subject', $subjects_data);
+                $stmt->bindParam(':academic_id', $academic_id);
 
                 if (!empty($password)) {
                     $stmt->bindParam(':password', $hashed_password);
@@ -109,8 +127,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $stmt->bindParam(':faculty_id', $id, PDO::PARAM_INT);
             } else {
-                $query = "INSERT INTO college_faculty_list (school_id, firstname, lastname, email, subject, password, avatar) 
-                          VALUES (:school_id, :firstname, :lastname, :email, :subject, :password, :avatar)";
+                $query = "INSERT INTO college_faculty_list (school_id, firstname, lastname, email, subject, password, avatar, academic_id) 
+                          VALUES (:school_id, :firstname, :lastname, :email, :subject, :password, :avatar, :academic_id)";
                 $stmt = $conn->prepare($query);
 
                 $stmt->bindParam(':school_id', $school_id);
@@ -120,6 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->bindParam(':subject', $subjects_data);
                 $stmt->bindParam(':password', $hashed_password);
                 $stmt->bindParam(':avatar', $avatar);
+                $stmt->bindParam(':academic_id', $academic_id);
             }
 
 
