@@ -54,7 +54,7 @@ include 'handlers/academic_handler.php';
                                                 data-id="<?php echo isset($row['id']) ?>">No</button>
                                         <?php else: ?>
                                             <button type="button"
-                                                class="btn btn-primary bg-gradient-primary col-sm-4 btn-flat btn-sm px-1 py-0">Yes</button>
+                                                class="btn btn-success bg-gradient-success col-sm-4 btn-flat btn-sm px-1 py-0">Yes</button>
                                         <?php endif; ?>
                                     </td>
                                     <td class="text-center">
@@ -65,11 +65,11 @@ include 'handlers/academic_handler.php';
                                         <?php elseif ($row['status'] == 1): ?>
                                             <span class="badge badge-success">Active (Ends:
                                                 <?php echo $row['end_date']; ?>)</span>
-                                            <button class="btn btn-primary update_status"
+                                            <button class="btn btn-success update_status"
                                                 data-id="<?php echo $row['academic_id']; ?>"
                                                 data-status="2">Close</button>
                                         <?php elseif ($row['status'] == 2): ?>
-                                            <span class="badge badge-primary">Closed</span>
+                                            <span class="badge badge-success">Closed</span>
                                         <?php endif; ?>
                                     </td>
                                     <td class="text-center">
