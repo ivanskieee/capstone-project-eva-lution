@@ -18,6 +18,21 @@ include 'handlers/questionnaire_handler.php';
                                 value="<?php echo isset($_GET['academic_id']) ? $_GET['academic_id'] : ''; ?>">
 
                             <div class="form-group">
+                                <label for="question_type">Question Type</label>
+                                <select name="question_type" id="question_type" class="form-control" required>
+                                    <option value="mcq" <?= isset($questionToEdit['question_type']) && $questionToEdit['question_type'] == 'mcq' ? 'selected' : '' ?>>Ratings</option>
+                                    <option value="text" <?= isset($questionToEdit['question_type']) && $questionToEdit['question_type'] == 'text' ? 'selected' : '' ?>>Text Answer
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" id="text-field-container" style="display: none;">
+                                <label for="text_answer">Text Answer</label>
+                                <textarea name="text_answer" id="text_answer" cols="30" rows="4" class="form-control"
+                                    placeholder="Enter the text answer here"><?php echo isset($questionToEdit['text_answer']) ? $questionToEdit['text_answer'] : ''; ?></textarea>
+                            </div>
+
+                            <div class="form-group" id="criteria-container">
                                 <label for="criteria_id">Select Criteria:</label>
                                 <select name="criteria_id" id="criteria_id" class="form-control" required>
                                     <option value=""></option>
@@ -29,10 +44,12 @@ include 'handlers/questionnaire_handler.php';
                                     <?php endforeach; ?>
                                 </select>
                             </div>
-                            <div class="form-group">
+
+                            <div class="form-group" id="question-container">
                                 <label for="question">Question</label>
-                                <textarea name="question" id="question" cols="30" rows="4" class="form-control"
-                                    required><?php echo isset($questionToEdit['question']) ? $questionToEdit['question'] : ''; ?></textarea>
+                                <input type="text" name="question" id="question" class="form-control" required
+                                    placeholder="Enter the question here"
+                                    value="<?php echo isset($questionToEdit['question']) ? $questionToEdit['question'] : ''; ?>">
                             </div>
                         </form>
                     </div>
@@ -104,15 +121,23 @@ include 'handlers/questionnaire_handler.php';
                                                         <?= htmlspecialchars($qRow['question']) ?>
                                                         <input type="hidden" name="qid[]" value="<?= $qRow['question_id'] ?>">
                                                     </td>
-                                                    <?php for ($c = 0; $c < 4; $c++): ?>
-                                                        <td class="text-center">
-                                                            <div class="icheck-success d-inline">
-                                                                <input type="radio" name="qid[<?= $qRow['question_id'] ?>][]"
-                                                                    id="qradio<?= $qRow['question_id'] . '_' . $c ?>" value="<?= $c + 1 ?>">
-                                                                <label for="qradio<?= $qRow['question_id'] . '_' . $c ?>"></label>
-                                                            </div>
+                                                    <?php if ($qRow['question_type'] == 'mcq'): ?>
+                                                        <?php for ($c = 0; $c < 4; $c++): ?>
+                                                            <td class="text-center">
+                                                                <div class="icheck-success d-inline">
+                                                                    <input type="radio" name="qid[<?= $qRow['question_id'] ?>][]"
+                                                                        id="qradio<?= $qRow['question_id'] . '_' . $c ?>" value="<?= $c + 1 ?>">
+                                                                    <label for="qradio<?= $qRow['question_id'] . '_' . $c ?>"></label>
+                                                                </div>
+                                                            </td>
+                                                        <?php endfor; ?>
+                                                    <?php elseif ($qRow['question_type'] == 'text'): ?>
+                                                        <!-- Add comment textarea in the same row -->
+                                                        <td colspan="4" class="text-center">
+                                                            <textarea name="comment[<?= $qRow['question_id'] ?>]" class="form-control"
+                                                                rows="3" placeholder="Enter your answer"></textarea>
                                                         </td>
-                                                    <?php endfor; ?>
+                                                    <?php endif; ?>
                                                 </tr>
                                                 <?php
                                             }
@@ -168,7 +193,7 @@ include 'handlers/questionnaire_handler.php';
         });
 
         $(document).on('submit', '.delete-form', function (e) {
-            e.preventDefault(); 
+            e.preventDefault();
             var form = this;
 
             Swal.fire({
@@ -216,6 +241,41 @@ include 'handlers/questionnaire_handler.php';
         var academicId = document.getElementById('academic_id').value;
         window.location.href = 'manage_questionnaire.php?academic_id=' + academicId;
     }
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const questionTypeSelect = document.getElementById('question_type');
+        const criteriaContainer = document.getElementById('criteria-container');
+        const questionContainer = document.getElementById('question-container');
+        const questionField = document.getElementById('question');
+
+        function toggleFields() {
+            const selectedType = questionTypeSelect.value;
+
+            if (selectedType === 'text') {
+                // Change the question field to a textarea for Text Answer
+                questionField.setAttribute('type', 'text');
+                questionField.setAttribute('placeholder', 'Enter the text answer here');
+                questionField.setAttribute('rows', '4');
+                questionField.innerHTML = '';  // Ensures the question input is blank for text answers
+            } else if (selectedType === 'mcq') {
+                // Change the question field to a regular input for MCQ
+                questionField.setAttribute('type', 'text');
+                questionField.setAttribute('placeholder', 'Enter your question for ratings here');
+                questionField.removeAttribute('rows');
+            }
+
+            // Always display the criteria container for both types
+            criteriaContainer.style.display = 'block';
+        }
+
+        // Initial toggle based on the loaded value
+        toggleFields();
+
+        // Add event listener to handle changes in question type
+        questionTypeSelect.addEventListener('change', toggleFields);
+    });
 </script>
 
 <style>

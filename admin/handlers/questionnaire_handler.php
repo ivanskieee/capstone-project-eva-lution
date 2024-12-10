@@ -21,16 +21,22 @@ $questionToEdit = null;
 
 $stmt = $conn->prepare("
     SELECT a.*, 
-           COUNT(q.academic_id) AS total_questions,
-           COUNT(ea.evaluation_id) AS total_answers
-    FROM academic_list a 
-    LEFT JOIN question_list q ON a.academic_id = q.academic_id
-    LEFT JOIN evaluation_answers ea ON a.academic_id = ea.evaluation_id 
-    GROUP BY a.academic_id
+           COALESCE(q.total_questions, 0) AS total_questions,  -- Total questions from the question_list
+           COALESCE(ea.total_answers, 0) AS total_answers      -- Distinct students from evaluation_answers
+    FROM academic_list a
+    LEFT JOIN (
+        SELECT academic_id, COUNT(question_id) AS total_questions
+        FROM question_list
+        GROUP BY academic_id
+    ) q ON a.academic_id = q.academic_id
+    LEFT JOIN (
+        SELECT academic_id, COUNT(DISTINCT student_id) AS total_answers
+        FROM evaluation_answers
+        GROUP BY academic_id
+    ) ea ON a.academic_id = ea.academic_id
 ");
 $stmt->execute();
 $questionnaires = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
 
 $stmt = $conn->prepare('SELECT * FROM criteria_list');
 $stmt->execute();
@@ -65,23 +71,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit();
 
     } elseif (isset($_POST['question'])) {
+        // Retrieve form values
         $criteria_id = $_POST['criteria_id'];
         $question = trim($_POST['question']);
+        $question_type = $_POST['question_type']; // Get the question type (mcq or text)
         $id = $_POST['question_id'] ?? null;
-
-        if (!empty($criteria_id) && !empty($question) && !empty($academic_id)) { 
+    
+        // Check if required fields are filled
+        if (!empty($criteria_id) && !empty($question) && !empty($academic_id) && !empty($question_type)) {
+            // Handle inserting or updating the question
             if ($id) {
-                $query = 'UPDATE question_list SET criteria_id = ?, question = ?, academic_id = ? WHERE question_id = ?';
+                // Update existing question
+                $query = 'UPDATE question_list SET criteria_id = ?, question = ?, question_type = ?, academic_id = ? WHERE question_id = ?';
                 $stmt = $conn->prepare($query);
-                $stmt->execute([$criteria_id, $question, $academic_id, $id]);
+                $stmt->execute([$criteria_id, $question, $question_type, $academic_id, $id]);
                 $_SESSION['message'] = 'Question updated successfully.';
             } else {
-                $query = 'INSERT INTO question_list (criteria_id, question, academic_id) VALUES (?, ?, ?)';
+                // Insert new question
+                $query = 'INSERT INTO question_list (criteria_id, question, question_type, academic_id) VALUES (?, ?, ?, ?)';
                 $stmt = $conn->prepare($query);
-                $stmt->execute([$criteria_id, $question, $academic_id]);
+                $stmt->execute([$criteria_id, $question, $question_type, $academic_id]);
                 $_SESSION['message'] = 'Question submitted successfully.';
             }
-
+    
+            // Redirect to manage questionnaire page
             header('Location: manage_questionnaire.php?academic_id=' . $academic_id);
             exit;
         } else {
@@ -91,6 +104,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $conn = null;
-
 
 ?>

@@ -114,20 +114,29 @@ include 'handlers/eval_handler.php';
 										if ($qRow['criteria_id'] == $row['criteria_id']) {
 											?>
 											<tr class="bg-white">
-												<td class="p-1" width="40%"><?php echo htmlspecialchars($qRow['question']); ?>
+												<td class="p-1" width="40%">
+													<?php echo htmlspecialchars($qRow['question']); ?>
 													<input type="hidden" name="question_id[]"
 														value="<?php echo htmlspecialchars($qRow['question_id']); ?>">
 												</td>
-												<?php for ($c = 1; $c <= 4; $c++): ?>
-													<td class="text-center">
-														<div class="icheck-success d-inline">
-															<input type="radio" name="rate[<?= $qRow['question_id'] ?>]"
-																id="qradio<?= $qRow['question_id'] . '_' . $c ?>" value="<?= $c ?>"
-																required>
-															<label for="qradio<?= $qRow['question_id'] . '_' . $c ?>"></label>
-														</div>
+												<?php if ($qRow['question_type'] == 'mcq'): ?>
+													<?php for ($c = 1; $c <= 4; $c++): ?>
+														<td class="text-center">
+															<div class="icheck-success d-inline">
+																<input type="radio" name="rate[<?= $qRow['question_id'] ?>]"
+																	id="qradio<?= $qRow['question_id'] . '_' . $c ?>" value="<?= $c ?>"
+																	required>
+																<label for="qradio<?= $qRow['question_id'] . '_' . $c ?>"></label>
+															</div>
+														</td>
+													<?php endfor; ?>
+												<?php elseif ($qRow['question_type'] == 'text'): ?>
+													<!-- Comment textarea in the same row -->
+													<td colspan="4" class="text-center">
+														<textarea name="comment[<?= $qRow['question_id'] ?>]" class="form-control"
+															rows="3" placeholder="Enter your answer" required></textarea>
 													</td>
-												<?php endfor; ?>
+												<?php endif; ?>
 											</tr>
 											<?php
 										}
@@ -144,54 +153,54 @@ include 'handlers/eval_handler.php';
 	</div>
 </nav>
 <script>
-    $(document).ready(function () {
-        $('#evaluation-form').on('submit', function (e) {
-            // Prevent form submission to handle validation
-            e.preventDefault();
+	$(document).ready(function () {
+		$('#evaluation-form').on('submit', function (e) {
+			// Prevent form submission to handle validation
+			e.preventDefault();
 
-            // Check if a faculty member is selected
-            const selectedFaculty = $('input[name="faculty_id"]').val();
+			// Check if a faculty member is selected
+			const selectedFaculty = $('input[name="faculty_id"]').val();
 
-            // If no faculty is selected, show SweetAlert
-            if (!selectedFaculty) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Faculty Not Selected',
-                    text: 'Please select a faculty member before submitting your evaluation.',
-                    confirmButtonText: 'Okay'
-                });
-                return; // Exit the function if no faculty is selected
-            }
+			// If no faculty is selected, show SweetAlert
+			if (!selectedFaculty) {
+				Swal.fire({
+					icon: 'warning',
+					title: 'Faculty Not Selected',
+					text: 'Please select a faculty member before submitting your evaluation.',
+					confirmButtonText: 'Okay'
+				});
+				return; // Exit the function if no faculty is selected
+			}
 
-            // If faculty is selected, proceed with form submission (AJAX)
-            var formData = $(this).serialize();
+			// If faculty is selected, proceed with form submission (AJAX)
+			var formData = $(this).serialize();
 
-            $.ajax({
-                type: 'POST',
-                url: 'evaluate.php',
-                data: formData,
-                success: function (response) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: 'Your answers have been saved successfully.',
-                        showConfirmButton: false,
-                        timer: 2000
-                    }).then(() => {
-                        window.location.href = 'evaluate.php';
-                    });
+			$.ajax({
+				type: 'POST',
+				url: 'evaluate.php',
+				data: formData,
+				success: function (response) {
+					Swal.fire({
+						icon: 'success',
+						title: 'Success!',
+						text: 'Your answers have been saved successfully.',
+						showConfirmButton: false,
+						timer: 2000
+					}).then(() => {
+						window.location.href = 'evaluate.php';
+					});
 
-                    $('#evaluation-form')[0].reset();  // Optionally reset the form after success
-                },
-                error: function () {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Something went wrong! Please try again.',
-                    });
-                }
-            });
-        });
-    });
+					$('#evaluation-form')[0].reset();  // Optionally reset the form after success
+				},
+				error: function () {
+					Swal.fire({
+						icon: 'error',
+						title: 'Oops...',
+						text: 'Something went wrong! Please try again.',
+					});
+				}
+			});
+		});
+	});
 </script>
 <?php include 'footer.php'; ?>
