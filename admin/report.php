@@ -89,15 +89,24 @@ include "handlers/report_handler.php";
                                                         <?= htmlspecialchars($qRow['question']) ?>
                                                         <input type="hidden" name="qid[]" value="<?= $qRow['question_id'] ?>">
                                                     </td>
-                                                    <?php for ($c = 0; $c < 4; $c++): ?>
-                                                        <td class="text-center">
-                                                            <div class="icheck-success d-inline">
-                                                                <input type="radio" name="qid[<?= $qRow['question_id'] ?>][]"
-                                                                    id="qradio<?= $qRow['question_id'] . '_' . $c ?>" value="<?= $c + 1 ?>">
-                                                                <label for="qradio<?= $qRow['question_id'] . '_' . $c ?>"></label>
-                                                            </div>
+                                                    <?php if ($qRow['question_type'] == 'mcq'): ?>
+                                                        <!-- Multiple-choice question -->
+                                                        <?php for ($c = 0; $c < 4; $c++): ?>
+                                                            <td class="text-center">
+                                                                <div class="icheck-success d-inline">
+                                                                    <input type="radio" name="qid[<?= $qRow['question_id'] ?>][]"
+                                                                        id="qradio<?= $qRow['question_id'] . '_' . $c ?>" value="<?= $c + 1 ?>">
+                                                                    <label for="qradio<?= $qRow['question_id'] . '_' . $c ?>"></label>
+                                                                </div>
+                                                            </td>
+                                                        <?php endfor; ?>
+                                                    <?php elseif ($qRow['question_type'] == 'text'): ?>
+                                                        <!-- Open-ended question -->
+                                                        <td colspan="4" class="text-center">
+                                                            <textarea name="comment[<?= $qRow['question_id'] ?>]" class="form-control"
+                                                                rows="3" placeholder="Enter your answer"></textarea>
                                                         </td>
-                                                    <?php endfor; ?>
+                                                    <?php endif; ?>
                                                 </tr>
                                                 <?php
                                             }
@@ -105,7 +114,7 @@ include "handlers/report_handler.php";
                                     }
                                     if (!$hasQuestions): ?>
                                         <tr>
-                                            <td colspan="7" class="text-center"></td>
+                                            <td colspan="5" class="text-center">No questions available.</td>
                                         </tr>
                                     <?php endif; ?>
                                 </tbody>
@@ -219,7 +228,7 @@ include "handlers/report_handler.php";
         const facultyId = this.value;
 
         const ratingsTable = document.querySelector('#printable .table-responsive');
-        
+
         if (facultyId) {
             fetch(`get_faculty_ratings.php?faculty_id=${facultyId}`)
                 .then(response => response.json())
@@ -284,25 +293,25 @@ include "handlers/report_handler.php";
 </script>
 <script>
     document.getElementById('faculty_id').addEventListener('change', function () {
-    const facultyId = this.value;
-    const academicYearDisplay = document.getElementById('ay');
+        const facultyId = this.value;
+        const academicYearDisplay = document.getElementById('ay');
 
-    if (facultyId) {
-        fetch(`get_academic_info.php?faculty_id=${facultyId}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    academicYearDisplay.innerHTML = `${data.year} - ${data.semester}`;
-                } else {
-                    academicYearDisplay.innerHTML = 'No academic information available.';
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching academic information:', error);
-                academicYearDisplay.innerHTML = 'Error fetching academic information.';
-            });
-    } else {
-        academicYearDisplay.innerHTML = 'Select a faculty to view academic year and semester.';
-    }
-});
+        if (facultyId) {
+            fetch(`get_academic_info.php?faculty_id=${facultyId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        academicYearDisplay.innerHTML = `${data.year} - ${data.semester}`;
+                    } else {
+                        academicYearDisplay.innerHTML = 'No academic information available.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching academic information:', error);
+                    academicYearDisplay.innerHTML = 'Error fetching academic information.';
+                });
+        } else {
+            academicYearDisplay.innerHTML = 'Select a faculty to view academic year and semester.';
+        }
+    });
 </script>
