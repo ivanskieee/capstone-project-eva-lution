@@ -145,20 +145,24 @@ include "handlers/report_handler.php";
                     // Update faculty name
                     document.getElementById('fname').innerText = data.faculty_name;
 
-                    // Populate the ratings table
+                    // Populate the ratings table with only MCQs
                     const ratingsTable = document.getElementById('ratings-table-body'); // Assuming a table body exists
                     ratingsTable.innerHTML = ''; // Clear old data
-                    data.ratings.forEach(row => {
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `
+
+                    // Filter MCQ questions and populate the table
+                    data.ratings
+                        .filter(row => row.question_type === 'mcq') // Only include MCQs
+                        .forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
                         <td>${row.question}</td>
                         <td>${row.rate1}%</td>
                         <td>${row.rate2}%</td>
                         <td>${row.rate3}%</td>
                         <td>${row.rate4}%</td>
                     `;
-                        ratingsTable.appendChild(tr);
-                    });
+                            ratingsTable.appendChild(tr);
+                        });
                 } else {
                     console.error('Error:', data.message);
                 }

@@ -31,6 +31,7 @@ $stmt = $conn->prepare("
     SELECT 
         q.question_id,
         q.question,
+        q.question_type, -- Fetch question type (e.g., 'mcq' or 'text')
         COUNT(CASE WHEN ea.rate = 1 THEN 1 END) AS rate1,
         COUNT(CASE WHEN ea.rate = 2 THEN 1 END) AS rate2,
         COUNT(CASE WHEN ea.rate = 3 THEN 1 END) AS rate3,
@@ -39,17 +40,20 @@ $stmt = $conn->prepare("
     FROM question_list q
     LEFT JOIN evaluation_answers ea 
         ON q.question_id = ea.question_id AND ea.faculty_id = :faculty_id
-    GROUP BY q.question_id, q.question
+    WHERE q.question_type = 'mcq' -- Only include MCQ questions
+    GROUP BY q.question_id, q.question, q.question_type
 ");
 $stmt->bindParam(':faculty_id', $facultyId, PDO::PARAM_INT);
 $stmt->execute();
 $ratings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Prepare the response
 $response = [];
 foreach ($ratings as $row) {
     $total = $row['total_responses'];
     $response[] = [
         'question' => $row['question'],
+        'question_type' => $row['question_type'], // Include question type in the response
         'rate1' => $total ? round(($row['rate1'] / $total) * 100, 2) : 0,
         'rate2' => $total ? round(($row['rate2'] / $total) * 100, 2) : 0,
         'rate3' => $total ? round(($row['rate3'] / $total) * 100, 2) : 0,

@@ -256,24 +256,39 @@ include "handlers/report_handler.php";
                         // Add table body
                         const tbody = document.createElement('tbody');
                         data.data.forEach(row => {
-                            const questionRow = `
-                            <tr class="bg-white">
-                                <td class="p-1" width="20%">${row.question}</td>
-                                <td class="text-center">
-                                    <div class="circle">${row.rate1}%</div>
-                                </td>
-                                <td class="text-center">
-                                    <div class="circle">${row.rate2}%</div>
-                                </td>
-                                <td class="text-center">
-                                    <div class="circle">${row.rate3}%</div>
-                                </td>
-                                <td class="text-center">
-                                    <div class="circle">${row.rate4}%</div>
-                                </td>
-                            </tr>`;
+                            let questionRow = '';
+                            if (row.question_type === 'text') {
+                                // Handle open-ended questions with the question text and stored comment
+                                questionRow = `
+                                    <tr class="bg-white">
+                                        <td colspan="5">
+                                            <div><strong>${row.question}</strong></div>
+                                            <textarea name="comment[${row.question_id}]" class="form-control mt-2"
+                                                rows="3" placeholder="Enter your answer">${row.comment || ''}</textarea>
+                                        </td>
+                                    </tr>`;
+                            } else {
+                                // Handle rating questions
+                                questionRow = `
+                                    <tr class="bg-white">
+                                        <td class="p-1" width="20%">${row.question}</td>
+                                        <td class="text-center">
+                                            <div class="circle">${row.rate1}%</div>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="circle">${row.rate2}%</div>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="circle">${row.rate3}%</div>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="circle">${row.rate4}%</div>
+                                        </td>
+                                    </tr>`;
+                            }
                             tbody.innerHTML += questionRow;
                         });
+
                         table.appendChild(tbody);
 
                         // Append the complete table to the ratings container
@@ -314,4 +329,52 @@ include "handlers/report_handler.php";
             academicYearDisplay.innerHTML = 'Select a faculty to view academic year and semester.';
         }
     });
+</script>
+<script>
+    document.getElementById('print-btn').addEventListener('click', function () {
+    const printableContent = document.getElementById('printable').innerHTML;
+    console.log(printableContent);  // Debugging line
+
+    // Create a new window for printing
+    const printWindow = window.open('', '', 'width=800,height=600');
+
+    if (printWindow) {
+        // Write the content into the new window
+        printWindow.document.open();
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Print Evaluation Report</title>
+                <style>
+                    body { font-family: Arial, sans-serif; line-height: 1.6; margin: 20px; }
+                    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                    table, th, td { border: 1px solid black; padding: 8px; text-align: center; }
+                    .text-center { text-align: center; }
+                    .text-right { text-align: right; }
+                    .text-left { text-align: left; }
+                    .wborder { border: 1px solid gray; }
+                </style>
+            </head>
+            <body>
+                <h1 class="text-center">Evaluation Report</h1>
+                ${printableContent}
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+
+        // Make sure the print window is printed
+        printWindow.onload = function () {
+            printWindow.print();
+            printWindow.onafterprint = function() {
+                printWindow.close();
+            };
+        };
+    } else {
+        console.error('Unable to open the print window. It may have been blocked by the browser.');
+    }
+});
 </script>
