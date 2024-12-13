@@ -10,6 +10,27 @@ $query = "
 $stmt = $conn->prepare($query);
 $stmt->execute();
 $student_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Assume $total_records is the total number of records from the database
+$total_records = count($student_data); // Replace this with the actual query to count rows
+$records_per_page = 8; // Number of records per page
+$total_pages = ceil($total_records / $records_per_page);
+
+// Current page
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+$page = max(1, min($page, $total_pages)); // Ensure the page is within valid range
+
+// Calculate offset for database query
+$offset = ($page - 1) * $records_per_page;
+
+// Fetch only the required records for the current page
+$student_data = array_slice($student_data, $offset, $records_per_page);
+
+// Pagination segment settings
+$segment_size = 5; // Number of page links per segment
+$current_segment = ceil($page / $segment_size);
+$start_page = ($current_segment - 1) * $segment_size + 1;
+$end_page = min($current_segment * $segment_size, $total_pages);
 ?>
 
 <nav class="main-header">
@@ -74,15 +95,44 @@ $student_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         </form>
                     </div>
                     </td> -->
-                    </tr>
-                <?php endforeach; ?>
-                </tbody>
-                </table>
-                <p id="noRecordsMessage" style="display:none; color: black;" class="ml-1">No student found.</p>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                    <p id="noRecordsMessage" style="display:none; color: black;" class="ml-1">No student found.</p>
+                </div>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                        <?php if ($current_segment > 1): ?>
+                            <li class="page-item">
+                                <a class="page-link btn btn-success"
+                                    href="?page=<?php echo ($start_page - 1); ?>" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo; Previous Segment</span>
+                                </a>
+                            </li>
+                        <?php endif; ?>
+
+                        <?php for ($p = $start_page; $p <= $end_page; $p++): ?>
+                            <li class="page-item <?php echo ($p == $page) ? 'active' : ''; ?>">
+                                <a class="page-link btn btn-success <?php echo ($p == $page) ? 'active' : ''; ?>"
+                                    href="?page=<?php echo $p; ?>">
+                                    <?php echo $p; ?>
+                                </a>
+                            </li>
+                        <?php endfor; ?>
+
+                        <?php if ($end_page < $total_pages): ?>
+                            <li class="page-item">
+                                <a class="page-link btn btn-success" href="?page=<?php echo $end_page + 1; ?>"
+                                    aria-label="Next">
+                                    <span aria-hidden="true">Next Segment &raquo;</span>
+                                </a>
+                            </li>
+                        <?php endif; ?>
+                    </ul>
+                </nav </div>
             </div>
         </div>
-    </div>
-    </div>
 </nav>
 <script>
     $(document).ready(function () {
