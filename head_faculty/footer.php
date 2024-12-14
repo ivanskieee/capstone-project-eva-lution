@@ -17,7 +17,7 @@
 <script src="assets/plugins/bootstrap-switch/js/bootstrap-switch.min.js"></script>
  <!-- MOMENT -->
 <script src="assets/plugins/moment/moment.min.js"></script>
-<script>
+<!-- <script>
 	$(document).ready(function(){
 	  $('.select2').select2({
 	    placeholder:"Please select here",
@@ -128,7 +128,7 @@ $('.number').on('input keyup keypress',function(){
         val = val > 0 ? parseFloat(val).toLocaleString("en-US") : 0;
         $(this).val(val)
     })
-</script>
+</script> -->
 <script src="assets/plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
 <!-- overlayScrollbars -->
 <script src="assets/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>

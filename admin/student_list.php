@@ -64,7 +64,7 @@ $end_page = min($current_segment * $segment_size, $total_pages);
                         </thead>
                         <tbody>
                             <?php
-                            $i = 1;
+                            $i = $offset + 1;
                             foreach ($student_data as $row): ?>
                                 <tr>
                                     <th class="text-center"><?php echo $i++; ?></th>
@@ -105,8 +105,8 @@ $end_page = min($current_segment * $segment_size, $total_pages);
                     <ul class="pagination justify-content-center">
                         <?php if ($current_segment > 1): ?>
                             <li class="page-item">
-                                <a class="page-link btn btn-success"
-                                    href="?page=<?php echo ($start_page - 1); ?>" aria-label="Previous">
+                                <a class="page-link btn btn-success" href="?page=<?php echo ($start_page - 1); ?>"
+                                    aria-label="Previous">
                                     <span aria-hidden="true">&laquo; Previous Segment</span>
                                 </a>
                             </li>
@@ -130,9 +130,10 @@ $end_page = min($current_segment * $segment_size, $total_pages);
                             </li>
                         <?php endif; ?>
                     </ul>
-                </nav </div>
+                </nav>
             </div>
         </div>
+    </div>
 </nav>
 <script>
     $(document).ready(function () {

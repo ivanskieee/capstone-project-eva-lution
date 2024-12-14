@@ -27,9 +27,9 @@
                     </a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a href="./"
-                        class="nav-link nav-evaluate <?php echo basename($_SERVER['PHP_SELF']) == 'evaluate.php' ? 'active' : ''; ?>"
-                        style="<?php echo basename($_SERVER['PHP_SELF']) == 'evaluate.php' ? 'background-color: rgb(51, 128, 64); color: #fff; border: 1px solid #343a40;' : 'background-color: #343a40; color: #fff; border: 1px solid #343a40;'; ?>">
+                    <a href="report.php"
+                        class="nav-link nav-evaluate <?php echo basename($_SERVER['PHP_SELF']) == 'report.php' ? 'active' : ''; ?>"
+                        style="<?php echo basename($_SERVER['PHP_SELF']) == 'report.php' ? 'background-color: rgb(51, 128, 64); color: #fff; border: 1px solid #343a40;' : 'background-color: #343a40; color: #fff; border: 1px solid #343a40;'; ?>">
                         <i class="nav-icon fas fa-th-list"></i>
                         <p>Result</p>
                     </a>
