@@ -71,7 +71,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             move_uploaded_file($_FILES["img"]["tmp_name"], $target_file);
         }
 
-        
+        $query = 'SELECT academic_id FROM academic_list WHERE status = 1 AND start_date <= CURDATE() AND end_date >= CURDATE()';
+        $stmt = $conn->query($query);
+        $academic = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$academic) {
+            echo "<script>
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'No Active Academic Year!',
+                        text: 'Registration is not allowed as there is no active academic year.',
+                    });
+                  </script>";
+            return;
+        }
+
+        $academic_id = $academic['academic_id'];
+
         if ($id) {
             $query = "UPDATE head_faculty_list 
                       SET school_id = :school_id, firstname = :firstname, lastname = :lastname, email = :email";
