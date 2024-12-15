@@ -24,6 +24,13 @@ $facultyList = fetchFacultyList($conn);
 ?>
 <nav class="main-header">
     <div class="container-fluid mt-3">
+        <div class="row mb-3">
+            <div class="col-12">
+                <h2 class="text-start"
+                    style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
+                    Dashboard</h2>
+            </div>
+        </div>
         <div class="row">
             <div class="col-12">
                 <div class="card shadow-sm rounded">

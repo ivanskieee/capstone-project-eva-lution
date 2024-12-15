@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($id) {
             $query = "UPDATE head_faculty_list 
-                      SET school_id = :school_id, firstname = :firstname, lastname = :lastname, email = :email";
+                      SET school_id = :school_id, firstname = :firstname, lastname = :lastname, email = :email, academic_id = :academic_id";
 
             if (!empty($password)) {
                 $query .= ", password = :password";
@@ -107,6 +107,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindParam(':firstname', $firstname);
             $stmt->bindParam(':lastname', $lastname);
             $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':academic_id', $academic_id);
 
             if (!empty($password)) {
                 $stmt->bindParam(':password', $hashed_password);
@@ -118,8 +119,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $stmt->bindParam(':head_id', $id, PDO::PARAM_INT);
         } else {
-            $query = "INSERT INTO head_faculty_list (school_id, firstname, lastname, email, password, avatar) 
-                      VALUES (:school_id, :firstname, :lastname, :email, :password, :avatar)";
+            $query = "INSERT INTO head_faculty_list (school_id, firstname, lastname, email, password, avatar, academic_id) 
+                      VALUES (:school_id, :firstname, :lastname, :email, :password, :avatar, :academic_id)";
             $stmt = $conn->prepare($query);
 
             $stmt->bindParam(':school_id', $school_id);
@@ -128,6 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':password', $hashed_password);
             $stmt->bindParam(':avatar', $avatar);
+            $stmt->bindParam(':academic_id', $academic_id);
         }
 
         

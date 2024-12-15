@@ -5,32 +5,40 @@ $generated_link = isset($_SESSION['generated_token']) ? "http://localhost/Capsto
 ?>
 
 <nav class="main-header">
-    <div class="col-lg-12 mt-5">
-        <div class="card">
-            <div class="card-body">
-                <h2 class="text-center">Generate Registration Link</h2>
-                <p class="text-center">Click the button below to generate a unique registration link for students:</p>
+    <div class="col-lg-12 mt-3">
+        <div class="container mt-3">
+            <div class="col-12 mb-5">
+                <h2 class="text-start"
+                    style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
+                    Account Links</h2>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="text-center">Generate Registration Link</h2>
+                    <p class="text-center">Click the button below to generate a unique registration link for students:
+                    </p>
 
-                <!-- Display Generated Link Only After Button Click -->
-                <?php if ($generated_link): ?>
-                    <div class="link-container mt-4 text-center" id="link-container">
-                        <label for="generated-link" class="control-label">Generated Link:</label>
-                        <div class="input-group justify-content-center mt-2">
-                            <input type="text" id="generated-link" class="form-control form-control-sm" 
-                                   value="<?php echo $generated_link; ?>" readonly>
-                            <div class="input-group-append">
-                                <button class="btn btn-secondary copy-btn" onclick="copyLink()">Copy Link</button>
+                    <!-- Display Generated Link Only After Button Click -->
+                    <?php if ($generated_link): ?>
+                        <div class="link-container mt-4 text-center" id="link-container">
+                            <label for="generated-link" class="control-label">Generated Link:</label>
+                            <div class="input-group justify-content-center mt-2">
+                                <input type="text" id="generated-link" class="form-control form-control-sm"
+                                    value="<?php echo $generated_link; ?>" readonly>
+                                <div class="input-group-append">
+                                    <button class="btn btn-secondary copy-btn" onclick="copyLink()">Copy Link</button>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                <?php endif; ?>
+                    <?php endif; ?>
 
-                <!-- Generate Button -->
-                <form method="POST" action="admin_generate_link.php" id="generate_link_form">
-                    <div class="text-center mt-4">
-                        <button type="submit" class="btn btn-success btn-secondary-blue">Generate Link</button>
-                    </div>
-                </form>
+                    <!-- Generate Button -->
+                    <form method="POST" action="admin_generate_link.php" id="generate_link_form">
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-success btn-secondary-blue">Generate Link</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

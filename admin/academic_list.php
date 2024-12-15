@@ -4,6 +4,11 @@ include 'handlers/academic_handler.php';
 ?>
 <nav class="main-header">
     <div class="col-lg-12 mt-3">
+        <div class="col-12 mb-3">
+            <h2 class="text-start"
+                style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
+                Academic Year and Semester</h2>
+        </div>
         <div class="card card-outline card-success">
             <div class="card-header">
                 <div class="card-tools">
@@ -60,14 +65,12 @@ include 'handlers/academic_handler.php';
                                     <td class="text-center">
                                         <?php if ($row['status'] == 0): ?>
                                             <button class="btn btn-secondary update_status"
-                                                data-id="<?php echo $row['academic_id']; ?>"
-                                                data-status="1">Start</button>
+                                                data-id="<?php echo $row['academic_id']; ?>" data-status="1">Start</button>
                                         <?php elseif ($row['status'] == 1): ?>
                                             <span class="badge badge-success">Active (Ends:
                                                 <?php echo $row['end_date']; ?>)</span>
                                             <button class="btn btn-success update_status"
-                                                data-id="<?php echo $row['academic_id']; ?>"
-                                                data-status="2">Close</button>
+                                                data-id="<?php echo $row['academic_id']; ?>" data-status="2">Close</button>
                                         <?php elseif ($row['status'] == 2): ?>
                                             <span class="badge badge-success">Closed</span>
                                         <?php endif; ?>
