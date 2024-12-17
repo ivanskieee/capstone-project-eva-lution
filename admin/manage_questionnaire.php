@@ -17,6 +17,19 @@ include 'handlers/questionnaire_handler.php';
                             <input type="hidden" name="academic_id"
                                 value="<?php echo isset($_GET['academic_id']) ? $_GET['academic_id'] : ''; ?>">
 
+                            <input type="hidden" name="sector"
+                                value="<?php echo isset($_GET['sector']) ? $_GET['sector'] : 'student_teacher'; ?>">
+
+                            <div class="form-group">
+                                <label for="sector">Sector</label>
+                                <select name="sector" id="sector" class="form-control" required>
+                                    <option value="student_teacher" <?= isset($_GET['sector']) && $_GET['sector'] === 'student_teacher' ? 'selected' : '' ?>>Student to Teacher
+                                    </option>
+                                    <option value="teacher_teacher" <?= isset($_GET['sector']) && $_GET['sector'] === 'teacher_teacher' ? 'selected' : '' ?>>Teacher to Teacher
+                                    </option>
+                                </select>
+                            </div>
+
                             <div class="form-group">
                                 <label for="question_type">Question Type</label>
                                 <select name="question_type" id="question_type" class="form-control" required>
@@ -233,6 +246,11 @@ include 'handlers/questionnaire_handler.php';
                 }
             });
         });
+        $('#sector').on('change', function () {
+            var sector = $('#sector').val();
+            var academic_id = $('#academic_id').val(); // Ensure academic_id is available in the DOM
+            window.location.href = 'manage_questionnaire.php?academic_id=' + academic_id + '&sector=' + sector;
+        });
     });
 </script>
 
@@ -289,7 +307,7 @@ include 'handlers/questionnaire_handler.php';
     }
 
     .main-header {
-        max-height: 95vh;
+        max-height: 90vh;
         overflow-y: scroll;
         scrollbar-width: none;
     }

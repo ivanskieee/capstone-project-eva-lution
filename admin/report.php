@@ -5,6 +5,11 @@ include "handlers/report_handler.php";
 ?>
 <nav class="main-header">
     <div class="col-lg-12 mt-3">
+        <div class="col-12 mb-3">
+            <h2 class="text-start"
+                style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
+                Evaluation Report</h2>
+        </div>
         <div class="callout callout-success">
             <div class="d-flex w-100 justify-content-center align-items-center">
                 <label for="faculty">Select Faculty</label>
@@ -332,16 +337,16 @@ include "handlers/report_handler.php";
 </script>
 <script>
     document.getElementById('print-btn').addEventListener('click', function () {
-    const printableContent = document.getElementById('printable').innerHTML;
-    console.log(printableContent);  // Debugging line
+        const printableContent = document.getElementById('printable').innerHTML;
+        console.log(printableContent);  // Debugging line
 
-    // Create a new window for printing
-    const printWindow = window.open('', '', 'width=800,height=600');
+        // Create a new window for printing
+        const printWindow = window.open('', '', 'width=800,height=600');
 
-    if (printWindow) {
-        // Write the content into the new window
-        printWindow.document.open();
-        printWindow.document.write(`
+        if (printWindow) {
+            // Write the content into the new window
+            printWindow.document.open();
+            printWindow.document.write(`
             <!DOCTYPE html>
             <html lang="en">
             <head>
@@ -364,17 +369,17 @@ include "handlers/report_handler.php";
             </body>
             </html>
         `);
-        printWindow.document.close();
+            printWindow.document.close();
 
-        // Make sure the print window is printed
-        printWindow.onload = function () {
-            printWindow.print();
-            printWindow.onafterprint = function() {
-                printWindow.close();
+            // Make sure the print window is printed
+            printWindow.onload = function () {
+                printWindow.print();
+                printWindow.onafterprint = function () {
+                    printWindow.close();
+                };
             };
-        };
-    } else {
-        console.error('Unable to open the print window. It may have been blocked by the browser.');
-    }
-});
+        } else {
+            console.error('Unable to open the print window. It may have been blocked by the browser.');
+        }
+    });
 </script>

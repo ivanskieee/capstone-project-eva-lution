@@ -4,6 +4,11 @@ include "handlers/questionnaire_handler.php";
 ?>
 <nav class="main-header">
     <div class="col-lg-12 mt-3">
+        <div class="col-12 mb-3">
+            <h2 class="text-start"
+                style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
+                Manage Questionnaires</h2>
+        </div>
         <div class="card card-outline card-success">
             <div class="card-header mt-4">
                 <!-- <div class="card-tools">

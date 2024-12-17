@@ -4,6 +4,11 @@ include 'handlers/criteria_handler.php';
 ?>
 <nav class="main-header">
     <div class="col-lg-12 mt-3">
+        <div class="col-12 mb-3">
+            <h2 class="text-start"
+                style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
+                Manage Criterias</h2>
+        </div>
         <div class="card card-outline card-success">
             <div class="card-header"></div>
             <div class="card-body">
@@ -80,6 +85,7 @@ include 'handlers/criteria_handler.php';
     .dropright a:hover {
         color: black !important;
     }
+
     .list-group-item:hover {
         color: black !important;
         font-weight: 700 !important;
@@ -133,7 +139,7 @@ include 'handlers/criteria_handler.php';
         });
 
         $(document).on('submit', '.delete-form', function (e) {
-            e.preventDefault(); 
+            e.preventDefault();
             var form = this;
 
             Swal.fire({
@@ -149,7 +155,7 @@ include 'handlers/criteria_handler.php';
                     var criteria_id = $('#criteria_id').val();
                     $.ajax({
                         type: 'POST',
-                        url: 'criteria_list.php', 
+                        url: 'criteria_list.php',
                         data: $(form).serialize(),
                         success: function () {
                             Swal.fire({
@@ -159,8 +165,8 @@ include 'handlers/criteria_handler.php';
                                 showConfirmButton: false,
                                 timer: 2000
                             }).then(() => {
-                                
-                                window.location.href = 'criteria_list.php' 
+
+                                window.location.href = 'criteria_list.php'
                             });
                         },
                         error: function () {
