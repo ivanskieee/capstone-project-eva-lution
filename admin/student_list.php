@@ -1,5 +1,6 @@
 <?php
 include "handlers/student_handler.php";
+include '../database/connection.php';
 include "handlers/verify_actions_handler.php";
 
 $query = "
@@ -13,7 +14,7 @@ $student_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Assume $total_records is the total number of records from the database
 $total_records = count($student_data); // Replace this with the actual query to count rows
-$records_per_page = 8; // Number of records per page
+$records_per_page = 5; // Number of records per page
 $total_pages = ceil($total_records / $records_per_page);
 
 // Current page

@@ -76,13 +76,13 @@
           <ul class="nav nav-treeview">
             <li class="nav-item">
               <a href="new_head_faculty.php" class="nav-link nav-new_user tree-item">
-                <i class="nav-icon"></i>
+                <i class="nav-icon fas fa-plus-circle"></i>
                 <p>Add New</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="head_faculty_list.php" class="nav-link nav-user_list tree-item">
-                <i class="nav-icon"></i>
+                <i class="nav-icon fas fa-list"></i>
                 <p>List</p>
               </a>
             </li>
@@ -90,8 +90,8 @@
         </li>
         <li class="nav-item">
           <a href="#"
-            class="nav-link nav-edit_faculty <?php echo in_array(basename($_SERVER['PHP_SELF']), ['new_faculty.php', 'tertiary_faculty_list.php', 'new_secondary_faculty.php', 'secondary_faculty_list.php']) ? 'active' : ''; ?>"
-            style="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['new_faculty.php', 'tertiary_faculty_list.php', 'new_secondary_faculty.php', 'secondary_faculty_list.php']) ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
+            class="nav-link nav-edit_faculty <?php echo in_array(basename($_SERVER['PHP_SELF']), ['new_faculty.php', 'faculty_list.php']) ? 'active' : ''; ?>"
+            style="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['new_faculty.php', 'faculty_list.php']) ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
             <i class="nav-icon fas fa-user-friends"></i>
             <p>
               Faculties
@@ -100,47 +100,20 @@
           </a>
           <ul class="nav nav-treeview">
             <li class="nav-item">
-              <a href="#" class="nav-link nav-edit_faculty">
-                <i class="right fas fa-angle-left"></i>
-                <p>Tertiary</p>
+              <a href="new_faculty.php" class="nav-link nav-new_faculty tree-item">
+                <i class="nav-icon fas fa-plus-circle"></i>
+                <p>Add New Faculty</p>
               </a>
-              <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="new_faculty.php" class="nav-link nav-new_faculty tree-item">
-                    <i class="nav-icon"></i>
-                    <p>Add New</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="tertiary_faculty_list.php" class="nav-link nav-tertiary_faculty_list tree-item">
-                    <i class="nav-icon"></i>
-                    <p>List</p>
-                  </a>
-                </li>
-              </ul>
             </li>
             <li class="nav-item">
-              <a href="#" class="nav-link nav-edit_faculty">
-                <i class="right fas fa-angle-left"></i>
-                <p>Secondary</p>
+              <a href="tertiary_faculty_list.php" class="nav-link nav-tertiary_faculty_list tree-item">
+                <i class="nav-icon fas fa-list"></i>
+                <p>Faculty List</p>
               </a>
-              <ul class="nav nav-treeview">
-                <li class="nav-item">
-                  <a href="new_secondary_faculty.php" class="nav-link nav-new_faculty tree-item">
-                    <i class="nav-icon"></i>
-                    <p>Add New</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="secondary_faculty_list.php" class="nav-link nav-faculty_list tree-item">
-                    <i class="nav-icon"></i>
-                    <p>List</p>
-                  </a>
-                </li>
-              </ul>
             </li>
           </ul>
         </li>
+
         <li class="nav-item">
           <a href="#"
             class="nav-link nav-edit_student <?php echo (basename($_SERVER['PHP_SELF']) == 'new_student.php' || basename($_SERVER['PHP_SELF']) == 'student_list.php') ? 'active' : ''; ?>"
@@ -154,7 +127,7 @@
           <ul class="nav nav-treeview">
             <li class="nav-item">
               <a href="student_list.php" class="nav-link nav-student_list tree-item">
-                <i class="nav-icon"></i>
+                <i class="nav-icon fas fa-list"></i>
                 <p>List</p>
               </a>
             </li>
@@ -183,13 +156,13 @@
           <ul class="nav nav-treeview">
             <li class="nav-item">
               <a href="new_users.php" class="nav-link nav-new_user tree-item">
-                <i class="nav-icon"></i>
+                <i class="nav-icon fas fa-plus-circle"></i>
                 <p>Add New</p>
               </a>
             </li>
             <li class="nav-item">
               <a href="user_list.php" class="nav-link nav-user_list tree-item">
-                <i class="nav-icon"></i>
+                <i class="nav-icon fas fa-list"></i>
                 <p>List</p>
               </a>
             </li>
@@ -200,7 +173,7 @@
   </div>
 </aside>
 <script>
-  $(document).ready(function () {
+  $(document).ready(function() {
     var page = '<?php echo isset($_GET['page']) ? $_GET['page'] : 'home' ?>';
     var s = '<?php echo isset($_GET['s']) ? $_GET['s'] : '' ?>';
     if (s != '')
@@ -219,7 +192,7 @@
 
   })
 
-  document.addEventListener('DOMContentLoaded', function () {
+  document.addEventListener('DOMContentLoaded', function() {
     const navLinks = document.querySelectorAll('.nav-link');
 
     navLinks.forEach(link => {
