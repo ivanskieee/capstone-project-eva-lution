@@ -97,10 +97,9 @@ $facultyList = fetchFacultyList($conn);
         <div class="row mt-3">
             <?php
             $dashboardData = [
-                ["Total Tertiary Faculties", "college_faculty_list", "fa-user-friends"],
+                ["Total Faculties", "college_faculty_list", "fa-user-friends"],
                 ["Total Students", "student_list", "ion-ios-people-outline"],
                 ["Total Users", "users", "fa-users"],
-                ["Total Secondary Faculties", "secondary_faculty_list", "fa-user-friends"],
                 ["Total Head Faculties", "head_faculty_list", "fa-users"],
             ];
 
@@ -124,66 +123,116 @@ $facultyList = fetchFacultyList($conn);
         </div>
 
         <div class="row mt-3">
-            <div class="col-md-8 offset-md-2">
-                <div class="card shadow-sm rounded">
-                    <div class="card-header text-center py-2">
-                        <h5 class="mb-0">Select Faculty to Monitor</h5>
-                    </div>
-                    <div class="card-body py-3">
-                        <form id="facultyForm">
-                            <div class="form-group">
-                                <label for="facultySelect" class="form-label">Faculty:</label>
-                                <select class="form-control form-control-sm" id="facultySelect" name="faculty_id">
-                                    <option value="" selected disabled>Select Faculty</option>
-                                    <?php foreach ($facultyList as $faculty): ?>
-                                        <option value="<?php echo $faculty['faculty_id']; ?>">
-                                            <?php echo $faculty['faculty_name']; ?>
-                                        </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+    <div class="col-md-8 offset-md-2">
+        <div class="card shadow-sm rounded">
+            <div class="card-header text-center py-2">
+                <h5 class="mb-0">Select Category</h5>
             </div>
-        </div>
-
-        <div class="row mt-3">
-            <div class="col-md-8 offset-md-2">
-                <div class="card shadow-sm rounded">
-                    <div class="card-header text-center py-2">
-                        <h5 class="mb-0">Faculty Performance Over Time</h5>
-                    </div>
-                    <div class="card-body py-3">
-                        <canvas id="facultyLineChart" style="max-height: 400px;"></canvas>
-                    </div>
+            <div class="card-body py-3 text-center">
+                <div class="btn-group" role="group" aria-label="Category Selector">
+                    <button type="button" class="btn btn-outline-success active" id="facultyButton" data-category="faculty">Faculty</button>
+                    <button type="button" class="btn btn-outline-success" id="selfFacultyButton" data-category="self-faculty">Self Faculty</button>
                 </div>
             </div>
         </div>
     </div>
-</nav>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-8 offset-md-2">
+        <div class="card shadow-sm rounded">
+            <div class="card-header text-center py-2">
+                <h5 class="mb-0" id="categoryTitle">Select Faculty to Monitor</h5>
+            </div>
+            <div class="card-body py-3">
+                <form id="facultyForm">
+                    <div class="form-group">
+                        <label for="facultySelect" class="form-label" id="facultyLabel">Faculty:</label>
+                        <select class="form-control form-control-sm" id="facultySelect" name="faculty_id">
+                            <option value="" selected disabled>Select Faculty</option>
+                            <?php foreach ($facultyList as $faculty): ?>
+                                <option value="<?php echo $faculty['faculty_id']; ?>">
+                                    <?php echo $faculty['faculty_name']; ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-8 offset-md-2">
+        <div class="card shadow-sm rounded">
+            <div class="card-header text-center py-2">
+                <h5 class="mb-0">Performance Over Time</h5>
+            </div>
+            <div class="card-body py-3">
+                <canvas id="facultyLineChart" style="max-height: 400px;"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
-    document.getElementById('facultySelect').addEventListener('change', function () {
+    // Elements
+    const categoryTitle = document.getElementById('categoryTitle');
+    const facultyLabel = document.getElementById('facultyLabel');
+    const facultySelect = document.getElementById('facultySelect');
+    const facultyButtons = document.querySelectorAll('[data-category]');
+
+    // Set active category
+    facultyButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            facultyButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            const category = this.getAttribute('data-category');
+            updateCategory(category);
+        });
+    });
+
+    // Update category function
+    function updateCategory(category) {
+        if (category === 'faculty') {
+            categoryTitle.textContent = 'Select Faculty to Monitor';
+            facultyLabel.textContent = 'Faculty:';
+        } else if (category === 'self-faculty') {
+            categoryTitle.textContent = 'Select Self Faculty to Monitor';
+            facultyLabel.textContent = 'Self Faculty:';
+        }
+        // Reset the dropdown
+        facultySelect.value = '';
+        lineChart.data.labels = [];
+        lineChart.data.datasets[0].data = [];
+        lineChart.update();
+    }
+
+    // Update chart on selection
+    facultySelect.addEventListener('change', function () {
         const facultyId = this.value;
+        const activeCategory = document.querySelector('[data-category].active').getAttribute('data-category');
 
         if (facultyId) {
-            fetch(`fetch_faculty_data.php?faculty_id=${facultyId}`)
+            fetch(`fetch_faculty_data.php?category=${activeCategory}&faculty_id=${facultyId}`)
                 .then(response => response.json())
                 .then(data => {
                     updateLineChart(data.labels, data.dataset);
                 })
-                .catch(error => console.error('Error fetching faculty data:', error));
+                .catch(error => console.error('Error fetching data:', error));
         }
     });
 
+    // Chart setup
     const ctx = document.getElementById('facultyLineChart').getContext('2d');
     const lineChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: [],
             datasets: [{
-                label: 'Faculty Ratings',
+                label: 'Ratings',
                 data: [],
                 borderColor: 'rgb(51, 128, 64)',
                 tension: 0.1,
@@ -209,12 +258,14 @@ $facultyList = fetchFacultyList($conn);
         }
     });
 
+    // Update chart function
     function updateLineChart(labels, dataset) {
         lineChart.data.labels = labels;
         lineChart.data.datasets[0].data = dataset;
         lineChart.update();
     }
 </script>
+
 
 <style>
     .card {
