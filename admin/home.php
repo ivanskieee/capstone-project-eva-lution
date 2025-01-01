@@ -14,13 +14,24 @@ include 'header.php';
 include 'sidebar.php';
 include '../database/connection.php';
 
+// Function to fetch faculty list
 function fetchFacultyList($conn)
 {
     $stmt = $conn->query("SELECT faculty_id, CONCAT(firstname, ' ', lastname) AS faculty_name FROM college_faculty_list");
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+// Function to fetch head faculty list
+function fetchHeadFacultyList($conn)
+{
+    $stmt = $conn->query("SELECT head_id, CONCAT(firstname, ' ', lastname) AS head_name FROM head_faculty_list");
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// Fetch data
 $facultyList = fetchFacultyList($conn);
+$headList = fetchHeadFacultyList($conn);
+
 ?>
 <nav class="main-header">
     <div class="container-fluid mt-3">
@@ -123,209 +134,229 @@ $facultyList = fetchFacultyList($conn);
         </div>
 
         <div class="row mt-3">
-    <div class="col-md-8 offset-md-2">
-        <div class="card shadow-sm rounded">
-            <div class="card-header text-center py-2">
-                <h5 class="mb-0">Select Category</h5>
-            </div>
-            <div class="card-body py-3 text-center">
-                <div class="btn-group" role="group" aria-label="Category Selector">
-                    <button type="button" class="btn btn-outline-success active" id="facultyButton" data-category="faculty">Faculty</button>
-                    <button type="button" class="btn btn-outline-success" id="selfFacultyButton" data-category="self-faculty">Self Faculty</button>
+            <div class="col-md-8 offset-md-2">
+                <div class="card shadow-sm rounded">
+                    <div class="card-header text-center py-2">
+                        <h5 class="mb-0">Select Category</h5>
+                    </div>
+                    <div class="card-body py-3 text-center">
+                        <div class="btn-group" role="group" aria-label="Category Selector">
+                            <button type="button" class="btn btn-outline-success active" id="facultyButton"
+                                data-category="faculty">Faculty</button>
+                            <button type="button" class="btn btn-outline-success" id="selfFacultyButton"
+                                data-category="self-faculty">Self Faculty</button>
+                            <button type="button" class="btn btn-outline-success" id="selfHeadFacultyButton"
+                                data-category="self-head-faculty">Self Head Faculty</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
-<div class="row mt-3">
-    <div class="col-md-8 offset-md-2">
-        <div class="card shadow-sm rounded">
-            <div class="card-header text-center py-2">
-                <h5 class="mb-0" id="categoryTitle">Select Faculty to Monitor</h5>
-            </div>
-            <div class="card-body py-3">
-                <form id="facultyForm">
-                    <div class="form-group">
-                        <label for="facultySelect" class="form-label" id="facultyLabel">Faculty:</label>
-                        <select class="form-control form-control-sm" id="facultySelect" name="faculty_id">
-                            <option value="" selected disabled>Select Faculty</option>
-                            <?php foreach ($facultyList as $faculty): ?>
-                                <option value="<?php echo $faculty['faculty_id']; ?>">
-                                    <?php echo $faculty['faculty_name']; ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+        <div class="row mt-3">
+            <div class="col-md-8 offset-md-2">
+                <div class="card shadow-sm rounded">
+                    <div class="card-header text-center py-2">
+                        <h5 class="mb-0" id="categoryTitle">Select Faculty to Monitor</h5>
                     </div>
-                </form>
+                    <div class="card-body py-3">
+                        <form id="facultyForm">
+                            <div class="form-group">
+                                <label for="facultySelect" class="form-label" id="facultyLabel">Faculty:</label>
+                                <select class="form-control form-control-sm" id="facultySelect" name="faculty_id">
+                                    <option value="" selected disabled>Select Faculty</option>
+                                    <!-- Options dynamically populated -->
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<div class="row mt-3">
-    <div class="col-md-8 offset-md-2">
-        <div class="card shadow-sm rounded">
-            <div class="card-header text-center py-2">
-                <h5 class="mb-0">Performance Over Time</h5>
-            </div>
-            <div class="card-body py-3">
-                <canvas id="facultyLineChart" style="max-height: 400px;"></canvas>
+        <div class="row mt-3">
+            <div class="col-md-8 offset-md-2">
+                <div class="card shadow-sm rounded">
+                    <div class="card-header text-center py-2">
+                        <h5 class="mb-0">Performance Over Time</h5>
+                    </div>
+                    <div class="card-body py-3">
+                        <canvas id="facultyLineChart" style="max-height: 400px;"></canvas>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<script>
-    // Elements
-    const categoryTitle = document.getElementById('categoryTitle');
-    const facultyLabel = document.getElementById('facultyLabel');
-    const facultySelect = document.getElementById('facultySelect');
-    const facultyButtons = document.querySelectorAll('[data-category]');
+        <script>
+            // Mock data for testing
+            const facultyList = <?php echo json_encode($facultyList); ?>; // Example [{faculty_id: 1, faculty_name: "John Doe"}]
+            const headList = <?php echo json_encode($headList); ?>; // Example [{head_id: 1, head_name: "Jane Smith"}]
 
-    // Set active category
-    facultyButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            facultyButtons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-            
-            const category = this.getAttribute('data-category');
-            updateCategory(category);
-        });
-    });
+            const categoryTitle = document.getElementById('categoryTitle');
+            const facultyLabel = document.getElementById('facultyLabel');
+            const facultySelect = document.getElementById('facultySelect');
+            const facultyButtons = document.querySelectorAll('[data-category]');
 
-    // Update category function
-    function updateCategory(category) {
-        if (category === 'faculty') {
-            categoryTitle.textContent = 'Select Faculty to Monitor';
-            facultyLabel.textContent = 'Faculty:';
-        } else if (category === 'self-faculty') {
-            categoryTitle.textContent = 'Select Self Faculty to Monitor';
-            facultyLabel.textContent = 'Self Faculty:';
-        }
-        // Reset the dropdown
-        facultySelect.value = '';
-        lineChart.data.labels = [];
-        lineChart.data.datasets[0].data = [];
-        lineChart.update();
-    }
+            // Populate dropdown based on category
+            function populateDropdown(category) {
+                facultySelect.innerHTML = '<option value="" selected disabled>Select Faculty</option>'; // Reset options
 
-    // Update chart on selection
-    facultySelect.addEventListener('change', function () {
-        const facultyId = this.value;
-        const activeCategory = document.querySelector('[data-category].active').getAttribute('data-category');
-
-        if (facultyId) {
-            fetch(`fetch_faculty_data.php?category=${activeCategory}&faculty_id=${facultyId}`)
-                .then(response => response.json())
-                .then(data => {
-                    updateLineChart(data.labels, data.dataset);
-                })
-                .catch(error => console.error('Error fetching data:', error));
-        }
-    });
-
-    // Chart setup
-    const ctx = document.getElementById('facultyLineChart').getContext('2d');
-    const lineChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [],
-            datasets: [{
-                label: 'Ratings',
-                data: [],
-                borderColor: 'rgb(51, 128, 64)',
-                tension: 0.1,
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Rating (1-4)'
-                    }
-                },
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Evaluation Sequence'
-                    }
+                if (category === 'faculty' || category === 'self-faculty') {
+                    facultyLabel.textContent = 'Faculty:';
+                    categoryTitle.textContent = category === 'faculty' ? 'Select Faculty to Monitor' : 'Select Self Faculty to Monitor';
+                    facultyList.forEach(faculty => {
+                        const option = document.createElement('option');
+                        option.value = faculty.faculty_id;
+                        option.textContent = faculty.faculty_name;
+                        facultySelect.appendChild(option);
+                    });
+                } else if (category === 'self-head-faculty') {
+                    facultyLabel.textContent = 'Self Head Faculty:';
+                    categoryTitle.textContent = 'Select Self Head Faculty to Monitor';
+                    headList.forEach(head => {
+                        const option = document.createElement('option');
+                        option.value = head.head_id;
+                        option.textContent = head.head_name;
+                        facultySelect.appendChild(option);
+                    });
                 }
             }
-        }
-    });
 
-    // Update chart function
-    function updateLineChart(labels, dataset) {
-        lineChart.data.labels = labels;
-        lineChart.data.datasets[0].data = dataset;
-        lineChart.update();
-    }
-</script>
+            // Handle category button clicks
+            facultyButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    facultyButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const category = this.getAttribute('data-category');
+                    populateDropdown(category);
+                });
+            });
+
+            // Initialize dropdown for default category
+            populateDropdown('faculty');
+
+            // Update chart on selection
+            facultySelect.addEventListener('change', function () {
+                const id = this.value;
+                const activeCategory = document.querySelector('[data-category].active').getAttribute('data-category');
+
+                if (id) {
+                    fetch(`fetch_faculty_data.php?faculty_id=${id}&category=${activeCategory}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.error) {
+                                alert(data.error);
+                                return;
+                            }
+                            updateLineChart(data.labels, data.dataset);
+                        })
+                        .catch(error => console.error('Error fetching data:', error));
+                }
+            });
+
+            // Chart setup
+            const ctx = document.getElementById('facultyLineChart').getContext('2d');
+            const lineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Ratings',
+                        data: [],
+                        borderColor: 'rgb(51, 128, 64)',
+                        tension: 0.1,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Rating (1-4)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Evaluation Sequence'
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Update chart data
+            function updateLineChart(labels, dataset) {
+                lineChart.data.labels = labels;
+                lineChart.data.datasets[0].data = dataset;
+                lineChart.update();
+            }
+        </script>
 
 
-<style>
-    .card {
-        border-radius: 10px;
-        overflow: hidden;
-    }
 
-    .card-header {
-        background: rgb(51, 128, 64);
-        color: white;
-    }
+        <style>
+            .card {
+                border-radius: 10px;
+                overflow: hidden;
+            }
 
-    .card-header h5 {
-        font-size: 1rem;
-    }
+            .card-header {
+                background: rgb(51, 128, 64);
+                color: white;
+            }
 
-    #facultySelect {
-        border: 1px solid rgb(51, 128, 64);
-        border-radius: 5px;
-        font-size: 0.9rem;
-    }
+            .card-header h5 {
+                font-size: 1rem;
+            }
 
-    .container-fluid {
-        max-width: 90%;
-    }
+            #facultySelect {
+                border: 1px solid rgb(51, 128, 64);
+                border-radius: 5px;
+                font-size: 0.9rem;
+            }
 
-    .form-label {
-        font-size: 0.9rem;
-        font-weight: 500;
-    }
+            .container-fluid {
+                max-width: 90%;
+            }
 
-    body {
-        overflow-y: hidden;
-    }
+            .form-label {
+                font-size: 0.9rem;
+                font-weight: 500;
+            }
 
-    html {
-        scroll-behavior: smooth;
-    }
+            body {
+                overflow-y: hidden;
+            }
 
-    .main-header {
-        max-height: 90vh;
-        overflow-y: scroll;
-        scrollbar-width: none;
-        scroll-behavior: smooth;
-    }
+            html {
+                scroll-behavior: smooth;
+            }
 
-    .main-header::-webkit-scrollbar {
-        display: none;
-    }
+            .main-header {
+                max-height: 87vh;
+                overflow-y: scroll;
+                scrollbar-width: none;
+                scroll-behavior: smooth;
+            }
 
-    .card-body {
-        padding: 0.75rem;
-    }
+            .main-header::-webkit-scrollbar {
+                display: none;
+            }
 
-    .form-control-sm {
-        height: calc(1.5em + 0.5rem + 2px);
-        padding: 0.25rem 0.5rem;
-        font-size: 0.875rem;
-    }
-</style>
+            .card-body {
+                padding: 0.75rem;
+            }
+
+            .form-control-sm {
+                height: calc(1.5em + 0.5rem + 2px);
+                padding: 0.25rem 0.5rem;
+                font-size: 0.875rem;
+            }
+        </style>
 
 
-<?php include 'footer.php'; ?>
+        <?php include 'footer.php'; ?>

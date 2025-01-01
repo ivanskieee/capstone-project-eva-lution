@@ -84,10 +84,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $conn->prepare('UPDATE student_list SET account_status = 1 WHERE academic_id = ?');
             $stmt->execute([$academic_id]);
 
-            $stmt = $conn->prepare('UPDATE college_faculty_list SET account_status = 1 WHERE academic_id = ?');
+            $stmt = $conn->prepare('UPDATE college_faculty_list SET academic_id = ?');
             $stmt->execute([$academic_id]);
 
-            $stmt = $conn->prepare('UPDATE head_faculty_list SET account_status = 1 WHERE academic_id = ?');
+            $stmt = $conn->prepare('UPDATE head_faculty_list SET academic_id = ?');
             $stmt->execute([$academic_id]);
     
         } elseif ($status == 2) { 
@@ -98,11 +98,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt = $conn->prepare('UPDATE student_list SET account_status = 0 WHERE academic_id = ?');
             $stmt->execute([$academic_id]);
 
-            $stmt = $conn->prepare('UPDATE college_faculty_list SET account_status = 0 WHERE academic_id = ?');
-            $stmt->execute([$academic_id]);
+            // $stmt = $conn->prepare('UPDATE college_faculty_list SET account_status = 0 WHERE academic_id = ?');
+            // $stmt->execute([$academic_id]);
 
-            $stmt = $conn->prepare('UPDATE head_faculty_list SET account_status = 0 WHERE academic_id = ?');
-            $stmt->execute([$academic_id]);
+            // $stmt = $conn->prepare('UPDATE head_faculty_list SET account_status = 0 WHERE academic_id = ?');
+            // $stmt->execute([$academic_id]);
         }
     
         echo json_encode(['success' => true]);

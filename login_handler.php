@@ -79,7 +79,7 @@ if ($_POST) {
     if ($user) {
         // Check if the account is closed (applicable for 'student' and 'faculty' roles)
         if (
-            in_array($role, ['student', 'faculty', 'head_faculty']) && 
+            in_array($role, ['student']) && 
             isset($user['account_status']) && 
             $user['account_status'] == 0
         ) {
