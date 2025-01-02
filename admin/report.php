@@ -10,20 +10,23 @@ include "handlers/report_handler.php";
                 style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
                 Evaluation Report</h2>
         </div>
-        <div class="callout callout-success">
-            <div class="d-flex w-100 justify-content-center align-items-center">
-                <label for="faculty">Select Faculty</label>
-                <div class=" mx-2 col-md-4">
-                    <select name="" id="faculty_id" class="form-control form-control-sm select2">
-                        <option value="">Select Faculty</option>
-                        <?php
-                        $stmt = $conn->query("SELECT faculty_id, firstname, lastname FROM college_faculty_list");
-                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                            $fullName = htmlspecialchars($row['firstname'] . ' ' . $row['lastname']);
-                            echo '<option value="' . $row['faculty_id'] . '" data-name="' . $fullName . '">' . $fullName . '</option>';
-                        }
-                        ?>
-                    </select>
+        <div id="dynamicContent">
+            <!-- This section will change based on the selected category -->
+            <div class="callout callout-success" id="facultySelection">
+                <div class="d-flex w-100 justify-content-center align-items-center">
+                    <label for="faculty">Select Faculty</label>
+                    <div class="mx-2 col-md-4">
+                        <select name="" id="faculty_id" class="form-control form-control-sm select2">
+                            <option value="">Select Faculty</option>
+                            <?php
+                            $stmt = $conn->query("SELECT faculty_id, firstname, lastname FROM college_faculty_list");
+                            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                $fullName = htmlspecialchars($row['firstname'] . ' ' . $row['lastname']);
+                                echo '<option value="' . $row['faculty_id'] . '" data-name="' . $fullName . '">' . $fullName . '</option>';
+                            }
+                            ?>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
@@ -39,7 +42,15 @@ include "handlers/report_handler.php";
             <div class="col-md-3">
                 <div class="callout callout-success">
                     <div class="list-group" id="class-list">
-
+                        <div class="d-flex w-100 justify-content-center align-items-center">
+                            <label for="category">Select Category</label>
+                            <div class="mx-2 col-md-4">
+                                <select id="category" class="form-control form-control-sm">
+                                    <option value="faculty">Faculty</option>
+                                    <option value="self">Self</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -229,6 +240,32 @@ include "handlers/report_handler.php";
     });
 </script>
 <script>
+    document.getElementById('category').addEventListener('change', function () {
+        const selectedCategory = this.value; // Get selected category
+        const ratingsTable = document.querySelector('#printable .table-responsive'); // Ratings container
+
+        if (selectedCategory === 'self') {
+            // Clear the current table content
+            ratingsTable.innerHTML = `
+            <div class="mb-3">
+                <label for="skills" class="form-label">Rate your skills (1-5):</label>
+                <input type="number" id="skills" name="skills" class="form-control" min="1" max="5" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="performance" class="form-label">Rate your performance (1-5):</label>
+                <input type="number" id="performance" name="performance" class="form-control" min="1" max="5" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="comments" class="form-label">Additional Comments:</label>
+                <textarea id="comments" name="comments" class="form-control" rows="4" placeholder="Enter any additional comments..."></textarea>
+            </div>
+        `;
+        } 
+    });
+</script>
+<script>
     document.getElementById('faculty_id').addEventListener('change', function () {
         const facultyId = this.value;
 
@@ -263,13 +300,17 @@ include "handlers/report_handler.php";
                         data.data.forEach(row => {
                             let questionRow = '';
                             if (row.question_type === 'text') {
-                                // Handle open-ended questions with the question text and stored comment
+                                // Concatenate all comments into a single string
+                                const concatenatedComments = row.comments
+                                    ? row.comments.join('\n')
+                                    : '';
+
                                 questionRow = `
                                     <tr class="bg-white">
                                         <td colspan="5">
                                             <div><strong>${row.question}</strong></div>
                                             <textarea name="comment[${row.question_id}]" class="form-control mt-2"
-                                                rows="3" placeholder="Enter your answer">${row.comment || ''}</textarea>
+                                                rows="5" placeholder="No comments available" readonly>${concatenatedComments}</textarea>
                                         </td>
                                     </tr>`;
                             } else {
