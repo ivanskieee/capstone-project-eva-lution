@@ -187,6 +187,20 @@ $headList = fetchHeadFacultyList($conn);
             </div>
         </div>
 
+        <div class="row mt-3">
+            <div class="col-md-8 offset-md-2">
+                <div class="card shadow-sm rounded">
+                    <div class="card-header text-center py-2">
+                        <h5 class="mb-0">Performance Feedback</h5>
+                    </div>
+                    <div class="card-body py-3 text-center">
+                        <p id="performanceFeedback" class="text-success"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <script>
             // Mock data for testing
             const facultyList = <?php echo json_encode($facultyList); ?>; // Example [{faculty_id: 1, faculty_name: "John Doe"}]
@@ -289,10 +303,45 @@ $headList = fetchHeadFacultyList($conn);
             });
 
             // Update chart data
+            // Update chart data and provide feedback
             function updateLineChart(labels, dataset) {
                 lineChart.data.labels = labels;
                 lineChart.data.datasets[0].data = dataset;
                 lineChart.update();
+
+                // Analyze performance based on the ratings
+                const performanceFeedback = analyzePerformance(dataset);
+
+                // Display feedback below the chart
+                const feedbackElement = document.getElementById('performanceFeedback');
+                feedbackElement.textContent = performanceFeedback;
+            }
+
+            // Function to analyze the performance of the faculty
+            function analyzePerformance(ratings) {
+                let improvement = 0;
+                let consistency = 0;
+                let needImprovement = 0;
+
+                // Analyze ratings
+                ratings.forEach(rating => {
+                    if (rating >= 3) {
+                        improvement++; // Consistently good rating
+                    } else if (rating <= 2) {
+                        needImprovement++; // Needs improvement
+                    } else {
+                        consistency++; // Neutral or inconsistent
+                    }
+                });
+
+                // Feedback based on the analysis
+                if (improvement > needImprovement) {
+                    return "Performance is improving and consistent. Keep up the good work!";
+                } else if (needImprovement > improvement) {
+                    return "Performance needs improvement and is inconsistent. Please work on improving the ratings.";
+                } else {
+                    return "Performance is inconsistent. Aim to have consistent positive feedback.";
+                }
             }
         </script>
 
@@ -337,7 +386,7 @@ $headList = fetchHeadFacultyList($conn);
             }
 
             .main-header {
-                max-height: 87vh;
+                max-height: 81vh;
                 overflow-y: scroll;
                 scrollbar-width: none;
                 scroll-behavior: smooth;

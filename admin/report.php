@@ -10,23 +10,20 @@ include "handlers/report_handler.php";
                 style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
                 Evaluation Report</h2>
         </div>
-        <div id="dynamicContent">
-            <!-- This section will change based on the selected category -->
-            <div class="callout callout-success" id="facultySelection">
-                <div class="d-flex w-100 justify-content-center align-items-center">
-                    <label for="faculty">Select Faculty</label>
-                    <div class="mx-2 col-md-4">
-                        <select name="" id="faculty_id" class="form-control form-control-sm select2">
-                            <option value="">Select Faculty</option>
-                            <?php
-                            $stmt = $conn->query("SELECT faculty_id, firstname, lastname FROM college_faculty_list");
-                            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                                $fullName = htmlspecialchars($row['firstname'] . ' ' . $row['lastname']);
-                                echo '<option value="' . $row['faculty_id'] . '" data-name="' . $fullName . '">' . $fullName . '</option>';
-                            }
-                            ?>
-                        </select>
-                    </div>
+        <div class="callout callout-success" id="facultySelection">
+            <div class="d-flex w-100 justify-content-center align-items-center">
+                <label for="faculty">Select Faculty</label>
+                <div class="mx-2 col-md-4">
+                    <select name="" id="faculty_id" class="form-control form-control-sm select2">
+                        <option value="">Select Faculty</option>
+                        <?php
+                        $stmt = $conn->query("SELECT faculty_id, firstname, lastname FROM college_faculty_list");
+                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                            $fullName = htmlspecialchars($row['firstname'] . ' ' . $row['lastname']);
+                            echo '<option value="' . $row['faculty_id'] . '" data-name="' . $fullName . '">' . $fullName . '</option>';
+                        }
+                        ?>
+                    </select>
                 </div>
             </div>
         </div>
@@ -242,10 +239,11 @@ include "handlers/report_handler.php";
 <script>
     document.getElementById('category').addEventListener('change', function () {
         const selectedCategory = this.value; // Get selected category
+        const facultyDropdown = document.getElementById('faculty_id');
         const ratingsTable = document.querySelector('#printable .table-responsive'); // Ratings container
 
+        // Reset ratingsTable content when category changes
         if (selectedCategory === 'self') {
-            // Clear the current table content
             ratingsTable.innerHTML = `
             <div class="mb-3">
                 <label for="skills" class="form-label">Rate your skills (1-5):</label>
@@ -262,7 +260,52 @@ include "handlers/report_handler.php";
                 <textarea id="comments" name="comments" class="form-control" rows="4" placeholder="Enter any additional comments..."></textarea>
             </div>
         `;
-        } 
+        } else {
+            ratingsTable.innerHTML = `<br>
+                <p class="text-center text-muted">Select a category to view evaluation details.</p>`;
+        }
+
+        // Add event listener to faculty dropdown only if category is 'self'
+        if (selectedCategory === 'self') {
+            facultyDropdown.addEventListener('change', function () {
+                const facultyId = this.value;
+                if (!facultyId) {
+                    ratingsTable.innerHTML = `<br>
+                        <p class="text-center text-muted">Select a faculty to view evaluation details.</p>`;
+                    return;
+                }
+
+                // Fetch self-evaluation data when a faculty is selected
+                fetch(`get_self_eval.php?faculty_id=${facultyId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            ratingsTable.innerHTML = `
+                            <div class="mb-3">
+                                <label for="skills" class="form-label">Skills (1-5):</label>
+                                <input type="number" id="skills" name="skills" class="form-control" value="${data.skills}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="performance" class="form-label">Performance (1-5):</label>
+                                <input type="number" id="performance" name="performance" class="form-control" value="${data.performance}" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="comments" class="form-label">Comments:</label>
+                                <textarea id="comments" name="comments" class="form-control" rows="4" readonly>${data.comments}</textarea>
+                            </div>
+                        `;
+                        } else {
+                            ratingsTable.innerHTML = `<br>
+                                <p class="text-center text-muted">No self-evaluation data available.</p>`;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching self-evaluation data:', error);
+                        ratingsTable.innerHTML = `<br>
+                            <p class="text-center text-muted">Failed to fetch self-evaluation data.</p>`;
+                    });
+            });
+        }
     });
 </script>
 <script>
@@ -347,7 +390,7 @@ include "handlers/report_handler.php";
         } else {
             // Reset the table to its normal state
             ratingsTable.innerHTML = `<br>
-                <p class="text-center text-muted">Select a faculty to view evaluation ratings.</p>
+                <p class="text-center text-muted">Select faculty to view evaluation ratings.</p>
             `;
         }
     });
@@ -372,7 +415,7 @@ include "handlers/report_handler.php";
                     academicYearDisplay.innerHTML = 'Error fetching academic information.';
                 });
         } else {
-            academicYearDisplay.innerHTML = 'Select a faculty to view academic year and semester.';
+            academicYearDisplay.innerHTML = 'Select faculty to view year and semester.';
         }
     });
 </script>

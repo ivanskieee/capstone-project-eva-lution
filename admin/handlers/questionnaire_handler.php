@@ -42,9 +42,17 @@ $stmt = $conn->prepare('SELECT * FROM criteria_list');
 $stmt->execute();
 $criteriaList = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$stmt = $conn->prepare('SELECT * FROM question_list WHERE academic_id = ?');
+$sector = isset($_GET['sector']) ? $_GET['sector'] : 'student_faculty';
+
+if ($sector === 'student_faculty') {
+    $stmt = $conn->prepare('SELECT * FROM question_list WHERE academic_id = ?');
+} elseif ($sector === 'faculty_faculty') {
+    $stmt = $conn->prepare('SELECT * FROM question_faculty_faculty WHERE academic_id = ?');
+}
+
 $stmt->execute([$academic_id]);
 $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
 
 if ($id) {
     $stmt = $conn->prepare('SELECT * FROM question_list WHERE question_id = ?');
@@ -54,10 +62,14 @@ if ($id) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $academic_id = $_POST['academic_id'];
+    $sector = $_POST['sector'] ?? 'student_faculty'; // Default sector
+
+    // Determine the target table based on sector
+    $table = ($sector === 'faculty_faculty') ? 'question_faculty_faculty' : 'question_list';
 
     if (isset($_POST['delete_id'])) {
         $delete_id = $_POST['delete_id'];
-        $stmt = $conn->prepare('DELETE FROM question_list WHERE question_id = :id');
+        $stmt = $conn->prepare("DELETE FROM $table WHERE question_id = :id");
         $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
 
         if ($stmt->execute()) {
@@ -67,7 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['error'] = 'Error deleting question. Please try again.';
         }
 
-        echo "<script>window.location.replace('manage_questionnaire.php?academic_id=" . $academic_id . "');</script>";
+        echo "<script>window.location.replace('manage_questionnaire.php?academic_id=" . $academic_id . "&sector=" . $sector . "');</script>";
         exit();
 
     } elseif (isset($_POST['question'])) {
@@ -76,26 +88,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $question = trim($_POST['question']);
         $question_type = $_POST['question_type']; // Get the question type (mcq or text)
         $id = $_POST['question_id'] ?? null;
-    
+
         // Check if required fields are filled
         if (!empty($criteria_id) && !empty($question) && !empty($academic_id) && !empty($question_type)) {
             // Handle inserting or updating the question
             if ($id) {
                 // Update existing question
-                $query = 'UPDATE question_list SET criteria_id = ?, question = ?, question_type = ?, academic_id = ? WHERE question_id = ?';
+                $query = "UPDATE $table SET criteria_id = ?, question = ?, question_type = ?, academic_id = ? WHERE question_id = ?";
                 $stmt = $conn->prepare($query);
                 $stmt->execute([$criteria_id, $question, $question_type, $academic_id, $id]);
                 $_SESSION['message'] = 'Question updated successfully.';
             } else {
                 // Insert new question
-                $query = 'INSERT INTO question_list (criteria_id, question, question_type, academic_id) VALUES (?, ?, ?, ?)';
+                $query = "INSERT INTO $table (criteria_id, question, question_type, academic_id) VALUES (?, ?, ?, ?)";
                 $stmt = $conn->prepare($query);
                 $stmt->execute([$criteria_id, $question, $question_type, $academic_id]);
                 $_SESSION['message'] = 'Question submitted successfully.';
             }
-    
+
             // Redirect to manage questionnaire page
-            header('Location: manage_questionnaire.php?academic_id=' . $academic_id);
+            header('Location: manage_questionnaire.php?academic_id=' . $academic_id . '&sector=' . $sector);
             exit;
         } else {
             $_SESSION['error'] = 'Please fill out all fields.';

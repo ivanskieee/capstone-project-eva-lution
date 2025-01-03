@@ -25,7 +25,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Fetch the faculty_id
         $faculty = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$faculty) {
-            die("Error: Faculty not found in the database.");
+            echo "<script>
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Faculty Not Found',
+                        text: 'Unable to find your record in the database.',
+                        confirmButtonText: 'Okay'
+                    });
+                  </script>";
+            exit;
         }
 
         $facultyId = $faculty['faculty_id'];
@@ -59,17 +67,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Execute the statement
             if ($stmt->execute()) {
-                echo "<h2>Evaluation Submitted Successfully</h2>";
-                echo "<p>Your evaluation has been saved.</p>";
-                echo "<p><a href='home.php'>Go back to the dashboard</a></p>";
+                echo "<script>
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Evaluation Submitted',
+                            text: 'Your evaluation has been successfully saved!',
+                            confirmButtonText: 'Go to Dashboard',
+                            customClass: {
+                                confirmButton: 'swal-success-btn'
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = 'home.php';
+                            }
+                        });
+                      </script>";
             } else {
-                echo "Error: Unable to submit evaluation.";
+                echo "<script>
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Submission Failed',
+                            text: 'Unable to save your evaluation. Please try again.',
+                            confirmButtonText: 'Retry'
+                        });
+                      </script>";
             }
         } else {
-            echo "Invalid ratings. Please enter values between 1 and 5.";
+            echo "<script>
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Invalid Ratings',
+                        text: 'Please enter ratings between 1 and 5.',
+                        confirmButtonText: 'Okay'
+                    });
+                  </script>";
         }
     } catch (PDOException $e) {
-        echo "Error: " . $e->getMessage();
+        echo "<script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: '" . $e->getMessage() . "',
+                    confirmButtonText: 'Okay'
+                });
+              </script>";
     }
 }
 ?>
@@ -82,8 +123,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <div class="col-md-8">
                 <div class="card shadow-sm">
                     <div class="card-header mt-5 text-white" style="background-color: rgb(51, 128, 64); >
-                        <span class="navbar-text text-light">
-                            Welcome, <?php echo $_SESSION['login_name']; ?>!
+                        <span class=" navbar-text text-light">
+                        Welcome, <?php echo $_SESSION['login_name']; ?>!
                         </span>
                         <h3 class="mb-0">Self Evaluation Form</h3>
                     </div>
@@ -91,17 +132,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         <form action="evaluate.php" method="POST">
                             <div class="mb-3">
                                 <label for="skills" class="form-label">Rate your skills (1-5):</label>
-                                <input type="number" id="skills" name="skills" class="form-control" min="1" max="5" required>
+                                <input type="number" id="skills" name="skills" class="form-control" min="1" max="5"
+                                    required>
                             </div>
 
                             <div class="mb-3">
                                 <label for="performance" class="form-label">Rate your performance (1-5):</label>
-                                <input type="number" id="performance" name="performance" class="form-control" min="1" max="5" required>
+                                <input type="number" id="performance" name="performance" class="form-control" min="1"
+                                    max="5" required>
                             </div>
 
                             <div class="mb-3">
                                 <label for="comments" class="form-label">Additional Comments:</label>
-                                <textarea id="comments" name="comments" class="form-control" rows="4" placeholder="Enter any additional comments..."></textarea>
+                                <textarea id="comments" name="comments" class="form-control" rows="4"
+                                    placeholder="Enter any additional comments..."></textarea>
                             </div>
 
                             <button type="submit" class="btn btn-success w-100">Submit Evaluation</button>
@@ -112,5 +156,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </div>
 </nav>
+
+<style>
+    .swal-success-btn {
+        background-color: #28a745 !important; /* Success green */
+        color: white !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    .swal-success-btn:hover {
+        background-color: #218838 !important; /* Darker green on hover */
+    }
+</style>
 
 <?php include 'footer.php'; ?>

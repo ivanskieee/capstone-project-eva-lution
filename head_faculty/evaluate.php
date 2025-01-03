@@ -59,17 +59,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Execute the statement
             if ($stmt->execute()) {
-                echo "<h2>Evaluation Submitted Successfully</h2>";
-                echo "<p>Your evaluation has been saved.</p>";
-                echo "<p><a href='home.php'>Go back to the dashboard</a></p>";
+                echo "<script>
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Evaluation Submitted',
+                            text: 'Your evaluation has been successfully saved!',
+                            confirmButtonText: 'Go to Dashboard',
+                            customClass: {
+                                confirmButton: 'swal-success-btn'
+                            }
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = 'home.php';
+                            }
+                        });
+                      </script>";
             } else {
-                echo "Error: Unable to submit evaluation.";
+                echo "<script>
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Submission Failed',
+                            text: 'Unable to save your evaluation. Please try again.',
+                            confirmButtonText: 'Retry'
+                        });
+                      </script>";
             }
         } else {
-            echo "Invalid ratings. Please enter values between 1 and 5.";
+            echo "<script>
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Invalid Ratings',
+                        text: 'Please enter ratings between 1 and 5.',
+                        confirmButtonText: 'Okay'
+                    });
+                  </script>";
         }
     } catch (PDOException $e) {
-        echo "Error: " . $e->getMessage();
+        echo "<script>
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: '" . $e->getMessage() . "',
+                    confirmButtonText: 'Okay'
+                });
+              </script>";
     }
 }
 ?>
@@ -112,5 +145,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </div>
 </nav>
+
+<style>
+    .swal-success-btn {
+        background-color: #28a745 !important; /* Success green */
+        color: white !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    .swal-success-btn:hover {
+        background-color: #218838 !important; /* Darker green on hover */
+    }
+</style>
 
 <?php include 'footer.php'; ?>
