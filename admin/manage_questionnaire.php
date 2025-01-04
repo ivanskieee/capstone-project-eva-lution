@@ -11,7 +11,7 @@ include 'handlers/questionnaire_handler.php';
                         <b><?php echo isset($questionToEdit) ? 'Edit Question' : 'Add New Question'; ?></b>
                     </div>
                     <div class="card-body">
-                        <form id="manage-question" 
+                        <form id="manage-question"
                             action="manage_questionnaire.php?academic_id=<?php echo $academic_id; ?>&sector=<?php echo $sector; ?>"
                             method="POST">
                             <input type="hidden" name="sector" value="<?= htmlspecialchars($sector) ?>">
@@ -26,10 +26,12 @@ include 'handlers/questionnaire_handler.php';
                             <div class="form-group">
                                 <label for="sector">Sector</label>
                                 <select name="sector" id="sector" class="form-control" required>
-                                    <option value="student_faculty" <?= ($sector === 'student_faculty') ? 'selected' : '' ?>>Student to Faculty
-                                    </option>
-                                    <option value="faculty_faculty" <?= ($sector === 'faculty_faculty') ? 'selected' : '' ?>>Faculty to Faculty
-                                    </option>
+                                    <option value="student_faculty" <?= ($sector === 'student_faculty') ? 'selected' : '' ?>>Student to Faculty</option>
+                                    <option value="faculty_faculty" <?= ($sector === 'faculty_faculty') ? 'selected' : '' ?>>Faculty to Faculty</option>
+                                    <option value="faculty_dean" <?= ($sector === 'faculty_dean') ? 'selected' : '' ?>>
+                                        Faculty to Dean</option>
+                                    <option value="dean_faculty" <?= ($sector === 'dean_faculty') ? 'selected' : '' ?>>Dean
+                                        to Faculty</option>
                                 </select>
                             </div>
 
@@ -87,7 +89,7 @@ include 'handlers/questionnaire_handler.php';
             <div class="col-md-8 mt-2">
                 <div class="card card-outline card-success">
                     <div class="card-header">
-                        <b>Evaluation Questionnaire for Academic: </b>
+                        <b>Evaluation Questionnaires</b>
                     </div>
                     <div class="card-body">
                         <fieldset class="border border-success p-2 w-100">
@@ -130,6 +132,9 @@ include 'handlers/questionnaire_handler.php';
                                                                     style="display: inline;" class="delete-form">
                                                                     <input type="hidden" name="delete_id"
                                                                         value="<?= htmlspecialchars($qRow['question_id']) ?>">
+                                                                    <input type="hidden" name="sector"
+                                                                        value="<?= htmlspecialchars($sector) ?>">
+                                                                    <!-- Pass sector here -->
                                                                     <button type="submit" class="dropdown-item">Delete</button>
                                                                 </form>
                                                             </div>
@@ -188,6 +193,7 @@ include 'handlers/questionnaire_handler.php';
 
 <script>
     $(document).ready(function () {
+        // Submit form for adding/editing questions
         $('#manage-question').on('submit', function (e) {
             e.preventDefault();
             var formData = $(this).serialize();
@@ -196,7 +202,7 @@ include 'handlers/questionnaire_handler.php';
                 type: 'POST',
                 url: 'manage_questionnaire.php',
                 data: formData,
-                success: function (response) {
+                success: function () {
                     Swal.fire({
                         icon: 'success',
                         title: 'Success!',
@@ -205,11 +211,9 @@ include 'handlers/questionnaire_handler.php';
                         timer: 2000
                     }).then(() => {
                         var academic_id = $('#academic_id').val();
-                        var sector = $('#sector').val(); // Ensure sector is included
+                        var sector = $('#sector').val();
                         window.location.href = 'manage_questionnaire.php?academic_id=' + academic_id + '&sector=' + sector;
                     });
-
-                    $('#manage-question')[0].reset();
                 },
                 error: function () {
                     Swal.fire({
@@ -221,6 +225,7 @@ include 'handlers/questionnaire_handler.php';
             });
         });
 
+        // Delete question with confirmation
         $(document).on('submit', '.delete-form', function (e) {
             e.preventDefault();
             var form = this;
@@ -235,8 +240,6 @@ include 'handlers/questionnaire_handler.php';
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    var academic_id = $('#academic_id').val();
-                    var sector = $('#sector').val(); // Ensure sector is included
                     $.ajax({
                         type: 'POST',
                         url: 'manage_questionnaire.php',
@@ -249,6 +252,8 @@ include 'handlers/questionnaire_handler.php';
                                 showConfirmButton: false,
                                 timer: 2000
                             }).then(() => {
+                                var academic_id = $('#academic_id').val();
+                                var sector = $('#sector').val();
                                 window.location.href = 'manage_questionnaire.php?academic_id=' + academic_id + '&sector=' + sector;
                             });
                         },
@@ -264,6 +269,7 @@ include 'handlers/questionnaire_handler.php';
             });
         });
 
+        // Handle sector change
         $('#sector').on('change', function () {
             var sector = $('#sector').val();
             var academic_id = $('#academic_id').val();

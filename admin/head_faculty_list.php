@@ -76,8 +76,23 @@ $end_page = min($current_segment * $segment_size, $total_pages);
                                     <td><b><?php echo ucwords($row['firstname'] . ' ' . $row['lastname']); ?></b></td>
                                     <td><b><?php echo $row['email']; ?></b></td>
                                     <td class="text-center">
-                                        <a href="new_head_faculty.php?head_id=<?php echo $row['head_id']; ?>" class="btn btn-sm btn-primary">Edit</a>
-                                        <a href="#" class="btn btn-sm btn-danger" onclick="confirmDeletion(<?php echo $row['head_id']; ?>)">Delete</a>
+                                        <button type="button"
+                                            class="btn btn-default btn-sm btn-flat border-info wave-effect text-info dropdown-toggle"
+                                            data-toggle="dropdown" aria-expanded="true">
+                                            Action
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item"
+                                                href="new_head_faculty.php?head_id=<?php echo $row['head_id']; ?>">Edit</a>
+                                            <div class="dropdown-divider"></div>
+                                            <form method="post" action="head_faculty_list.php" style="display: inline;"
+                                                class="delete-form">
+                                                <input type="hidden" name="delete_id"
+                                                    value="<?php echo isset($row['head_id']) ? $row['head_id'] : ''; ?>">
+                                                <button type="submit" class="dropdown-item"
+                                                    onclick="confirmDeletion()">Delete</button>
+                                            </form>
+                                        </div>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

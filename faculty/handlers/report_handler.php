@@ -22,3 +22,11 @@ $criteriaList = $stmt->fetchAll(PDO::FETCH_ASSOC);
 $stmt = $conn->prepare('SELECT * FROM question_list');
 $stmt->execute();
 $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$stmt = $conn->prepare('SELECT * FROM question_faculty_faculty');
+$stmt->execute();
+$questions_faculties = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$stmt = $conn->prepare('SELECT * FROM question_faculty_dean');
+$stmt->execute();
+$questions_deans = $stmt->fetchAll(PDO::FETCH_ASSOC);

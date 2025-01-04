@@ -1,12 +1,12 @@
 <?php
-include 'handlers/eval_handler.php';
+include 'handlers/report_handler.php';
 ?>
 
 <nav class="main-header">
 	<div class="col-lg-12 mt-5">
 		<div class="row">
 			<div class="col-md-3">
-				<div class="list-group">
+				<!-- <div class="list-group">
 					<?php
 					$subjects = $_GET['subjects'] ?? '';
 					$subjectArray = explode(',', strtolower($subjects));
@@ -66,7 +66,7 @@ include 'handlers/eval_handler.php';
 						}
 					}
 					?>
-				</div>
+				</div> -->
 			</div>
 			<?php
 			// Retrieve faculty_id from URL
@@ -110,7 +110,7 @@ include 'handlers/eval_handler.php';
 								</thead>
 								<tbody class="tr-sortable">
 									<?php
-									foreach ($questions as $qRow) {
+									foreach ($questions_faculties as $qRow) {
 										if ($qRow['criteria_id'] == $row['criteria_id']) {
 											?>
 											<tr class="bg-white">
@@ -203,4 +203,3 @@ include 'handlers/eval_handler.php';
 		});
 	});
 </script>
-<?php include 'footer.php'; ?>
