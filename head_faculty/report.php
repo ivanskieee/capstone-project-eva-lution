@@ -258,13 +258,17 @@ include "handlers/report_handler.php";
                         data.data.forEach(row => {
                             let questionRow = '';
                             if (row.question_type === 'text') {
-                                // Handle open-ended questions with the question text and stored comment
+                                // Concatenate all comments into a single string
+                                const concatenatedComments = row.comments
+                                    ? row.comments.join('\n')
+                                    : '';
+
                                 questionRow = `
                                     <tr class="bg-white">
                                         <td colspan="5">
                                             <div><strong>${row.question}</strong></div>
                                             <textarea name="comment[${row.question_id}]" class="form-control mt-2"
-                                                rows="3" placeholder="Enter your answer">${row.comment || ''}</textarea>
+                                                rows="5" placeholder="No comments available" readonly>${concatenatedComments}</textarea>
                                         </td>
                                     </tr>`;
                             } else {
@@ -288,7 +292,7 @@ include "handlers/report_handler.php";
                             }
                             tbody.innerHTML += questionRow;
                         });
-
+                        
                         table.appendChild(tbody);
 
                         // Append the complete table to the ratings container
@@ -332,16 +336,16 @@ include "handlers/report_handler.php";
 </script>
 <script>
     document.getElementById('print-btn').addEventListener('click', function () {
-    const printableContent = document.getElementById('printable').innerHTML;
-    console.log(printableContent);  // Debugging line
+        const printableContent = document.getElementById('printable').innerHTML;
+        console.log(printableContent);  // Debugging line
 
-    // Create a new window for printing
-    const printWindow = window.open('', '', 'width=800,height=600');
+        // Create a new window for printing
+        const printWindow = window.open('', '', 'width=800,height=600');
 
-    if (printWindow) {
-        // Write the content into the new window
-        printWindow.document.open();
-        printWindow.document.write(`
+        if (printWindow) {
+            // Write the content into the new window
+            printWindow.document.open();
+            printWindow.document.write(`
             <!DOCTYPE html>
             <html lang="en">
             <head>
@@ -364,17 +368,17 @@ include "handlers/report_handler.php";
             </body>
             </html>
         `);
-        printWindow.document.close();
+            printWindow.document.close();
 
-        // Make sure the print window is printed
-        printWindow.onload = function () {
-            printWindow.print();
-            printWindow.onafterprint = function() {
-                printWindow.close();
+            // Make sure the print window is printed
+            printWindow.onload = function () {
+                printWindow.print();
+                printWindow.onafterprint = function () {
+                    printWindow.close();
+                };
             };
-        };
-    } else {
-        console.error('Unable to open the print window. It may have been blocked by the browser.');
-    }
-});
+        } else {
+            console.error('Unable to open the print window. It may have been blocked by the browser.');
+        }
+    });
 </script>
