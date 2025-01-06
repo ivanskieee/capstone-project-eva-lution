@@ -53,6 +53,12 @@ include "handlers/head_faculty_handler.php";
                                 <small id="msg"></small>
                             </div>
                             <div class="form-group">
+                                <label for="department" class="control-label">Department</label>
+                                <input type="department" class="form-control form-control-sm" name="department" required
+                                    value="<?php echo isset($faculty['department']) ? $faculty['department'] : ''; ?>">
+                                <small id="msg"></small>
+                            </div>
+                            <div class="form-group">
                                 <label for="password" class="control-label">Password</label>
                                 <input type="password" class="form-control form-control-sm" name="password" <?php echo isset($faculty) ? '' : 'required'; ?>>
                                 <small><i><?php echo isset($faculty) ? 'Leave this blank if you do not want to change your password' : ''; ?></i></small>

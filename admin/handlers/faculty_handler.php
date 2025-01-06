@@ -44,6 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $password = $_POST['password'];
         $cpass = $_POST['cpass'];
         $subjects = $_POST['subjects'] ?? []; // Multiple subjects array
+        $department = $_POST['department']; // New department field
         $avatar = isset($_FILES['img']['name']) ? $_FILES['img']['name'] : null;
         $id = $_POST['faculty_id'] ?? null;
 
@@ -67,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $target_file = $target_dir . basename($_FILES["img"]["name"]);
             move_uploaded_file($_FILES["img"]["tmp_name"], $target_file);
         }
-        
+
         $query = 'SELECT academic_id FROM academic_list WHERE status = 1 AND start_date <= CURDATE() AND end_date >= CURDATE()';
         $stmt = $conn->query($query);
         $academic = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -88,16 +89,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (is_array($subjects) && count($subjects) > 1) {
             $subjects_data = implode(", ", $subjects);
         } else {
-           
             $subjects_data = $subjects[0] ?? '';
         }
 
         try {
             if ($id) {
-              
+                // Update query
                 $query = "UPDATE college_faculty_list 
                           SET school_id = :school_id, firstname = :firstname, lastname = :lastname, 
-                              email = :email, subject = :subject, academic_id = :academic_id";
+                              email = :email, subject = :subject, academic_id = :academic_id, department = :department";
 
                 if (!empty($password)) {
                     $query .= ", password = :password";
@@ -116,6 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->bindParam(':email', $email);
                 $stmt->bindParam(':subject', $subjects_data);
                 $stmt->bindParam(':academic_id', $academic_id);
+                $stmt->bindParam(':department', $department);
 
                 if (!empty($password)) {
                     $stmt->bindParam(':password', $hashed_password);
@@ -127,8 +128,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 $stmt->bindParam(':faculty_id', $id, PDO::PARAM_INT);
             } else {
-                $query = "INSERT INTO college_faculty_list (school_id, firstname, lastname, email, subject, password, avatar, academic_id) 
-                          VALUES (:school_id, :firstname, :lastname, :email, :subject, :password, :avatar, :academic_id)";
+                // Insert query
+                $query = "INSERT INTO college_faculty_list (school_id, firstname, lastname, email, subject, password, avatar, academic_id, department) 
+                          VALUES (:school_id, :firstname, :lastname, :email, :subject, :password, :avatar, :academic_id, :department)";
                 $stmt = $conn->prepare($query);
 
                 $stmt->bindParam(':school_id', $school_id);
@@ -139,11 +141,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->bindParam(':password', $hashed_password);
                 $stmt->bindParam(':avatar', $avatar);
                 $stmt->bindParam(':academic_id', $academic_id);
+                $stmt->bindParam(':department', $department);
             }
 
-
             $stmt->execute();
-
 
             echo "<script>
                     Swal.fire({
@@ -186,9 +187,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo "<script>window.location.replace('tertiary_faculty_list.php');</script>";
     }
 }
-
-
-
 
 
 function sendEmail($toEmail, $plainPassword)

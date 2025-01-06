@@ -6,67 +6,67 @@ include 'handlers/report_handler.php';
 	<div class="col-lg-12 mt-5">
 		<div class="row">
 			<div class="col-md-3">
-				<!-- <div class="list-group">
+				<div class="list-group">
 					<?php
-					$subjects = $_GET['subjects'] ?? '';
-					$subjectArray = explode(',', strtolower($subjects));
+					$departments = $_GET['departments'] ?? '';
+					$departmentArray = explode(',', strtolower($departments));
 
-					if (empty($subjects)) {
+					if (empty($departments)) {
 						echo '<div class="alert alert-success">Successfully evaluated the faculty member.</div>';
 					} else {
-						$displayedFaculty = [];
+						$displayedHeads = [];
 
-						foreach ($subjectArray as $subject) {
-							$subject = trim($subject);
+						foreach ($departmentArray as $department) {
+							$department = trim($department);
 
 							$query = "
-										SELECT cf.faculty_id AS fid, cf.firstname, cf.lastname
-										FROM college_faculty_list cf
-										WHERE EXISTS (
-											SELECT 1
-											FROM student_list sl
-											WHERE sl.student_id = :student_id
-										)
-										AND cf.subject REGEXP :subject
-									";
+								SELECT hf.head_id AS hid, hf.firstname, hf.lastname
+								FROM head_faculty_list hf
+								WHERE EXISTS (
+									SELECT 1
+									FROM college_faculty_list cf
+									WHERE cf.faculty_id = :faculty_id
+								)
+								AND hf.department REGEXP :department
+							";
 							$stmt = $conn->prepare($query);
 							$stmt->execute([
-								'student_id' => $_SESSION['user']['student_id'],
-								'subject' => '\\b' . strtolower($subject) . '\\b',
+								'faculty_id' => $_SESSION['user']['faculty_id'], // Adjusted for faculty_id
+								'department' => '\\b' . strtolower($department) . '\\b',
 							]);
 
 							if ($stmt->rowCount() > 0) {
 								while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-									// Check if the student has already evaluated this faculty
-									$evaluationStmt = $conn->prepare('SELECT COUNT(*) FROM evaluation_answers WHERE faculty_id = ? AND student_id = ?');
-									$evaluationStmt->execute([$row['fid'], $_SESSION['user']['student_id']]);
+									// Check if the faculty has already evaluated this head
+									$evaluationStmt = $conn->prepare('SELECT COUNT(*) FROM evaluation_answers WHERE faculty_id = ? AND evaluator_id = ?');
+									$evaluationStmt->execute([$row['hid'], $_SESSION['user']['faculty_id']]);
 									$evaluationExists = $evaluationStmt->fetchColumn();
 
-									// If the student has already evaluated this faculty, skip this faculty
+									// If the faculty has already evaluated this head, skip this head
 									if ($evaluationExists > 0) {
 										continue;
 									}
 
-									if (in_array($row['fid'], $displayedFaculty)) {
+									if (in_array($row['hid'], $displayedHeads)) {
 										continue;
 									}
 
-									$displayedFaculty[] = $row['fid'];
-									$is_active = (isset($_GET['rid']) && $_GET['rid'] == $row['fid']) ? 'list-group-item-success' : '';
+									$displayedHeads[] = $row['hid'];
+									$is_active = (isset($_GET['rid']) && $_GET['rid'] == $row['hid']) ? 'list-group-item-success' : '';
 									?>
 									<a class="list-group-item list-group-item-action <?php echo $is_active; ?>"
-										href="./evaluate.php?rid=<?php echo $row['fid']; ?>&subjects=<?php echo urlencode($subjects); ?>">
+										href="./evaluate_deans.php?rid=<?php echo $row['hid']; ?>&departments=<?php echo urlencode($departments); ?>">
 										<?php echo htmlspecialchars(ucwords($row['firstname'] . ' ' . $row['lastname']), ENT_QUOTES, 'UTF-8'); ?>
 									</a>
 									<?php
 								}
 							} else {
-								echo '<div class="alert alert-warning">No faculty members found for ' . htmlspecialchars($subject, ENT_QUOTES, 'UTF-8') . '.</div>';
+								echo '<div class="alert alert-warning">No head faculty members found for ' . htmlspecialchars($department, ENT_QUOTES, 'UTF-8') . '.</div>';
 							}
 						}
 					}
 					?>
-				</div> -->
+				</div>
 			</div>
 			<?php
 			// Retrieve faculty_id from URL
@@ -78,7 +78,7 @@ include 'handlers/report_handler.php';
 					<div class="card-header">
 						<b>Evaluation Questionnaires</b>
 						<div class="card-tools">
-							<form id="evaluation-form" method="POST" action="eval_handler.php">
+							<form id="evaluation-form" method="POST" action="report_handler.php">
 								<button type="submit"
 									class="btn btn-sm btn-flat btn-success bg-gradient-success mx-1">Submit
 									Evaluation</button>
@@ -95,6 +95,8 @@ include 'handlers/report_handler.php';
 							value="<?= htmlspecialchars($subject_id ?? '', ENT_QUOTES, 'UTF-8') ?>">
 						<input type="hidden" name="evaluation_id"
 							value="<?= htmlspecialchars($evaluation_id ?? '', ENT_QUOTES, 'UTF-8') ?>">
+						<input type="hidden" name="head_id"
+							value="<?= htmlspecialchars($faculty_id, ENT_QUOTES, 'UTF-8') ?>">
 						<div class="clear-fix mt-2"></div>
 
 						<?php foreach ($criteriaList as $row): ?>
@@ -177,7 +179,7 @@ include 'handlers/report_handler.php';
 
 			$.ajax({
 				type: 'POST',
-				url: 'evaluate.php',
+				url: 'evaluate_deans.php',
 				data: formData,
 				success: function (response) {
 					Swal.fire({
@@ -187,7 +189,7 @@ include 'handlers/report_handler.php';
 						showConfirmButton: false,
 						timer: 2000
 					}).then(() => {
-						window.location.href = 'evaluate.php';
+						window.location.href = 'evaluate_deans.php';
 					});
 
 					$('#evaluation-form')[0].reset();  // Optionally reset the form after success

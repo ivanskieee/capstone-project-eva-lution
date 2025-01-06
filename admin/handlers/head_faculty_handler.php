@@ -36,18 +36,19 @@ if ($id) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    
     if (!isset($_POST['delete_id'])) {
+        // Retrieve form inputs
         $school_id = $_POST['school_id'];
         $firstname = $_POST['firstname'];
         $lastname = $_POST['lastname'];
         $email = $_POST['email'];
         $password = $_POST['password'];
         $cpass = $_POST['cpass'];
+        $department = $_POST['department']; // New department field
         $avatar = isset($_FILES['img']['name']) ? $_FILES['img']['name'] : null;
         $id = $_POST['head_id'] ?? null; 
 
-        
+        // Validate passwords
         if (!empty($password) && $password !== $cpass) {
             echo "<script>
                     Swal.fire({
@@ -59,18 +60,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             return;
         }
 
-        
+        // Hash the password if provided
         if (!empty($password)) {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         }
 
-       
+        // Handle avatar upload
         if ($avatar) {
             $target_dir = "assets/uploads/";
             $target_file = $target_dir . basename($_FILES["img"]["name"]);
             move_uploaded_file($_FILES["img"]["tmp_name"], $target_file);
         }
 
+        // Fetch active academic year
         $query = 'SELECT academic_id FROM academic_list WHERE status = 1 AND start_date <= CURDATE() AND end_date >= CURDATE()';
         $stmt = $conn->query($query);
         $academic = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -88,9 +90,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $academic_id = $academic['academic_id'];
 
+        // Update or Insert logic
         if ($id) {
+            // Update head faculty
             $query = "UPDATE head_faculty_list 
-                      SET school_id = :school_id, firstname = :firstname, lastname = :lastname, email = :email, academic_id = :academic_id";
+                      SET school_id = :school_id, firstname = :firstname, lastname = :lastname, email = :email, 
+                          department = :department, academic_id = :academic_id";
 
             if (!empty($password)) {
                 $query .= ", password = :password";
@@ -107,6 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindParam(':firstname', $firstname);
             $stmt->bindParam(':lastname', $lastname);
             $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':department', $department); // Bind department
             $stmt->bindParam(':academic_id', $academic_id);
 
             if (!empty($password)) {
@@ -119,8 +125,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $stmt->bindParam(':head_id', $id, PDO::PARAM_INT);
         } else {
-            $query = "INSERT INTO head_faculty_list (school_id, firstname, lastname, email, password, avatar, academic_id) 
-                      VALUES (:school_id, :firstname, :lastname, :email, :password, :avatar, :academic_id)";
+            // Insert new head faculty
+            $query = "INSERT INTO head_faculty_list (school_id, firstname, lastname, email, password, avatar, department, academic_id) 
+                      VALUES (:school_id, :firstname, :lastname, :email, :password, :avatar, :department, :academic_id)";
             $stmt = $conn->prepare($query);
 
             $stmt->bindParam(':school_id', $school_id);
@@ -129,15 +136,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':password', $hashed_password);
             $stmt->bindParam(':avatar', $avatar);
+            $stmt->bindParam(':department', $department); // Bind department
             $stmt->bindParam(':academic_id', $academic_id);
         }
 
-        
+        // Execute the query and handle the result
         if ($stmt->execute()) {
-            
+            // Optional: Send email with credentials
             sendEmail($email, $password);
 
-            
+            // Success alert
             echo "<script>
                     Swal.fire({
                         icon: 'success',
@@ -150,6 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     });
                   </script>";
         } else {
+            // Error alert
             echo "<script>
                     Swal.fire({
                         icon: 'error',
@@ -159,10 +168,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                   </script>";
         }
 
-       
+        // Close the connection
         $conn = null;
     }
 
+    // Delete logic
     if (isset($_POST['delete_id'])) {
         $delete_id = $_POST['delete_id'];
 

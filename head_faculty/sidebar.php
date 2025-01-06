@@ -23,7 +23,32 @@
                         class="nav-link nav-evaluate <?php echo basename($_SERVER['PHP_SELF']) == 'evaluate.php' ? 'active' : ''; ?>"
                         style="<?php echo basename($_SERVER['PHP_SELF']) == 'evaluate.php' ? 'background-color: rgb(51, 128, 64); color: #fff; border: 1px solid #343a40;' : 'background-color: #343a40; color: #fff; border: 1px solid #343a40;'; ?>">
                         <i class="nav-icon fas fa-th-list"></i>
-                        <p>Evaluate</p>
+                        <p>Evaluate Self</p>
+                    </a>
+                </li>
+                <?php
+                include '../database/connection.php';
+
+                $faculty_id = $_SESSION['user']['head_id'];
+
+                // Fetch the department of the logged-in faculty
+                $query = "SELECT LOWER(department) AS department FROM head_faculty_list WHERE head_id = :head_id";
+                $stmt = $conn->prepare($query);
+                $stmt->execute(['head_id' => $faculty_id]);
+                $faculty = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                $departments = $faculty['department'] ?? '';
+
+                // Normalize the department string for use in URLs
+                $normalizedDepartments = array_map('trim', explode(',', strtolower($departments)));
+                $normalizedDepartmentsString = implode(',', $normalizedDepartments);
+                ?>
+                <li class="nav-item dropdown">
+                    <a href="evaluate_faculty.php?departments=<?php echo urlencode($normalizedDepartmentsString); ?>"
+                        class="nav-link nav-evaluate <?php echo basename($_SERVER['PHP_SELF']) == 'evaluate_faculty.php' ? 'active' : ''; ?>"
+                        style="<?php echo basename($_SERVER['PHP_SELF']) == 'evaluate_faculty.php' ? 'background-color: rgb(51, 128, 64); color: #fff; border: 1px solid #343a40;' : 'background-color: #343a40; color: #fff; border: 1px solid #343a40;'; ?>">
+                        <i class="nav-icon fas fa-th-list"></i>
+                        <p>Evaluate Faculties</p>
                     </a>
                 </li>
                 <li class="nav-item dropdown">

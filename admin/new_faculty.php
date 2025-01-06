@@ -58,29 +58,36 @@ include "handlers/faculty_handler.php";
                                     if (!empty($subjects)) {
                                         foreach ($subjects as $subject) {
                                             echo '
-                <div class="input-group mb-3 subject-item">
-                    <input type="text" class="form-control" name="subjects[]" required placeholder="Subject" value="' . htmlspecialchars(trim($subject), ENT_QUOTES) . '">
-                    <div class="input-group-append">
-                        <button type="button" class="btn btn-danger remove-subject">
-                            <i class="fas fa-minus"></i>
-                        </button>
-                    </div>
-                </div>';
+                                            <div class="input-group mb-3 subject-item">
+                                                <input type="text" class="form-control" name="subjects[]" required placeholder="Subject" value="' . htmlspecialchars(trim($subject), ENT_QUOTES) . '">
+                                                <div class="input-group-append">
+                                                    <button type="button" class="btn btn-danger remove-subject">
+                                                        <i class="fas fa-minus"></i>
+                                                    </button>
+                                                </div>
+                                            </div>';
                                         }
                                     } else {
                                         // Default to one empty input field if no subjects exist
                                         echo '
-                <div class="input-group mb-3 subject-item">
-                    <input type="text" class="form-control" name="subjects[]" required placeholder="Subject">
-                    <div class="input-group-append">
-                        <button type="button" class="btn btn-success add-subject">
-                            <i class="fas fa-plus"></i>
-                        </button>
-                    </div>
-                </div>';
+                                        <div class="input-group mb-3 subject-item">
+                                            <input type="text" class="form-control" name="subjects[]" required placeholder="Subject">
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-success add-subject">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                            </div>
+                                        </div>';
                                     }
                                     ?>
                                 </div>
+                                <small id="msg"></small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="department" class="control-label">Department</label>
+                                <input type="department" class="form-control form-control-sm" name="department" required
+                                    value="<?php echo isset($faculty['department']) ? $faculty['department'] : ''; ?>">
                                 <small id="msg"></small>
                             </div>
 
