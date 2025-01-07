@@ -37,6 +37,11 @@ $end_page = min($current_segment * $segment_size, $total_pages);
 
 <nav class="main-header">
     <div class="col-lg-12 mt-3">
+        <div class="col-12 mb-3">
+            <h2 class="text-start"
+                style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
+                Faculty List</h2>
+        </div>
         <div class="card card-outline card-success">
             <div class="card-header">
                 <div class="card-tools">
@@ -46,7 +51,8 @@ $end_page = min($current_segment * $segment_size, $total_pages);
             </div>
             <div class="row mb-3">
                 <div class="col-8 col-md-4 ms-auto mt-3 mr-3">
-                    <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Search Tertiary Faculties">
+                    <input type="text" id="searchInput" class="form-control form-control-sm"
+                        placeholder="Search Tertiary Faculties">
                 </div>
             </div>
             <div class="card-body">
@@ -68,7 +74,8 @@ $end_page = min($current_segment * $segment_size, $total_pages);
                                 <tr>
                                     <th class="text-center"><?php echo $i++; ?></th>
                                     <td><b><?php echo htmlspecialchars($row['faculty_id']); ?></b></td>
-                                    <td><b><?php echo htmlspecialchars(ucwords($row['firstname'] . ' ' . $row['lastname'])); ?></b></td>
+                                    <td><b><?php echo htmlspecialchars(ucwords($row['firstname'] . ' ' . $row['lastname'])); ?></b>
+                                    </td>
                                     <td><b><?php echo htmlspecialchars($row['email']); ?></b></td>
                                     <td class="text-center">
                                         <button type="button"
@@ -93,7 +100,8 @@ $end_page = min($current_segment * $segment_size, $total_pages);
                             <?php endforeach; ?>
                         </tbody>
                     </table>
-                    <p id="noRecordsMessage" style="display:none; color: black;" class="ml-1">No tertiary faculty found.</p>
+                    <p id="noRecordsMessage" style="display:none; color: black;" class="ml-1">No tertiary faculty found.
+                    </p>
                 </div>
 
                 <nav aria-label="Page navigation example">
@@ -131,8 +139,8 @@ $end_page = min($current_segment * $segment_size, $total_pages);
     </div>
 </nav>
 <script>
-    $(document).ready(function() {
-        $(document).on('submit', '.delete-form', function(e) {
+    $(document).ready(function () {
+        $(document).on('submit', '.delete-form', function (e) {
             e.preventDefault();
             var form = this;
 
@@ -151,7 +159,7 @@ $end_page = min($current_segment * $segment_size, $total_pages);
                         type: 'POST',
                         url: 'tertiary_faculty_list.php',
                         data: $(form).serialize(),
-                        success: function() {
+                        success: function () {
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Deleted!',
@@ -162,7 +170,7 @@ $end_page = min($current_segment * $segment_size, $total_pages);
                                 window.location.href = 'tertiary_faculty_list.php';
                             });
                         },
-                        error: function() {
+                        error: function () {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Oops...',
@@ -176,17 +184,17 @@ $end_page = min($current_segment * $segment_size, $total_pages);
     });
 </script>
 <script>
-    document.getElementById('searchInput').addEventListener('keyup', function() {
+    document.getElementById('searchInput').addEventListener('keyup', function () {
         var searchValue = this.value.toLowerCase();
         var rows = document.querySelectorAll('#list tbody tr');
         var noRecordsMessage = document.getElementById('noRecordsMessage');
         var matchesFound = false;
 
-        rows.forEach(function(row) {
+        rows.forEach(function (row) {
             var cells = row.querySelectorAll('td');
             var matches = false;
 
-            cells.forEach(function(cell) {
+            cells.forEach(function (cell) {
                 if (cell.textContent.toLowerCase().includes(searchValue)) {
                     matches = true;
                 }

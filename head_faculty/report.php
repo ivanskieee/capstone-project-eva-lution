@@ -5,10 +5,15 @@ include "handlers/report_handler.php";
 ?>
 <nav class="main-header">
     <div class="col-lg-12 mt-3">
-        <div class="callout callout-success">
+        <div class="col-12 mb-3">
+            <h2 class="text-start"
+                style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
+                Evaluation Report</h2>
+        </div>
+        <div class="callout callout-success" id="facultySelection">
             <div class="d-flex w-100 justify-content-center align-items-center">
                 <label for="faculty">Select Faculty</label>
-                <div class=" mx-2 col-md-4">
+                <div class="mx-2 col-md-4">
                     <select name="" id="faculty_id" class="form-control form-control-sm select2">
                         <option value="">Select Faculty</option>
                         <?php
@@ -34,7 +39,15 @@ include "handlers/report_handler.php";
             <div class="col-md-3">
                 <div class="callout callout-success">
                     <div class="list-group" id="class-list">
-
+                        <div class="d-flex w-100 justify-content-center align-items-center">
+                            <label for="category">Select Category</label>
+                            <div class="mx-2 col-md-4">
+                                <select id="category" class="form-control form-control-sm">
+                                    <option value="faculty">Faculty</option>
+                                    <option value="self">Self</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -193,144 +206,114 @@ include "handlers/report_handler.php";
 </noscript>
 <script>
     document.getElementById('faculty_id').addEventListener('change', function () {
-        // Get the selected option
-        const selectedOption = this.options[this.selectedIndex];
-        // Get the faculty name from the `data-name` attribute
-        const facultyName = selectedOption.getAttribute('data-name') || '';
-        // Update the span content
+        const facultyId = this.value;
+        const facultyName = this.options[this.selectedIndex].getAttribute('data-name') || '';
         document.getElementById('fname').textContent = facultyName;
-    });
-</script>
-<script>
-    $(document).ready(function () {
-        $('#faculty_id').change(function () {
-            const facultyId = $(this).val();
-            if (facultyId) {
-                $.ajax({
-                    url: 'get_total_evaluated.php',
-                    method: 'GET',
-                    data: { faculty_id: facultyId },
-                    success: function (response) {
-                        $('#tse').text(response);
-                    },
-                    error: function () {
-                        alert('Failed to fetch data.');
-                    }
-                });
-            } else {
-                $('#tse').text(0);
-            }
-        });
-    });
-</script>
-<script>
-    document.getElementById('faculty_id').addEventListener('change', function () {
-        const facultyId = this.value;
 
-        const ratingsTable = document.querySelector('#printable .table-responsive');
-
-        if (facultyId) {
-            fetch(`get_faculty_ratings.php?faculty_id=${facultyId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'success') {
-                        ratingsTable.innerHTML = ''; // Clear previous data
-
-                        // Generate table structure
-                        const table = document.createElement('table');
-                        table.className = 'table table-condensed wborder';
-
-                        // Add table header
-                        const thead = `
-                        <thead>
-                            <tr class="bg-gradient-secondary">
-                                <th class="p-1"><b>Question</b></th>
-                                <th width="5%" class="text-center">1</th>
-                                <th width="5%" class="text-center">2</th>
-                                <th width="5%" class="text-center">3</th>
-                                <th width="5%" class="text-center">4</th>
-                            </tr>
-                        </thead>`;
-                        table.innerHTML = thead;
-
-                        // Add table body
-                        const tbody = document.createElement('tbody');
-                        data.data.forEach(row => {
-                            let questionRow = '';
-                            if (row.question_type === 'text') {
-                                // Concatenate all comments into a single string
-                                const concatenatedComments = row.comments
-                                    ? row.comments.join('\n')
-                                    : '';
-
-                                questionRow = `
-                                    <tr class="bg-white">
-                                        <td colspan="5">
-                                            <div><strong>${row.question}</strong></div>
-                                            <textarea name="comment[${row.question_id}]" class="form-control mt-2"
-                                                rows="5" placeholder="No comments available" readonly>${concatenatedComments}</textarea>
-                                        </td>
-                                    </tr>`;
-                            } else {
-                                // Handle rating questions
-                                questionRow = `
-                                    <tr class="bg-white">
-                                        <td class="p-1" width="20%">${row.question}</td>
-                                        <td class="text-center">
-                                            <div class="circle">${row.rate1}%</div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="circle">${row.rate2}%</div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="circle">${row.rate3}%</div>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="circle">${row.rate4}%</div>
-                                        </td>
-                                    </tr>`;
-                            }
-                            tbody.innerHTML += questionRow;
-                        });
-                        
-                        table.appendChild(tbody);
-
-                        // Append the complete table to the ratings container
-                        ratingsTable.appendChild(table);
-                    } else {
-                        console.error(data.message);
-                    }
-                })
-                .catch(error => console.error('Error fetching ratings:', error));
-        } else {
-            // Reset the table to its normal state
-            ratingsTable.innerHTML = `<br>
-                <p class="text-center text-muted">Select a faculty to view evaluation ratings.</p>
-            `;
-        }
-    });
-</script>
-<script>
-    document.getElementById('faculty_id').addEventListener('change', function () {
-        const facultyId = this.value;
         const academicYearDisplay = document.getElementById('ay');
+        const ratingsTable = document.querySelector('#printable .table-responsive');
+        const tse = document.getElementById('tse');
+        const selectedCategory = document.getElementById('category').value;
+
+        // Reset content
+        ratingsTable.innerHTML = `<br><p class="text-center text-muted">Select faculty to view evaluation ratings.</p>`;
+        academicYearDisplay.innerHTML = 'Select faculty to view year and semester.';
+        tse.textContent = 0;
 
         if (facultyId) {
+            // Fetch academic year
             fetch(`get_academic_info.php?faculty_id=${facultyId}`)
                 .then(response => response.json())
                 .then(data => {
-                    if (data.status === 'success') {
-                        academicYearDisplay.innerHTML = `${data.year} - ${data.semester}`;
-                    } else {
-                        academicYearDisplay.innerHTML = 'No academic information available.';
-                    }
+                    academicYearDisplay.innerHTML = data.status === 'success' ? `${data.year} - ${data.semester}` : 'No academic information available.';
                 })
-                .catch(error => {
-                    console.error('Error fetching academic information:', error);
+                .catch(() => {
                     academicYearDisplay.innerHTML = 'Error fetching academic information.';
                 });
-        } else {
-            academicYearDisplay.innerHTML = 'Select a faculty to view academic year and semester.';
+
+            // Fetch total evaluated
+            fetch(`get_total_evaluated.php?faculty_id=${facultyId}`)
+                .then(response => response.text())
+                .then(response => {
+                    tse.textContent = response;
+                })
+                .catch(() => {
+                    tse.textContent = 0;
+                });
+
+            // Fetch category-specific data
+            if (selectedCategory === 'self') {
+                fetch(`get_self_eval.php?faculty_id=${facultyId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            ratingsTable.innerHTML = `
+                                <div class="mb-3">
+                                    <label for="skills" class="form-label">Skills (1-5):</label>
+                                    <input type="number" id="skills" name="skills" class="form-control" value="${data.skills}" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="performance" class="form-label">Performance (1-5):</label>
+                                    <input type="number" id="performance" name="performance" class="form-control" value="${data.performance}" readonly>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="comments" class="form-label">Comments:</label>
+                                    <textarea id="comments" name="comments" class="form-control" rows="4" readonly>${data.comments}</textarea>
+                                </div>`;
+                        } else {
+                            ratingsTable.innerHTML = `<br><p class="text-center text-muted">No self-evaluation data available.</p>`;
+                        }
+                    })
+                    .catch(() => {
+                        ratingsTable.innerHTML = `<br><p class="text-center text-muted">Failed to fetch self-evaluation data.</p>`;
+                    });
+            } else {
+                fetch(`get_faculty_ratings.php?faculty_id=${facultyId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            ratingsTable.innerHTML = ''; // Clear previous data
+                            const table = document.createElement('table');
+                            table.className = 'table table-condensed wborder';
+                            table.innerHTML = `
+                                <thead>
+                                    <tr class="bg-gradient-secondary">
+                                        <th class="p-1"><b>Question</b></th>
+                                        <th width="5%" class="text-center">1</th>
+                                        <th width="5%" class="text-center">2</th>
+                                        <th width="5%" class="text-center">3</th>
+                                        <th width="5%" class="text-center">4</th>
+                                    </tr>
+                                </thead>`;
+
+                            const tbody = document.createElement('tbody');
+                            data.data.forEach(row => {
+                                tbody.innerHTML += row.question_type === 'text'
+                                    ? `<tr class="bg-white">
+                                        <td colspan="5">
+                                            <div><strong>${row.question}</strong></div>
+                                            <textarea name="comment[${row.question_id}]" class="form-control mt-2" rows="5" readonly>${row.comments ? row.comments.join('\n') : ''}</textarea>
+                                        </td>
+                                    </tr>`
+                                    : `<tr class="bg-white">
+                                        <td class="p-1" width="20%">${row.question}</td>
+                                        <td class="text-center"><div class="circle">${row.rate1}%</div></td>
+                                        <td class="text-center"><div class="circle">${row.rate2}%</div></td>
+                                        <td class="text-center"><div class="circle">${row.rate3}%</div></td>
+                                        <td class="text-center"><div class="circle">${row.rate4}%</div></td>
+                                    </tr>`;
+                            });
+
+                            table.appendChild(tbody);
+                            ratingsTable.appendChild(table);
+                        } else {
+                            ratingsTable.innerHTML = `<br><p class="text-center text-muted">${data.message || 'No evaluation ratings available.'}</p>`;
+                        }
+                    })
+                    .catch(() => {
+                        ratingsTable.innerHTML = `<br><p class="text-center text-muted">Failed to fetch evaluation ratings.</p>`;
+                    });
+            }
         }
     });
 </script>

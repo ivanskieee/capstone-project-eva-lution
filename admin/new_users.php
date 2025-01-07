@@ -3,7 +3,12 @@ include "handlers/user_handler.php";
 
 ?>
 <nav class="main-header">
-	<div class="col-lg-12 mt-5">
+	<div class="col-lg-12 mt-3">
+		<div class="col-12 mb-3">
+			<h2 class="text-start"
+				style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
+				Add New</h2>
+		</div>
 		<div class="card">
 			<div class="card-body">
 				<form method="POST" id="new_users" enctype="multipart/form-data">
@@ -76,24 +81,25 @@ include "handlers/user_handler.php";
 		object-fit: cover;
 		border-radius: 100% 100%;
 	}
+
 	.list-group-item:hover {
-        color: black !important;
-        font-weight: 700 !important;
-    }
+		color: black !important;
+		font-weight: 700 !important;
+	}
 
-    body {
-        overflow-y: hidden;
-    }
+	body {
+		overflow-y: hidden;
+	}
 
-    .main-header {
-        max-height: 90vh;
-        overflow-y: scroll;
-        scrollbar-width: none;
-    }
+	.main-header {
+		max-height: 90vh;
+		overflow-y: scroll;
+		scrollbar-width: none;
+	}
 
-    .main-header::-webkit-scrollbar {
-        display: none;
-    }
+	.main-header::-webkit-scrollbar {
+		display: none;
+	}
 </style>
 <script>
 	$('[name="password"],[name="cpass"]').keyup(function () {
@@ -134,25 +140,25 @@ include "handlers/user_handler.php";
 			}
 		}
 		$.ajax({
-            url: 'ajax.php?action=save_student',
-            data: new FormData($(this)[0]),
-            cache: false,
-            contentType: false,
-            processData: false,
-            method: 'POST',
-            type: 'POST',
-            success: function (resp) {
-                if (resp == 1) {
-                    alert_toast('Data successfully saved.', "success");
-                    setTimeout(function () {
-                        location.replace('index.php?page=student_list')
-                    }, 750)
-                } else if (resp == 2) {
-                    $('#msg').html("<div class='alert alert-danger'>Email already exist.</div>");
-                    $('[name="email"]').addClass("border-danger")
-                    end_load()
-                }
-            }
-        })
+			url: 'ajax.php?action=save_student',
+			data: new FormData($(this)[0]),
+			cache: false,
+			contentType: false,
+			processData: false,
+			method: 'POST',
+			type: 'POST',
+			success: function (resp) {
+				if (resp == 1) {
+					alert_toast('Data successfully saved.', "success");
+					setTimeout(function () {
+						location.replace('index.php?page=student_list')
+					}, 750)
+				} else if (resp == 2) {
+					$('#msg').html("<div class='alert alert-danger'>Email already exist.</div>");
+					$('[name="email"]').addClass("border-danger")
+					end_load()
+				}
+			}
+		})
 	})
 </script>

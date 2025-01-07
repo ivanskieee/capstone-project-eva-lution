@@ -142,7 +142,7 @@ $headList = fetchHeadFacultyList($conn);
                     <div class="card-body py-3 text-center">
                         <div class="btn-group" role="group" aria-label="Category Selector">
                             <button type="button" class="btn btn-outline-success active" id="facultyButton"
-                                data-category="faculty">Faculty</button>
+                                data-category="faculty">Student to Faculty</button>
                             <button type="button" class="btn btn-outline-success" id="selfFacultyButton"
                                 data-category="self-faculty">Self Faculty</button>
                             <button type="button" class="btn btn-outline-success" id="selfHeadFacultyButton"

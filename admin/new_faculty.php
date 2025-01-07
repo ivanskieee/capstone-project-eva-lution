@@ -4,7 +4,12 @@ include "handlers/faculty_handler.php";
 ?>
 
 <nav class="main-header">
-    <div class="col-lg-12 mt-5">
+    <div class="col-lg-12 mt-3">
+        <div class="col-12 mb-3">
+            <h2 class="text-start"
+                style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
+                Add New</h2>
+        </div>
         <div class="card">
             <div class="card-body">
                 <form method="POST" enctype="multipart/form-data" id="new_faculty">

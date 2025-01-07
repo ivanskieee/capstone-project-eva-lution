@@ -37,6 +37,11 @@ $end_page = min($current_segment * $segment_size, $total_pages);
 
 <nav class="main-header">
     <div class="col-lg-12 mt-3">
+        <div class="col-12 mb-3">
+            <h2 class="text-start"
+                style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
+                User List</h2>
+        </div>
         <div class="card card-outline card-success">
             <div class="card-header">
                 <div class="card-tools">
@@ -67,7 +72,8 @@ $end_page = min($current_segment * $segment_size, $total_pages);
                             foreach ($users_data as $row): ?>
                                 <tr>
                                     <th class="text-center"><?php echo $i++; ?></th>
-                                    <td><b><?php echo htmlspecialchars(ucwords($row['firstname'] . ' ' . $row['lastname'])); ?></b></td>
+                                    <td><b><?php echo htmlspecialchars(ucwords($row['firstname'] . ' ' . $row['lastname'])); ?></b>
+                                    </td>
                                     <td><b><?php echo htmlspecialchars($row['email']); ?></b></td>
                                     <td class="text-center">
                                         <button type="button"
@@ -79,9 +85,9 @@ $end_page = min($current_segment * $segment_size, $total_pages);
                                             <a class="dropdown-item"
                                                 href="new_users.php?id=<?php echo $row['id']; ?>">Edit</a>
                                             <div class="dropdown-divider"></div>
-                                            <form method="post" action="user_list.php" style="display: inline;" class="delete-form">
-                                                <input type="hidden" name="delete_id"
-                                                    value="<?php echo $row['id']; ?>">
+                                            <form method="post" action="user_list.php" style="display: inline;"
+                                                class="delete-form">
+                                                <input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>">
                                                 <button type="submit" class="dropdown-item">Delete</button>
                                             </form>
                                         </div>
@@ -96,35 +102,35 @@ $end_page = min($current_segment * $segment_size, $total_pages);
 
             <!-- Pagination -->
             <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-center">
-                        <?php if ($current_segment > 1): ?>
-                            <li class="page-item">
-                                <a class="page-link btn btn-success" href="?page=<?php echo ($start_page - 1); ?>"
-                                    aria-label="Previous">
-                                    <span aria-hidden="true">&laquo; Previous Segment</span>
-                                </a>
-                            </li>
-                        <?php endif; ?>
+                <ul class="pagination justify-content-center">
+                    <?php if ($current_segment > 1): ?>
+                        <li class="page-item">
+                            <a class="page-link btn btn-success" href="?page=<?php echo ($start_page - 1); ?>"
+                                aria-label="Previous">
+                                <span aria-hidden="true">&laquo; Previous Segment</span>
+                            </a>
+                        </li>
+                    <?php endif; ?>
 
-                        <?php for ($p = $start_page; $p <= $end_page; $p++): ?>
-                            <li class="page-item <?php echo ($p == $page) ? 'active' : ''; ?>">
-                                <a class="page-link btn btn-success <?php echo ($p == $page) ? 'active' : ''; ?>"
-                                    href="?page=<?php echo $p; ?>">
-                                    <?php echo $p; ?>
-                                </a>
-                            </li>
-                        <?php endfor; ?>
+                    <?php for ($p = $start_page; $p <= $end_page; $p++): ?>
+                        <li class="page-item <?php echo ($p == $page) ? 'active' : ''; ?>">
+                            <a class="page-link btn btn-success <?php echo ($p == $page) ? 'active' : ''; ?>"
+                                href="?page=<?php echo $p; ?>">
+                                <?php echo $p; ?>
+                            </a>
+                        </li>
+                    <?php endfor; ?>
 
-                        <?php if ($end_page < $total_pages): ?>
-                            <li class="page-item">
-                                <a class="page-link btn btn-success" href="?page=<?php echo $end_page + 1; ?>"
-                                    aria-label="Next">
-                                    <span aria-hidden="true">Next Segment &raquo;</span>
-                                </a>
-                            </li>
-                        <?php endif; ?>
-                    </ul>
-                </nav>
+                    <?php if ($end_page < $total_pages): ?>
+                        <li class="page-item">
+                            <a class="page-link btn btn-success" href="?page=<?php echo $end_page + 1; ?>"
+                                aria-label="Next">
+                                <span aria-hidden="true">Next Segment &raquo;</span>
+                            </a>
+                        </li>
+                    <?php endif; ?>
+                </ul>
+            </nav>
         </div>
     </div>
 </nav>
