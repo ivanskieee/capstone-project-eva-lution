@@ -56,7 +56,58 @@ if (isset($_GET['faculty_id']) && isset($_GET['category'])) {
 
         echo json_encode(['labels' => $labels, 'dataset' => $averageScores]);
 
-    } else {
+    } elseif ($category === 'faculty-to-faculty') {
+        // Query for faculty ratings data
+        $stmt = $conn->prepare("
+            SELECT ea.rate AS rating
+            FROM evaluation_answers ea
+            WHERE ea.faculty_id = :faculty_id AND ea.question_id IN (4, 5, 6) AND ea.rate IS NOT NULL
+            ORDER BY ea.evaluation_id ASC
+        ");
+        $stmt->execute(['faculty_id' => $facultyId]);
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Create labels as sequential numbers (1, 2, 3, ...)
+        $labels = range(1, count($data));
+        $ratings = array_column($data, 'rating');
+
+        echo json_encode(['labels' => $labels, 'dataset' => $ratings]);
+
+    } elseif ($category === 'faculty-to-head') {
+        // Query for faculty ratings data
+        $stmt = $conn->prepare("
+            SELECT ea.rate AS rating
+            FROM evaluation_answers ea
+            WHERE ea.faculty_id = :faculty_id AND ea.rate IS NOT NULL
+            ORDER BY ea.evaluation_id ASC
+        ");
+        $stmt->execute(['faculty_id' => $facultyId]);
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Create labels as sequential numbers (1, 2, 3, ...)
+        $labels = range(1, count($data));
+        $ratings = array_column($data, 'rating');
+
+        echo json_encode(['labels' => $labels, 'dataset' => $ratings]);
+
+    } elseif ($category === 'head-to-faculty') {
+        // Query for faculty ratings data
+        $stmt = $conn->prepare("
+            SELECT ea.rate AS rating
+            FROM evaluation_answers ea
+            WHERE ea.faculty_id = :faculty_id AND ea.question_id IN (1, 2, 3) AND ea.rate IS NOT NULL
+            ORDER BY ea.evaluation_id ASC
+        ");
+        $stmt->execute(['faculty_id' => $facultyId]);
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Create labels as sequential numbers (1, 2, 3, ...)
+        $labels = range(1, count($data));
+        $ratings = array_column($data, 'rating');
+
+        echo json_encode(['labels' => $labels, 'dataset' => $ratings]);
+
+    } else{
         // Invalid category
         echo json_encode(['error' => 'Invalid category']);
     }

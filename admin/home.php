@@ -139,14 +139,48 @@ $headList = fetchHeadFacultyList($conn);
                     <div class="card-header text-center py-2">
                         <h5 class="mb-0">Select Category</h5>
                     </div>
-                    <div class="card-body py-3 text-center">
-                        <div class="btn-group" role="group" aria-label="Category Selector">
-                            <button type="button" class="btn btn-outline-success active" id="facultyButton"
-                                data-category="faculty">Student to Faculty</button>
-                            <button type="button" class="btn btn-outline-success" id="selfFacultyButton"
-                                data-category="self-faculty">Self Faculty</button>
-                            <button type="button" class="btn btn-outline-success" id="selfHeadFacultyButton"
-                                data-category="self-head-faculty">Self Head Faculty</button>
+                    <div class="card-body py-3">
+                        <div class="row">
+                            <!-- First Row of Buttons -->
+                            <div class="col-md-4 mb-2">
+                                <button type="button" class="btn btn-outline-success w-100" id="facultyButton"
+                                    data-category="faculty">
+                                    Student to Faculty
+                                </button>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <button type="button" class="btn btn-outline-success w-100" id="selfFacultyButton"
+                                    data-category="self-faculty">
+                                    Self Faculty
+                                </button>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <button type="button" class="btn btn-outline-success w-100" id="selfHeadFacultyButton"
+                                    data-category="self-head-faculty">
+                                    Self Head Faculty
+                                </button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <!-- Second Row of Buttons -->
+                            <div class="col-md-4 mb-2">
+                                <button type="button" class="btn btn-outline-success w-100" id="FacultytoFacultyButton"
+                                    data-category="faculty-to-faculty">
+                                    Faculty to Faculty
+                                </button>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <button type="button" class="btn btn-outline-success w-100" id="FacultytoHeadButton"
+                                    data-category="faculty-to-head">
+                                    Faculty to Head
+                                </button>
+                            </div>
+                            <div class="col-md-4 mb-2">
+                                <button type="button" class="btn btn-outline-success w-100" id="HeadtoFacultyButton"
+                                    data-category="head-to-faculty">
+                                    Head to Faculty
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -224,13 +258,24 @@ $headList = fetchHeadFacultyList($conn);
                         option.textContent = faculty.faculty_name;
                         facultySelect.appendChild(option);
                     });
-                } else if (category === 'self-head-faculty') {
-                    facultyLabel.textContent = 'Self Head Faculty:';
-                    categoryTitle.textContent = 'Select Self Head Faculty to Monitor';
+                } else if (category === 'self-head-faculty' || category === 'faculty-to-head') {
+                    facultyLabel.textContent = 'Head:';
+                    categoryTitle.textContent = category === 'self-head-faculty'
+                        ? 'Select Self Head Faculty to Monitor'
+                        : 'Select Head for Faculty to Head Evaluation';
                     headList.forEach(head => {
                         const option = document.createElement('option');
                         option.value = head.head_id;
                         option.textContent = head.head_name;
+                        facultySelect.appendChild(option);
+                    });
+                } else if (category === 'faculty-to-faculty' || category === 'head-to-faculty') {
+                    facultyLabel.textContent = 'Faculty:';
+                    categoryTitle.textContent = `Select Faculty for ${category.replace(/-/g, ' ')}`;
+                    facultyList.forEach(faculty => {
+                        const option = document.createElement('option');
+                        option.value = faculty.faculty_id;
+                        option.textContent = faculty.faculty_name;
                         facultySelect.appendChild(option);
                     });
                 }
@@ -404,6 +449,13 @@ $headList = fetchHeadFacultyList($conn);
                 height: calc(1.5em + 0.5rem + 2px);
                 padding: 0.25rem 0.5rem;
                 font-size: 0.875rem;
+            }
+
+            .btn {
+                height: 40px;
+                /* Adjust height as needed */
+                line-height: 1.5;
+                /* Vertically centers text */
             }
         </style>
 
