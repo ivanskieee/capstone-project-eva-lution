@@ -203,4 +203,15 @@ include 'handlers/eval_handler.php';
 		});
 	});
 </script>
+<style>
+	.main-header {
+        max-height: 90vh;
+        overflow-y: scroll;
+        scrollbar-width: none;
+    }
+
+    .main-header::-webkit-scrollbar {
+        display: none;
+    }
+</style>
 <?php include 'footer.php'; ?>

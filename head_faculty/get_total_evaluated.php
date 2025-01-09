@@ -2,22 +2,51 @@
 // Database connection
 include '../database/connection.php'; // Adjust the path to your database connection file
 
-if (isset($_GET['faculty_id'])) {
+if (isset($_GET['faculty_id']) && isset($_GET['category'])) {
     $facultyId = intval($_GET['faculty_id']);
+    $category = $_GET['category'];
 
-    // Fetch the count of students evaluated for the selected faculty
-    $stmt = $conn->prepare("
-        SELECT COUNT(DISTINCT student_id) 
-        FROM evaluation_answers 
-        WHERE faculty_id = :faculty_id
-    ");
-    $stmt->bindParam(':faculty_id', $facultyId, PDO::PARAM_INT);
-    $stmt->execute();
+    $totalCount = 0;
 
-    // Fetch the total count
-    $totalStudentsEvaluated = $stmt->fetchColumn();
+    if ($category === 'self') {
+        // Count from self_faculty_eval
+        $stmt = $conn->prepare("SELECT COUNT(DISTINCT faculty_id) FROM self_faculty_eval WHERE faculty_id = :faculty_id");
+        $stmt->bindParam(':faculty_id', $facultyId, PDO::PARAM_INT);
+        $stmt->execute();
+        $totalCount = $stmt->fetchColumn();
+    } elseif ($category === 'dean_self') {
+        // Count from self_head_eval
+        $stmt = $conn->prepare("SELECT COUNT(DISTINCT faculty_id) FROM self_head_eval WHERE faculty_id = :faculty_id");
+        $stmt->bindParam(':faculty_id', $facultyId, PDO::PARAM_INT);
+        $stmt->execute();
+        $totalCount = $stmt->fetchColumn();
+    } elseif ($category === 'faculty_to_faculty') {
+        // Count from evaluation_answers for faculty-to-faculty
+        $stmt = $conn->prepare("SELECT COUNT(DISTINCT faculty_id) FROM evaluation_answers WHERE faculty_id = :faculty_id AND question_id IS NOT NULL");
+        $stmt->bindParam(':faculty_id', $facultyId, PDO::PARAM_INT);
+        $stmt->execute();
+        $totalCount = $stmt->fetchColumn();
+    } elseif ($category === 'head_to_faculty') {
+        // Count from evaluation_answers for head-to-faculty
+        $stmt = $conn->prepare("SELECT COUNT(DISTINCT faculty_id) FROM evaluation_answers WHERE faculty_id = :faculty_id AND question_id IS NOT NULL");
+        $stmt->bindParam(':faculty_id', $facultyId, PDO::PARAM_INT);
+        $stmt->execute();
+        $totalCount = $stmt->fetchColumn();
+    } elseif ($category === 'faculty_to_head') {
+        // Count from evaluation_answers for faculty-to-head
+        $stmt = $conn->prepare("SELECT COUNT(DISTINCT faculty_id) FROM evaluation_answers WHERE faculty_id = :faculty_id AND question_id IS NOT NULL");
+        $stmt->bindParam(':faculty_id', $facultyId, PDO::PARAM_INT);
+        $stmt->execute();
+        $totalCount = $stmt->fetchColumn();
+    } else {
+        // Default: Total students evaluated
+        $stmt = $conn->prepare("SELECT COUNT(DISTINCT student_id) FROM evaluation_answers WHERE faculty_id = :faculty_id");
+        $stmt->bindParam(':faculty_id', $facultyId, PDO::PARAM_INT);
+        $stmt->execute();
+        $totalCount = $stmt->fetchColumn();
+    }
 
-    // Return the result
-    echo $totalStudentsEvaluated ?: 0; // Default to 0 if no evaluations
+    // Return the total count
+    echo $totalCount ?: 0; // Default to 0 if no evaluations
 }
 ?>

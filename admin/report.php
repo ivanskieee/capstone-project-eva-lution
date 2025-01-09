@@ -45,7 +45,7 @@ include "handlers/report_handler.php";
                     <div class="list-group" id="class-list">
                         <div class="d-flex w-100 justify-content-center align-items-center">
                             <label for="category">Select Category</label>
-                            <div class="mx-2 col-md-4">
+                            <div class="mx-2 col-md-8">
                                 <select id="category" class="form-control form-control-sm">
                                     <option value="faculty">Student to Faculty</option>
                                     <option value="self">Self Faculty</option>
@@ -77,7 +77,7 @@ include "handlers/report_handler.php";
                             <tr>
                             </tr>
                         </table>
-                        <p class=""><b>Total Student Evaluated: <span id="tse">
+                        <p class=""><b>Total Evaluated: <span id="tse">
                                 </span></b></p>
                     </div>
                     <fieldset class="border border-success p-2 w-100">
@@ -240,7 +240,7 @@ include "handlers/report_handler.php";
                 });
 
             // Fetch total evaluated
-            fetch(`get_total_evaluated.php?faculty_id=${facultyId}`)
+            fetch(`get_total_evaluated.php?faculty_id=${facultyId}&category=${selectedCategory}`)
                 .then(response => response.text())
                 .then(response => {
                     tse.textContent = response;
