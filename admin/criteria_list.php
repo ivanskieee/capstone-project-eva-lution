@@ -2,85 +2,89 @@
 include 'handlers/criteria_handler.php';
 
 ?>
-<nav class="main-header">
-    <div class="col-lg-12 mt-3">
-        <div class="col-12 mb-3">
-            <h2 class="text-start"
-                style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
-                Manage Criterias</h2>
-        </div>
-        <div class="card card-outline card-success">
-            <div class="card-header"></div>
-            <div class="card-body">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="card card-outline card-success">
-                                <div class="card-header"><b>Criteria Form</b></div>
-                                <div class="card-body">
-                                    <form action="" id="manage-criteria" method="POST">
-                                        <input type="hidden" name="criteria_id"
-                                            value="<?php echo isset($criteria_to_edit['criteria_id']) ? $criteria_to_edit['criteria_id'] : ''; ?>">
-                                        <div class="form-group">
-                                            <label for="criteria">Criteria</label>
-                                            <input type="text" name="criteria" class="form-control form-control-sm"
-                                                value="<?php echo isset($criteria_to_edit['criteria']) ? $criteria_to_edit['criteria'] : ''; ?>"
-                                                required>
+
+<div class="content">
+    <nav class="main-header">
+        <div class="col-lg-12 mt-3">
+            <div class="col-12 mb-3">
+                <h2 class="text-start"
+                    style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
+                    Manage Criterias</h2>
+            </div>
+            <div class="card card-outline card-success">
+                <div class="card-header"></div>
+                <div class="card-body">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card card-outline card-success">
+                                    <div class="card-header"><b>Criteria Form</b></div>
+                                    <div class="card-body">
+                                        <form action="" id="manage-criteria" method="POST">
+                                            <input type="hidden" name="criteria_id"
+                                                value="<?php echo isset($criteria_to_edit['criteria_id']) ? $criteria_to_edit['criteria_id'] : ''; ?>">
+                                            <div class="form-group">
+                                                <label for="criteria">Criteria</label>
+                                                <input type="text" name="criteria" class="form-control form-control-sm"
+                                                    value="<?php echo isset($criteria_to_edit['criteria']) ? $criteria_to_edit['criteria'] : ''; ?>"
+                                                    required>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="card-footer">
+                                        <div class="d-flex justify-content-end w-100">
+                                            <button class="btn btn-sm btn-success btn-flat bg-gradient-success mx-1"
+                                                form="manage-criteria" type="submit">Save</button>
+                                            <button class="btn btn-sm btn-flat btn-secondary bg-gradient-secondary mx-1"
+                                                form="manage-criteria" type="reset"
+                                                onclick="window.location.href = './criteria_list.php';">Cancel</button>
                                         </div>
-                                    </form>
-                                </div>
-                                <div class="card-footer">
-                                    <div class="d-flex justify-content-end w-100">
-                                        <button class="btn btn-sm btn-success btn-flat bg-gradient-success mx-1"
-                                            form="manage-criteria" type="submit">Save</button>
-                                        <button class="btn btn-sm btn-flat btn-secondary bg-gradient-secondary mx-1"
-                                            form="manage-criteria" type="reset"
-                                            onclick="window.location.href = './criteria_list.php';">Cancel</button>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-8">
-                            <div class="callout callout-success">
-                                <div class="d-flex justify-content-between w-100">
-                                    <label for=""><b>Criteria List</b></label>
-                                    <button class="btn btn-sm btn-success btn-flat bg-gradient-success mx-1"
-                                        form="order-criteria">Save Order</button>
-                                </div>
-                                <hr>
-                                <ul class="list-group btn col-md-8" id="ui-sortable-list">
-                                    <?php foreach ($criterias as $row): ?>
-                                        <li class="list-group-item text-left">
-                                            <span class="btn-group dropright float-right">
-                                                <span type="button" class="btn" data-toggle="dropdown" aria-haspopup="true"
-                                                    aria-expanded="false">
-                                                    <i class="fa fa-ellipsis-v"></i>
+                            <div class="col-md-8">
+                                <div class="callout callout-success">
+                                    <div class="d-flex justify-content-between w-100">
+                                        <label for=""><b>Criteria List</b></label>
+                                        <button class="btn btn-sm btn-success btn-flat bg-gradient-success mx-1"
+                                            form="order-criteria">Save Order</button>
+                                    </div>
+                                    <hr>
+                                    <ul class="list-group btn col-md-8" id="ui-sortable-list">
+                                        <?php foreach ($criterias as $row): ?>
+                                            <li class="list-group-item text-left">
+                                                <span class="btn-group dropright float-right">
+                                                    <span type="button" class="btn" data-toggle="dropdown"
+                                                        aria-haspopup="true" aria-expanded="false">
+                                                        <i class="fa fa-ellipsis-v"></i>
+                                                    </span>
+                                                    <div class="dropdown-menu">
+                                                        <a class="dropdown-item"
+                                                            href="criteria_list.php?criteria_id=<?php echo $row['criteria_id']; ?>">Edit</a>
+                                                        <form method="POST" action="criteria_list.php" class="delete-form">
+                                                            <input type="hidden" name="delete_id"
+                                                                value="<?php echo $row['criteria_id']; ?>">
+                                                            <button class="dropdown-item delete-button"
+                                                                type="submit">Delete</button>
+                                                        </form>
+                                                    </div>
                                                 </span>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item"
-                                                        href="criteria_list.php?criteria_id=<?php echo $row['criteria_id']; ?>">Edit</a>
-                                                    <form method="POST" action="criteria_list.php" class="delete-form">
-                                                        <input type="hidden" name="delete_id"
-                                                            value="<?php echo $row['criteria_id']; ?>">
-                                                        <button class="dropdown-item delete-button"
-                                                            type="submit">Delete</button>
-                                                    </form>
-                                                </div>
-                                            </span>
-                                            <i class="fa fa-bars"></i> <?php echo ucwords($row['criteria']); ?>
-                                            <input type="hidden" name="criteria_id" id="criteria_id"
-                                                value="<?php echo $row['criteria_id']; ?>">
-                                        </li>
-                                    <?php endforeach; ?>
-                                </ul>
+                                                <i class="fa fa-bars"></i> <?php echo ucwords($row['criteria']); ?>
+                                                <input type="hidden" name="criteria_id" id="criteria_id"
+                                                    value="<?php echo $row['criteria_id']; ?>">
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</nav>
+    </nav>
+</div>
+
 <style>
     .dropright a:hover {
         color: black !important;
@@ -91,18 +95,10 @@ include 'handlers/criteria_handler.php';
         font-weight: 700 !important;
     }
 
-    body {
-        overflow-y: hidden;
-    }
-
-    .main-header {
+    .content .main-header {
         max-height: 95vh;
-        overflow-y: scroll;
-        scrollbar-width: none;
-    }
-
-    .main-header::-webkit-scrollbar {
-        display: none;
+        overflow-y: auto;
+        scroll-behavior: smooth;
     }
 </style>
 <script>

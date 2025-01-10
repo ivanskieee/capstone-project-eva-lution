@@ -5,7 +5,7 @@ include "submit_registration.php";
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <div class="login-box">
+            <div class="login-box mb-5">
                 <div class="card">
                     <div class="card-body login-card-body">
                         <div class="login-logo mb-4">

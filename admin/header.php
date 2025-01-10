@@ -40,6 +40,7 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <style>
     .bars {
       background: none;
@@ -79,7 +80,18 @@
       }
     }
 
-    .navbar-nav {
+    .navbar-nav .dropdown-menu {
+      position: fixed;
+      /* Make the dropdown appear outside the scrolling container */
+      top: auto;
+      /* Allow natural placement */
+      left: auto;
+      /* Allow natural placement */
+      z-index: 1050;
+      /* Ensure it appears above other elements */
+    }
+
+    /* .navbar-nav {
       display: flex;
       flex-wrap: nowrap;
       overflow-x: auto;
@@ -96,7 +108,7 @@
 
     .navbar-nav::-webkit-scrollbar-track {
       background-color: rgba(0, 0, 0, 0.1);
-    }
+    } */
   </style>
 </head>
 

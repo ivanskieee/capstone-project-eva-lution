@@ -3,6 +3,8 @@
 include "handlers/report_handler.php";
 
 ?>
+
+<div class="content">
 <nav class="main-header">
     <div class="col-lg-12 mt-3">
         <div class="col-12 mb-3">
@@ -139,24 +141,18 @@ include "handlers/report_handler.php";
             </div>
         </div>
 </nav>
+</div>
+
 <style>
     .list-group-item:hover {
         color: black !important;
         font-weight: 700 !important;
     }
 
-    body {
-        overflow-y: hidden;
-    }
-
-    .main-header {
+    .content .main-header {
         max-height: 90vh;
-        overflow-y: scroll;
-        scrollbar-width: none;
-    }
-
-    .main-header::-webkit-scrollbar {
-        display: none;
+        overflow-y: auto;
+        scroll-behavior: smooth;
     }
 
     .circle {
@@ -223,7 +219,7 @@ include "handlers/report_handler.php";
 
         if (facultyId) {
             // Fetch academic year
-            fetch(`get_academic_info.php?faculty_id=${facultyId}`)
+            fetch(`get_academic_info.php?faculty_id=${facultyId}&category=${selectedCategory}`)
                 .then(response => response.json())
                 .then(data => {
                     academicYearDisplay.innerHTML = data.status === 'success' ? `${data.year} - ${data.semester}` : 'No academic information available.';

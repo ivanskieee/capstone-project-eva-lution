@@ -34,74 +34,76 @@ $end_page = min($current_segment * $segment_size, $total_pages);
 
 ?>
 
-<nav class="main-header">
-    <div class="col-lg-12 mt-3">
-        <div class="col-12 mb-3">
-            <h2 class="text-start"
-                style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
-                Head Faculty List</h2>
-        </div>
-        <div class="card card-outline card-success">
-            <div class="card-header">
-                <div class="card-tools">
-                    <a class="btn btn-block btn-sm btn-default btn-flat border-success" href="new_head_faculty.php"><i
-                            class="fa fa-plus"></i> Add New Head Faculty</a>
-                </div>
+<div class="content">
+    <nav class="main-header">
+        <div class="col-lg-12 mt-3">
+            <div class="col-12 mb-3">
+                <h2 class="text-start"
+                    style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
+                    Head Faculty List</h2>
             </div>
-            <div class="row mb-3">
-                <div class="col-8 col-md-4 ms-auto mt-3 mr-3">
-                    <input type="text" id="searchInput" class="form-control form-control-sm"
-                        placeholder="Search Head Faculties">
+            <div class="card card-outline card-success">
+                <div class="card-header">
+                    <div class="card-tools">
+                        <a class="btn btn-block btn-sm btn-default btn-flat border-success"
+                            href="new_head_faculty.php"><i class="fa fa-plus"></i> Add New Head Faculty</a>
+                    </div>
                 </div>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-hover table-bordered" id="list">
-                        <thead>
-                            <tr>
-                                <th class="text-center">#</th>
-                                <th>School ID</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                            $i = $offset + 1; // Adjust numbering based on the current page
-                            foreach ($head_faculties as $row): ?>
+                <div class="row mb-3">
+                    <div class="col-8 col-md-4 ms-auto mt-3 mr-3">
+                        <input type="text" id="searchInput" class="form-control form-control-sm"
+                            placeholder="Search Head Faculties">
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered" id="list">
+                            <thead>
                                 <tr>
-                                    <th class="text-center"><?php echo $i++; ?></th>
-                                    <td><b><?php echo $row['school_id']; ?></b></td>
-                                    <td><b><?php echo ucwords($row['firstname'] . ' ' . $row['lastname']); ?></b></td>
-                                    <td><b><?php echo $row['email']; ?></b></td>
-                                    <td class="text-center">
-                                        <button type="button"
-                                            class="btn btn-default btn-sm btn-flat border-info wave-effect text-info dropdown-toggle"
-                                            data-toggle="dropdown" aria-expanded="true">
-                                            Action
-                                        </button>
-                                        <div class="dropdown-menu">
-                                            <a class="dropdown-item"
-                                                href="new_head_faculty.php?head_id=<?php echo $row['head_id']; ?>">Edit</a>
-                                            <div class="dropdown-divider"></div>
-                                            <form method="post" action="head_faculty_list.php" style="display: inline;"
-                                                class="delete-form">
-                                                <input type="hidden" name="delete_id"
-                                                    value="<?php echo isset($row['head_id']) ? $row['head_id'] : ''; ?>">
-                                                <button type="submit" class="dropdown-item"
-                                                    onclick="confirmDeletion()">Delete</button>
-                                            </form>
-                                        </div>
-                                    </td>
+                                    <th class="text-center">#</th>
+                                    <th>School ID</th>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Action</th>
                                 </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                    <p id="noRecordsMessage" style="display:none; color: black;" class="ml-1">No head faculty found.</p>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $i = $offset + 1; // Adjust numbering based on the current page
+                                foreach ($head_faculties as $row): ?>
+                                    <tr>
+                                        <th class="text-center"><?php echo $i++; ?></th>
+                                        <td><b><?php echo $row['school_id']; ?></b></td>
+                                        <td><b><?php echo ucwords($row['firstname'] . ' ' . $row['lastname']); ?></b></td>
+                                        <td><b><?php echo $row['email']; ?></b></td>
+                                        <td class="text-center">
+                                            <button type="button"
+                                                class="btn btn-default btn-sm btn-flat border-info wave-effect text-info dropdown-toggle"
+                                                data-toggle="dropdown" aria-expanded="true">
+                                                Action
+                                            </button>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item"
+                                                    href="new_head_faculty.php?head_id=<?php echo $row['head_id']; ?>">Edit</a>
+                                                <div class="dropdown-divider"></div>
+                                                <form method="post" action="head_faculty_list.php" style="display: inline;"
+                                                    class="delete-form">
+                                                    <input type="hidden" name="delete_id"
+                                                        value="<?php echo isset($row['head_id']) ? $row['head_id'] : ''; ?>">
+                                                    <button type="submit" class="dropdown-item"
+                                                        onclick="confirmDeletion()">Delete</button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                        <p id="noRecordsMessage" style="display:none; color: black;" class="ml-1">No head faculty found.
+                        </p>
+                    </div>
                 </div>
-            </div>
-            <nav aria-label="Page navigation example">
+                <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-center">
                         <?php if ($current_segment > 1): ?>
                             <li class="page-item">
@@ -131,12 +133,14 @@ $end_page = min($current_segment * $segment_size, $total_pages);
                         <?php endif; ?>
                     </ul>
                 </nav>
+            </div>
         </div>
-    </div>
-</nav>
+    </nav>
+</div>
+
 <script>
-    $(document).ready(function() {
-        $(document).on('submit', '.delete-form', function(e) {
+    $(document).ready(function () {
+        $(document).on('submit', '.delete-form', function (e) {
             e.preventDefault();
             var form = this;
 
@@ -155,7 +159,7 @@ $end_page = min($current_segment * $segment_size, $total_pages);
                         type: 'POST',
                         url: 'head_faculty_list.php',
                         data: $(form).serialize(),
-                        success: function() {
+                        success: function () {
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Deleted!',
@@ -166,7 +170,7 @@ $end_page = min($current_segment * $segment_size, $total_pages);
                                 window.location.href = 'head_faculty_list.php';
                             });
                         },
-                        error: function() {
+                        error: function () {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Oops...',
@@ -180,18 +184,18 @@ $end_page = min($current_segment * $segment_size, $total_pages);
     });
 </script>
 <script>
-    $(document).ready(function() {
-        document.getElementById('searchInput').addEventListener('keyup', function() {
+    $(document).ready(function () {
+        document.getElementById('searchInput').addEventListener('keyup', function () {
             var searchValue = this.value.toLowerCase();
             var rows = document.querySelectorAll('#list tbody tr');
             var noRecordsMessage = document.getElementById('noRecordsMessage');
             var matchesFound = false;
 
-            rows.forEach(function(row) {
+            rows.forEach(function (row) {
                 var cells = row.querySelectorAll('td');
                 var matches = false;
 
-                cells.forEach(function(cell) {
+                cells.forEach(function (cell) {
                     if (cell.textContent.toLowerCase().includes(searchValue)) {
                         matches = true;
                     }
@@ -219,22 +223,9 @@ $end_page = min($current_segment * $segment_size, $total_pages);
         font-weight: 700 !important;
     }
 
-    body {
-        overflow-y: hidden;
-    }
-
-    html {
-        scroll-behavior: smooth;
-    }
-
-    .main-header {
+    .content .main-header {
         max-height: 100vh;
-        overflow-y: scroll;
-        scrollbar-width: none;
+        overflow-y: auto;
         scroll-behavior: smooth;
-    }
-
-    .main-header::-webkit-scrollbar {
-        display: none;
     }
 </style>

@@ -1,190 +1,200 @@
 <?php
 include 'handlers/questionnaire_handler.php';
 ?>
-<nav class="main-header">
-    <div class="container-fluid">
-        <div class="row">
-            <!-- Form Section -->
-            <div class="col-md-4 mt-5">
-                <div class="card card-success">
-                    <div class="card-header">
-                        <b><?php echo isset($questionToEdit) ? 'Edit Question' : 'Add New Question'; ?></b>
-                    </div>
-                    <div class="card-body">
-                        <form id="manage-question"
-                            action="manage_questionnaire.php?academic_id=<?php echo $academic_id; ?>&sector=<?php echo $sector; ?>"
-                            method="POST">
-                            <input type="hidden" name="sector" value="<?= htmlspecialchars($sector) ?>">
-                            <input type="hidden" name="question_id"
-                                value="<?php echo isset($questionToEdit['question_id']) ? $questionToEdit['question_id'] : ''; ?>">
 
-                            <input type="hidden" name="academic_id"
-                                value="<?php echo isset($_GET['academic_id']) ? $_GET['academic_id'] : ''; ?>">
+<div class="content">
+    <nav class="main-header">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Form Section -->
+                <div class="col-md-4 mt-5">
+                    <div class="card card-success">
+                        <div class="card-header">
+                            <b><?php echo isset($questionToEdit) ? 'Edit Question' : 'Add New Question'; ?></b>
+                        </div>
+                        <div class="card-body">
+                            <form id="manage-question"
+                                action="manage_questionnaire.php?academic_id=<?php echo $academic_id; ?>&sector=<?php echo $sector; ?>"
+                                method="POST">
+                                <input type="hidden" name="sector" value="<?= htmlspecialchars($sector) ?>">
+                                <input type="hidden" name="question_id"
+                                    value="<?php echo isset($questionToEdit['question_id']) ? $questionToEdit['question_id'] : ''; ?>">
 
-                            <!-- Removed duplicate hidden sector input -->
+                                <input type="hidden" name="academic_id"
+                                    value="<?php echo isset($_GET['academic_id']) ? $_GET['academic_id'] : ''; ?>">
 
-                            <div class="form-group">
-                                <label for="sector">Sector</label>
-                                <select name="sector" id="sector" class="form-control" required>
-                                    <option value="student_faculty" <?= ($sector === 'student_faculty') ? 'selected' : '' ?>>Student to Faculty</option>
-                                    <option value="faculty_faculty" <?= ($sector === 'faculty_faculty') ? 'selected' : '' ?>>Faculty to Faculty</option>
-                                    <option value="faculty_dean" <?= ($sector === 'faculty_dean') ? 'selected' : '' ?>>
-                                        Faculty to Dean</option>
-                                    <option value="dean_faculty" <?= ($sector === 'dean_faculty') ? 'selected' : '' ?>>Dean
-                                        to Faculty</option>
-                                </select>
-                            </div>
+                                <!-- Removed duplicate hidden sector input -->
 
-                            <div class="form-group">
-                                <label for="question_type">Question Type</label>
-                                <select name="question_type" id="question_type" class="form-control" required>
-                                    <option value="mcq" <?= (isset($questionToEdit['question_type']) && $questionToEdit['question_type'] == 'mcq') ? 'selected' : '' ?>>Ratings</option>
-                                    <option value="text" <?= (isset($questionToEdit['question_type']) && $questionToEdit['question_type'] == 'text') ? 'selected' : '' ?>>Text Answer
-                                    </option>
-                                </select>
-                            </div>
+                                <div class="form-group">
+                                    <label for="sector">Sector</label>
+                                    <select name="sector" id="sector" class="form-control" required>
+                                        <option value="student_faculty" <?= ($sector === 'student_faculty') ? 'selected' : '' ?>>Student to Faculty</option>
+                                        <option value="faculty_faculty" <?= ($sector === 'faculty_faculty') ? 'selected' : '' ?>>Faculty to Faculty</option>
+                                        <option value="faculty_dean" <?= ($sector === 'faculty_dean') ? 'selected' : '' ?>>
+                                            Faculty to Dean</option>
+                                        <option value="dean_faculty" <?= ($sector === 'dean_faculty') ? 'selected' : '' ?>>
+                                            Dean
+                                            to Faculty</option>
+                                    </select>
+                                </div>
 
-                            <div class="form-group" id="text-field-container" style="display: none;">
-                                <label for="text_answer">Text Answer</label>
-                                <textarea name="text_answer" id="text_answer" cols="30" rows="4" class="form-control"
-                                    placeholder="Enter the text answer here"><?php echo isset($questionToEdit['text_answer']) ? $questionToEdit['text_answer'] : ''; ?></textarea>
-                            </div>
-
-                            <div class="form-group" id="criteria-container">
-                                <label for="criteria_id">Select Criteria:</label>
-                                <select name="criteria_id" id="criteria_id" class="form-control" required>
-                                    <option value=""></option>
-                                    <?php foreach ($criteriaList as $criteria): ?>
-                                        <option value="<?= $criteria['criteria_id'] ?>"
-                                            <?= (isset($questionToEdit['criteria_id']) && $questionToEdit['criteria_id'] == $criteria['criteria_id']) ? 'selected' : '' ?>>
-                                            <?= htmlspecialchars($criteria['criteria']) ?>
+                                <div class="form-group">
+                                    <label for="question_type">Question Type</label>
+                                    <select name="question_type" id="question_type" class="form-control" required>
+                                        <option value="mcq" <?= (isset($questionToEdit['question_type']) && $questionToEdit['question_type'] == 'mcq') ? 'selected' : '' ?>>Ratings
                                         </option>
-                                    <?php endforeach; ?>
-                                </select>
-                            </div>
+                                        <option value="text" <?= (isset($questionToEdit['question_type']) && $questionToEdit['question_type'] == 'text') ? 'selected' : '' ?>>Text Answer
+                                        </option>
+                                    </select>
+                                </div>
 
-                            <div class="form-group" id="question-container">
-                                <label for="question">Question</label>
-                                <input type="text" name="question" id="question" class="form-control" required
-                                    placeholder="Enter the question here"
-                                    value="<?php echo isset($questionToEdit['question']) ? htmlspecialchars($questionToEdit['question']) : ''; ?>">
+                                <div class="form-group" id="text-field-container" style="display: none;">
+                                    <label for="text_answer">Text Answer</label>
+                                    <textarea name="text_answer" id="text_answer" cols="30" rows="4"
+                                        class="form-control"
+                                        placeholder="Enter the text answer here"><?php echo isset($questionToEdit['text_answer']) ? $questionToEdit['text_answer'] : ''; ?></textarea>
+                                </div>
+
+                                <div class="form-group" id="criteria-container">
+                                    <label for="criteria_id">Select Criteria:</label>
+                                    <select name="criteria_id" id="criteria_id" class="form-control" required>
+                                        <option value=""></option>
+                                        <?php foreach ($criteriaList as $criteria): ?>
+                                            <option value="<?= $criteria['criteria_id'] ?>"
+                                                <?= (isset($questionToEdit['criteria_id']) && $questionToEdit['criteria_id'] == $criteria['criteria_id']) ? 'selected' : '' ?>>
+                                                <?= htmlspecialchars($criteria['criteria']) ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+
+                                <div class="form-group" id="question-container">
+                                    <label for="question">Question</label>
+                                    <input type="text" name="question" id="question" class="form-control" required
+                                        placeholder="Enter the question here"
+                                        value="<?php echo isset($questionToEdit['question']) ? htmlspecialchars($questionToEdit['question']) : ''; ?>">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="card-footer">
+                            <div class="d-flex justify-content-end w-100">
+                                <button type="submit" class="btn btn-sm btn-success btn-flat bg-gradient-success mx-1"
+                                    form="manage-question" name="submit_question">Save</button>
+                                <input type="hidden" id="academic_id"
+                                    value="<?php echo htmlspecialchars($academic_id); ?>">
+                                <button class="btn btn-sm btn-flat btn-secondary bg-gradient-secondary mx-1"
+                                    type="button" onclick="cancelAction();">
+                                    Cancel
+                                </button>
                             </div>
-                        </form>
+                        </div>
                     </div>
-                    <div class="card-footer">
-                        <div class="d-flex justify-content-end w-100">
-                            <button type="submit" class="btn btn-sm btn-success btn-flat bg-gradient-success mx-1"
-                                form="manage-question" name="submit_question">Save</button>
-                            <input type="hidden" id="academic_id" value="<?php echo htmlspecialchars($academic_id); ?>">
-                            <button class="btn btn-sm btn-flat btn-secondary bg-gradient-secondary mx-1" type="button"
-                                onclick="cancelAction();">
-                                Cancel
-                            </button>
+                </div>
+
+                <!-- Questionnaire Display Section -->
+                <div class="col-md-8 mt-2">
+                    <div class="card card-outline card-success">
+                        <div class="card-header">
+                            <b>Evaluation Questionnaires</b>
+                        </div>
+                        <div class="card-body">
+                            <fieldset class="border border-success p-2 w-100">
+                                <legend class="w-auto">Rating Legend</legend>
+                                <p>4 = Strongly Agree, 3 = Agree, 2 = Disagree, 1 = Strongly Disagree</p>
+                            </fieldset>
+                            <div class="clear-fix mt-2"></div>
+                            <?php foreach ($criteriaList as $row): ?>
+                                <table class="table table-condensed">
+                                    <thead>
+                                        <tr class="bg-gradient-secondary">
+                                            <th colspan="2" class="p-1">
+                                                <b><?php echo htmlspecialchars($row['criteria']); ?></b>
+                                            </th>
+                                            <th class="text-center">4</th>
+                                            <th class="text-center">3</th>
+                                            <th class="text-center">2</th>
+                                            <th class="text-center">1</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="tr-sortable">
+                                        <?php
+                                        $hasQuestions = false;
+                                        if (is_array($questions)) {
+                                            foreach ($questions as $qRow) {
+                                                if (is_array($qRow) && $qRow['criteria_id'] == $row['criteria_id'] && $qRow['academic_id'] == $academic_id) {
+                                                    $hasQuestions = true;
+                                                    ?>
+                                                    <tr class="bg-white">
+                                                        <td class="p-1 text-center" width="5%">
+                                                            <span class="btn-group dropright">
+                                                                <span type="button" class="btn" data-toggle="dropdown"
+                                                                    aria-haspopup="true" aria-expanded="false">
+                                                                    <i class="fa fa-ellipsis-v"></i>
+                                                                </span>
+                                                                <div class="dropdown-menu">
+                                                                    <a class="dropdown-item edit_question"
+                                                                        href="manage_questionnaire.php?question_id=<?php echo htmlspecialchars($qRow['question_id']); ?>&academic_id=<?php echo htmlspecialchars($academic_id); ?>&sector=<?php echo htmlspecialchars($sector); ?>">Edit</a>
+                                                                    <div class="dropdown-divider"></div>
+                                                                    <form method="post" action="manage_questionnaire.php"
+                                                                        style="display: inline;" class="delete-form">
+                                                                        <input type="hidden" name="delete_id"
+                                                                            value="<?= htmlspecialchars($qRow['question_id']) ?>">
+                                                                        <input type="hidden" name="sector"
+                                                                            value="<?= htmlspecialchars($sector) ?>">
+                                                                        <!-- Pass sector here -->
+                                                                        <button type="submit" class="dropdown-item">Delete</button>
+                                                                    </form>
+                                                                </div>
+                                                            </span>
+                                                        </td>
+                                                        <td class="p-1" width="20%">
+                                                            <?= htmlspecialchars($qRow['question']) ?>
+                                                            <input type="hidden" name="qid[]"
+                                                                value="<?= htmlspecialchars($qRow['question_id']) ?>">
+                                                        </td>
+                                                        <?php if ($qRow['question_type'] == 'mcq'): ?>
+                                                            <?php for ($c = 0; $c < 4; $c++): ?>
+                                                                <td class="text-center">
+                                                                    <div class="icheck-success d-inline">
+                                                                        <input type="radio"
+                                                                            name="qid[<?= htmlspecialchars($qRow['question_id']) ?>][]"
+                                                                            id="qradio<?= htmlspecialchars($qRow['question_id']) . '_' . $c ?>"
+                                                                            value="<?= $c + 1 ?>">
+                                                                        <label
+                                                                            for="qradio<?= htmlspecialchars($qRow['question_id']) . '_' . $c ?>"></label>
+                                                                    </div>
+                                                                </td>
+                                                            <?php endfor; ?>
+                                                        <?php elseif ($qRow['question_type'] == 'text'): ?>
+                                                            <!-- Add comment textarea in the same row -->
+                                                            <td colspan="4" class="text-center">
+                                                                <textarea name="comment[<?= htmlspecialchars($qRow['question_id']) ?>]"
+                                                                    class="form-control" rows="3"
+                                                                    placeholder="Enter your answer"></textarea>
+                                                            </td>
+                                                        <?php endif; ?>
+                                                    </tr>
+                                                    <?php
+                                                }
+                                            }
+                                        }
+                                        if (!$hasQuestions): ?>
+                                            <tr>
+                                                <td colspan="7" class="text-center">No questions available for the selected
+                                                    criteria
+                                                    and academic year.</td>
+                                            </tr>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
+                            <?php endforeach; ?>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <!-- Questionnaire Display Section -->
-            <div class="col-md-8 mt-2">
-                <div class="card card-outline card-success">
-                    <div class="card-header">
-                        <b>Evaluation Questionnaires</b>
-                    </div>
-                    <div class="card-body">
-                        <fieldset class="border border-success p-2 w-100">
-                            <legend class="w-auto">Rating Legend</legend>
-                            <p>4 = Strongly Agree, 3 = Agree, 2 = Disagree, 1 = Strongly Disagree</p>
-                        </fieldset>
-                        <div class="clear-fix mt-2"></div>
-                        <?php foreach ($criteriaList as $row): ?>
-                            <table class="table table-condensed">
-                                <thead>
-                                    <tr class="bg-gradient-secondary">
-                                        <th colspan="2" class="p-1"><b><?php echo htmlspecialchars($row['criteria']); ?></b>
-                                        </th>
-                                        <th class="text-center">4</th>
-                                        <th class="text-center">3</th>
-                                        <th class="text-center">2</th>
-                                        <th class="text-center">1</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="tr-sortable">
-                                    <?php
-                                    $hasQuestions = false;
-                                    if (is_array($questions)) {
-                                        foreach ($questions as $qRow) {
-                                            if (is_array($qRow) && $qRow['criteria_id'] == $row['criteria_id'] && $qRow['academic_id'] == $academic_id) {
-                                                $hasQuestions = true;
-                                                ?>
-                                                <tr class="bg-white">
-                                                    <td class="p-1 text-center" width="5%">
-                                                        <span class="btn-group dropright">
-                                                            <span type="button" class="btn" data-toggle="dropdown" aria-haspopup="true"
-                                                                aria-expanded="false">
-                                                                <i class="fa fa-ellipsis-v"></i>
-                                                            </span>
-                                                            <div class="dropdown-menu">
-                                                                <a class="dropdown-item edit_question"
-                                                                    href="manage_questionnaire.php?question_id=<?php echo htmlspecialchars($qRow['question_id']); ?>&academic_id=<?php echo htmlspecialchars($academic_id); ?>&sector=<?php echo htmlspecialchars($sector); ?>">Edit</a>
-                                                                <div class="dropdown-divider"></div>
-                                                                <form method="post" action="manage_questionnaire.php"
-                                                                    style="display: inline;" class="delete-form">
-                                                                    <input type="hidden" name="delete_id"
-                                                                        value="<?= htmlspecialchars($qRow['question_id']) ?>">
-                                                                    <input type="hidden" name="sector"
-                                                                        value="<?= htmlspecialchars($sector) ?>">
-                                                                    <!-- Pass sector here -->
-                                                                    <button type="submit" class="dropdown-item">Delete</button>
-                                                                </form>
-                                                            </div>
-                                                        </span>
-                                                    </td>
-                                                    <td class="p-1" width="20%">
-                                                        <?= htmlspecialchars($qRow['question']) ?>
-                                                        <input type="hidden" name="qid[]"
-                                                            value="<?= htmlspecialchars($qRow['question_id']) ?>">
-                                                    </td>
-                                                    <?php if ($qRow['question_type'] == 'mcq'): ?>
-                                                        <?php for ($c = 0; $c < 4; $c++): ?>
-                                                            <td class="text-center">
-                                                                <div class="icheck-success d-inline">
-                                                                    <input type="radio"
-                                                                        name="qid[<?= htmlspecialchars($qRow['question_id']) ?>][]"
-                                                                        id="qradio<?= htmlspecialchars($qRow['question_id']) . '_' . $c ?>"
-                                                                        value="<?= $c + 1 ?>">
-                                                                    <label
-                                                                        for="qradio<?= htmlspecialchars($qRow['question_id']) . '_' . $c ?>"></label>
-                                                                </div>
-                                                            </td>
-                                                        <?php endfor; ?>
-                                                    <?php elseif ($qRow['question_type'] == 'text'): ?>
-                                                        <!-- Add comment textarea in the same row -->
-                                                        <td colspan="4" class="text-center">
-                                                            <textarea name="comment[<?= htmlspecialchars($qRow['question_id']) ?>]"
-                                                                class="form-control" rows="3" placeholder="Enter your answer"></textarea>
-                                                        </td>
-                                                    <?php endif; ?>
-                                                </tr>
-                                                <?php
-                                            }
-                                        }
-                                    }
-                                    if (!$hasQuestions): ?>
-                                        <tr>
-                                            <td colspan="7" class="text-center">No questions available for the selected criteria
-                                                and academic year.</td>
-                                        </tr>
-                                    <?php endif; ?>
-                                </tbody>
-                            </table>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-            </div>
         </div>
-    </div>
-</nav>
+    </nav>
+</div>
 
 <!-- JavaScript and jQuery Code -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -322,17 +332,9 @@ include 'handlers/questionnaire_handler.php';
         font-weight: 700 !important;
     }
 
-    body {
-        overflow-y: hidden;
-    }
-
-    .main-header {
+    .content .main-header {
         max-height: 90vh;
-        overflow-y: scroll;
-        scrollbar-width: none;
-    }
-
-    .main-header::-webkit-scrollbar {
-        display: none;
+        overflow-y: auto;
+        scroll-behavior: smooth;
     }
 </style>
