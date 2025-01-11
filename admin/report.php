@@ -36,8 +36,15 @@ include "handlers/report_handler.php";
         <div class="row">
             <div class="col-md-12 mb-1">
                 <div class="d-flex justify-content-end w-100">
-                    <button class="btn btn-sm btn-success bg-gradient-success mr-3" id="print-btn"><i
-                            class="fa fa-print"></i> Print</button>
+                    <button class="btn btn-sm btn-success bg-gradient-success mr-3" id="print-btn">
+                        <i class="fa fa-print"></i> Print
+                    </button>
+                    <button class="btn btn-sm btn-info bg-gradient-success mr-3" id="export-csv-btn">
+                        <i class="fa fa-file-csv"></i> Export to CSV
+                    </button>
+                    <button class="btn btn-sm btn-primary bg-gradient-success mr-3" id="export-excel-btn">
+                        <i class="fa fa-file-excel"></i> Export to Excel
+                    </button>
                 </div>
             </div>
         </div>
@@ -302,10 +309,10 @@ include "handlers/report_handler.php";
     }
 
     function renderFacultyEval(data, container) {
-        container.innerHTML = ''; // Clear previous data
-        const table = document.createElement('table');
-        table.className = 'table table-condensed wborder';
-        table.innerHTML = `
+    container.innerHTML = ''; // Clear previous data
+    const table = document.createElement('table');
+    table.className = 'table table-condensed wborder';
+    table.innerHTML = `
     <thead>
         <tr class="bg-gradient-secondary">
             <th class="p-1"><b>Question</b></th>
@@ -315,72 +322,126 @@ include "handlers/report_handler.php";
             <th width="5%" class="text-center">4</th>
         </tr>
     </thead>`;
-        const tbody = document.createElement('tbody');
-        data.data.forEach(row => {
-            tbody.innerHTML += row.question_type === 'text'
-                ? `<tr class="bg-white">
-            <td colspan="5">
-                <div><strong>${row.question}</strong></div>
-                <textarea name="comment[${row.question_id}]" class="form-control mt-2" rows="5" readonly>${row.comments ? row.comments.join('\n') : ''}</textarea>
-            </td>
-        </tr>`
-                : `<tr class="bg-white">
-            <td class="p-1" width="20%">${row.question}</td>
-            <td class="text-center"><div class="circle">${row.rate1}%</div></td>
-            <td class="text-center"><div class="circle">${row.rate2}%</div></td>
-            <td class="text-center"><div class="circle">${row.rate3}%</div></td>
-            <td class="text-center"><div class="circle">${row.rate4}%</div></td>
-        </tr>`;
-        });
-        table.appendChild(tbody);
-        container.appendChild(table);
-    }
+    const tbody = document.createElement('tbody');
+    data.data.forEach(row => {
+        tbody.innerHTML += row.question_type === 'text'
+            ? `<tr class="bg-white">
+                <td colspan="5">
+                    <div><strong>${row.question}</strong></div>
+                    <div class="comment-display mt-2">${row.comments ? row.comments.join('<br>') : '<em>No comments provided.</em>'}</div>
+                </td>
+            </tr>`
+            : `<tr class="bg-white">
+                <td class="p-1" width="20%">${row.question}</td>
+                <td class="text-center"><div class="circle">${row.rate1}%</div></td>
+                <td class="text-center"><div class="circle">${row.rate2}%</div></td>
+                <td class="text-center"><div class="circle">${row.rate3}%</div></td>
+                <td class="text-center"><div class="circle">${row.rate4}%</div></td>
+            </tr>`;
+    });
+    table.appendChild(tbody);
+    container.appendChild(table);
+}
 </script>
 <script>
-    document.getElementById('print-btn').addEventListener('click', function () {
-        const printableContent = document.getElementById('printable').innerHTML;
-        console.log(printableContent);  // Debugging line
+document.getElementById('print-btn').addEventListener('click', function () {
+    const printableContent = document.getElementById('printable').cloneNode(true);
 
-        // Create a new window for printing
-        const printWindow = window.open('', '', 'width=800,height=600');
+    printableContent.querySelectorAll('td.text-left').forEach(td => {
+        td.style.textAlign = 'left'; // Ensure left alignment for all question cells
+    });
 
-        if (printWindow) {
-            // Write the content into the new window
-            printWindow.document.open();
-            printWindow.document.write(`
+    const printWindow = window.open('', '', 'width=800,height=600');
+
+    if (printWindow) {
+        printWindow.document.open();
+        printWindow.document.write(`
             <!DOCTYPE html>
             <html lang="en">
             <head>
                 <meta charset="UTF-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Print Evaluation Report</title>
+                <title>Eval-Report</title>
                 <style>
                     body { font-family: Arial, sans-serif; line-height: 1.6; margin: 20px; }
                     table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-                    table, th, td { border: 1px solid black; padding: 8px; text-align: center; }
+                    table, th, td { border: 1px solid black; padding: 8px; }
                     .text-center { text-align: center; }
-                    .text-right { text-align: right; }
                     .text-left { text-align: left; }
                     .wborder { border: 1px solid gray; }
+                    .comment-display {
+                        font-size: 1rem;
+                        font-style: italic;
+                        color: #4a4a4a;
+                        text-align: left;
+                        margin-top: 10px;
+                    }
                 </style>
             </head>
             <body>
-                <h1 class="text-center">Evaluation Report</h1>
-                ${printableContent}
+                ${printableContent.innerHTML}
             </body>
             </html>
         `);
-            printWindow.document.close();
-
-            // Make sure the print window is printed
-            printWindow.onload = function () {
-                printWindow.print();
-                printWindow.onafterprint = function () {
-                    printWindow.close();
-                };
+        printWindow.document.close();
+        printWindow.onload = function () {
+            printWindow.print();
+            printWindow.onafterprint = function () {
+                printWindow.close();
             };
-        } else {
-            console.error('Unable to open the print window. It may have been blocked by the browser.');
-        }
+        };
+    } else {
+        console.error('Unable to open the print window. It may have been blocked by the browser.');
+    }
+});
+
+// Export to CSV
+document.getElementById('export-csv-btn').addEventListener('click', function () {
+    const table = document.querySelector('#printable table');
+    let csvContent = '';
+    
+    // Extract table headers
+    const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.innerText);
+    csvContent += headers.join(',') + '\n';
+    
+    // Extract table rows
+    const rows = table.querySelectorAll('tbody tr');
+    rows.forEach(row => {
+        const cells = Array.from(row.querySelectorAll('td')).map(cell => cell.innerText.trim());
+        csvContent += cells.join(',') + '\n';
     });
+
+    // Create a downloadable CSV file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'evaluation_report.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+});
+
+// Export to Excel
+document.getElementById('export-excel-btn').addEventListener('click', function () {
+    const table = document.querySelector('#printable table');
+    const html = table.outerHTML;
+
+    // Create a downloadable Excel file
+    const blob = new Blob([`<html><head><meta charset="UTF-8"></head><body>${html}</body></html>`], { type: 'application/vnd.ms-excel' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'evaluation_report.xls');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+});
 </script>
+<style>
+    .comment-display {
+        font-size: 1rem;
+        font-style: italic;
+        color: #4a4a4a;
+    }
+</style>
