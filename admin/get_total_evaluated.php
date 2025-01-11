@@ -10,13 +10,13 @@ if (isset($_GET['faculty_id']) && isset($_GET['category'])) {
 
     if ($category === 'self') {
         // Count from self_faculty_eval
-        $stmt = $conn->prepare("SELECT COUNT(DISTINCT faculty_id) FROM self_faculty_eval WHERE faculty_id = :faculty_id");
+        $stmt = $conn->prepare("SELECT COUNT(faculty_id) FROM self_faculty_eval WHERE faculty_id = :faculty_id");
         $stmt->bindParam(':faculty_id', $facultyId, PDO::PARAM_INT);
         $stmt->execute();
         $totalCount = $stmt->fetchColumn();
     } elseif ($category === 'dean_self') {
         // Count from self_head_eval
-        $stmt = $conn->prepare("SELECT COUNT(DISTINCT faculty_id) FROM self_head_eval WHERE faculty_id = :faculty_id");
+        $stmt = $conn->prepare("SELECT COUNT(faculty_id) FROM self_head_eval WHERE faculty_id = :faculty_id");
         $stmt->bindParam(':faculty_id', $facultyId, PDO::PARAM_INT);
         $stmt->execute();
         $totalCount = $stmt->fetchColumn();

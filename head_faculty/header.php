@@ -78,7 +78,7 @@
             <a class="nav-link"  data-toggle="dropdown" aria-expanded="true" href="javascript:void(0)">
               <span>
                 <div class="d-felx badge-pill">
-                  <span class=""><img src="assets/uploads/png.png" alt="" class="user-img border "></span>
+                  <span class=""><img src="assets/uploads/head.png" alt="" class="user-img border "></span>
                   <span><b><?php echo ucwords($_SESSION['login_name']) ?></b></span>
                   <span class="fa fa-angle-down ml-2"></span>
                 </div>
