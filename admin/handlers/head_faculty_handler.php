@@ -126,8 +126,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindParam(':head_id', $id, PDO::PARAM_INT);
         } else {
             // Insert new head faculty
-            $query = "INSERT INTO head_faculty_list (school_id, firstname, lastname, email, password, avatar, department, academic_id) 
-                      VALUES (:school_id, :firstname, :lastname, :email, :password, :avatar, :department, :academic_id)";
+            $query = "INSERT INTO head_faculty_list (school_id, firstname, lastname, email, password, department, academic_id) 
+                      VALUES (:school_id, :firstname, :lastname, :email, :password, :department, :academic_id)";
             $stmt = $conn->prepare($query);
 
             $stmt->bindParam(':school_id', $school_id);
@@ -135,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bindParam(':lastname', $lastname);
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':password', $hashed_password);
-            $stmt->bindParam(':avatar', $avatar);
+            // $stmt->bindParam(':avatar', $avatar);
             $stmt->bindParam(':department', $department); // Bind department
             $stmt->bindParam(':academic_id', $academic_id);
         }

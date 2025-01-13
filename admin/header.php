@@ -144,8 +144,8 @@
           </span>
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="account_settings">
-          <a class="dropdown-item" href="javascript:void(0)" id="manage_account"><i class="fa fa-cog"></i> Manage
-            Account</a>
+          <!-- <a class="dropdown-item" href="javascript:void(0)" id="manage_account"><i class="fa fa-cog"></i> Manage
+            Account</a> -->
           <a class="dropdown-item" href="../database/logout.php"><i class="fa fa-power-off"></i> Logout</a>
         </div>
       </li>

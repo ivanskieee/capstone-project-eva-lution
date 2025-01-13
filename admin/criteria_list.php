@@ -46,8 +46,8 @@ include 'handlers/criteria_handler.php';
                                 <div class="callout callout-success">
                                     <div class="d-flex justify-content-between w-100">
                                         <label for=""><b>Criteria List</b></label>
-                                        <button class="btn btn-sm btn-success btn-flat bg-gradient-success mx-1"
-                                            form="order-criteria">Save Order</button>
+                                        <!-- <button class="btn btn-sm btn-success btn-flat bg-gradient-success mx-1"
+                                            form="order-criteria">Save Order</button> -->
                                     </div>
                                     <hr>
                                     <ul class="list-group btn col-md-8" id="ui-sortable-list">

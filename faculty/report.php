@@ -4,13 +4,13 @@ include "handlers/report_handler.php";
 
 ?>
 <nav class="main-header">
-    <div class="col-lg-12 mt-3">
+    <div class="col-lg-12 mt-5">
         <div class="row">
             <div class="col-md-12 mb-1">
-                <div class="d-flex justify-content-end w-100">
+                <!-- <div class="d-flex justify-content-end w-100">
                     <button class="btn btn-sm btn-success bg-gradient-success mr-3" id="print-btn"><i
                             class="fa fa-print"></i> Print</button>
-                </div>
+                </div> -->
             </div>
         </div>
         <div class="row">

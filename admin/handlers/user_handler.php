@@ -60,12 +60,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         }
 
-        // Upload avatar if provided
-        if ($avatar) {
-            $target_dir = "assets/uploads/";
-            $target_file = $target_dir . basename($_FILES["img"]["name"]);
-            move_uploaded_file($_FILES["img"]["tmp_name"], $target_file);
-        }
+        // // Upload avatar if provided
+        // if ($avatar) {
+        //     $target_dir = "assets/uploads/";
+        //     $target_file = $target_dir . basename($_FILES["img"]["name"]);
+        //     move_uploaded_file($_FILES["img"]["tmp_name"], $target_file);
+        // }
 
         // Fetch the current active academic_id
         $query = 'SELECT academic_id FROM academic_list WHERE status = 1 AND start_date <= CURDATE() AND end_date >= CURDATE()';
@@ -94,9 +94,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $query .= ", password = :password";
             }
 
-            if ($avatar) {
-                $query .= ", avatar = :avatar";
-            }
+            // if ($avatar) {
+            //     $query .= ", avatar = :avatar";
+            // }
 
             $query .= " WHERE id = :id";
             $stmt = $conn->prepare($query);
@@ -110,21 +110,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt->bindParam(':password', $hashed_password);
             }
 
-            if ($avatar) {
-                $stmt->bindParam(':avatar', $avatar);
-            }
+            // if ($avatar) {
+            //     $stmt->bindParam(':avatar', $avatar);
+            // }
 
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         } else {
-            $query = "INSERT INTO users (firstname, lastname, email, password, avatar, academic_id) 
-                      VALUES (:firstname, :lastname, :email, :password, :avatar, :academic_id)";
+            $query = "INSERT INTO users (firstname, lastname, email, password, academic_id) 
+                      VALUES (:firstname, :lastname, :email, :password, :academic_id)";
             $stmt = $conn->prepare($query);
 
             $stmt->bindParam(':firstname', $firstname);
             $stmt->bindParam(':lastname', $lastname);
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':password', $hashed_password);
-            $stmt->bindParam(':avatar', $avatar);
+            // $stmt->bindParam(':avatar', $avatar);
             $stmt->bindParam(':academic_id', $academic_id);
         }
 

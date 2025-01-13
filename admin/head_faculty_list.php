@@ -4,7 +4,7 @@ include '../database/connection.php';
 
 $query = "
     SELECT 
-        head_id, email, firstname, lastname
+        head_id, school_id, email, firstname, lastname
     FROM head_faculty_list
 ";
 $stmt = $conn->prepare($query);
@@ -70,7 +70,7 @@ $end_page = min($current_segment * $segment_size, $total_pages);
                             <tbody>
                                 <?php
                                 $i = $offset + 1; // Adjust numbering based on the current page
-                                foreach ($head_faculties as $row): ?>
+                                foreach ($users_data as $row): ?>
                                     <tr>
                                         <th class="text-center"><?php echo $i++; ?></th>
                                         <td><b><?php echo $row['school_id']; ?></b></td>
@@ -224,7 +224,7 @@ $end_page = min($current_segment * $segment_size, $total_pages);
     }
 
     .content .main-header {
-        max-height: 100vh;
+        max-height: 90vh;
         overflow-y: auto;
         scroll-behavior: smooth;
     }

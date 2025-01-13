@@ -92,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $subjects_data = $subjects[0] ?? '';
         }
 
-        try {
+        
             if ($id) {
                 // Update query
                 $query = "UPDATE college_faculty_list 
@@ -129,8 +129,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->bindParam(':faculty_id', $id, PDO::PARAM_INT);
             } else {
                 // Insert query
-                $query = "INSERT INTO college_faculty_list (school_id, firstname, lastname, email, subject, password, avatar, academic_id, department) 
-                          VALUES (:school_id, :firstname, :lastname, :email, :subject, :password, :avatar, :academic_id, :department)";
+                $query = "INSERT INTO college_faculty_list (school_id, firstname, lastname, email, subject, password, academic_id, department) 
+                          VALUES (:school_id, :firstname, :lastname, :email, :subject, :password, :academic_id, :department)";
                 $stmt = $conn->prepare($query);
 
                 $stmt->bindParam(':school_id', $school_id);
@@ -139,12 +139,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $stmt->bindParam(':email', $email);
                 $stmt->bindParam(':subject', $subjects_data);
                 $stmt->bindParam(':password', $hashed_password);
-                $stmt->bindParam(':avatar', $avatar);
+                // $stmt->bindParam(':avatar', $avatar);
                 $stmt->bindParam(':academic_id', $academic_id);
                 $stmt->bindParam(':department', $department);
             }
 
-            $stmt->execute();
+        if ($stmt->execute()) {
+                // Optional: Send email with credentials
+            sendEmail($email, $password);
+    
 
             echo "<script>
                     Swal.fire({
@@ -157,7 +160,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         window.location.replace('tertiary_faculty_list.php');
                     });
                   </script>";
-        } catch (Exception $e) {
+        } else {
             echo "<script>
                     Swal.fire({
                         icon: 'error',
@@ -169,6 +172,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $conn = null;
     }
+
 
     if (isset($_POST['delete_id'])) {
         $delete_id = $_POST['delete_id'];

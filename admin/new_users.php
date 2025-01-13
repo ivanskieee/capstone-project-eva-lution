@@ -32,7 +32,7 @@ include "handlers/user_handler.php";
 										value="<?php echo isset($admin['lastname']) ? $admin['lastname'] : ''; ?>">
 								</div>
 
-								<div class="form-group">
+								<!-- <div class="form-group">
 									<label for="" class="control-label">Avatar</label>
 									<div class="custom-file">
 										<input type="file" class="custom-file-input" id="customFile" name="img"
@@ -43,7 +43,7 @@ include "handlers/user_handler.php";
 								<div class="form-group d-flex justify-content-center align-items-center">
 									<img src="<?php echo isset($admin['avatar']) ? 'uploads/' . $admin['avatar'] : ''; ?>"
 										alt="Avatar" id="cimg" class="img-fluid img-thumbnail">
-								</div>
+								</div> -->
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">

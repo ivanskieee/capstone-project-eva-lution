@@ -42,9 +42,6 @@ include "handlers/report_handler.php";
                     <button class="btn btn-sm btn-info bg-gradient-success mr-3" id="export-csv-btn">
                         <i class="fa fa-file-csv"></i> Export to CSV
                     </button>
-                    <button class="btn btn-sm btn-primary bg-gradient-success mr-3" id="export-excel-btn">
-                        <i class="fa fa-file-excel"></i> Export to Excel
-                    </button>
                 </div>
             </div>
         </div>
@@ -397,46 +394,86 @@ document.getElementById('print-btn').addEventListener('click', function () {
 
 // Export to CSV
 document.getElementById('export-csv-btn').addEventListener('click', function () {
+    const facultyId = document.getElementById('faculty_id').value;
+    const selectedCategory = document.getElementById('category').value;
+
+    if (!facultyId) {
+        alert('Please select a faculty to export data.');
+        return;
+    }
+
     const table = document.querySelector('#printable table');
-    let csvContent = '';
-    
-    // Extract table headers
-    const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.innerText);
-    csvContent += headers.join(',') + '\n';
-    
-    // Extract table rows
-    const rows = table.querySelectorAll('tbody tr');
-    rows.forEach(row => {
-        const cells = Array.from(row.querySelectorAll('td')).map(cell => cell.innerText.trim());
-        csvContent += cells.join(',') + '\n';
+
+    // Start CSV content with headers for metadata
+    let csvContent = `Faculty Name:,${document.getElementById('fname').textContent}\n`;
+    csvContent += `Academic Year:,${document.getElementById('ay').textContent}\n`;
+    csvContent += `Total Evaluated:,${document.getElementById('tse').textContent}\n\n`;
+
+    // Add a separator before table data
+    csvContent += '--- Table Data ---\n';
+
+    // Fetch additional data and include it in the export
+    fetchAdditionalData(facultyId, selectedCategory, (additionalData) => {
+        if (additionalData.trim() !== '') {
+            csvContent += `\nAdditional Data:\n${additionalData}`;
+        }
+
+        // Extract table headers
+        const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.innerText);
+        csvContent += headers.join(',') + '\n';
+
+        // Extract table rows
+        const rows = table.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            const cells = Array.from(row.querySelectorAll('td')).map(cell => cell.innerText.trim());
+            csvContent += cells.join(',') + '\n';
+        });
+
+        // Create a downloadable CSV file
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'evaluation_report.csv');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     });
-
-    // Create a downloadable CSV file
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', 'evaluation_report.csv');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
 });
 
-// Export to Excel
-document.getElementById('export-excel-btn').addEventListener('click', function () {
-    const table = document.querySelector('#printable table');
-    const html = table.outerHTML;
+// Function to fetch additional data
+function fetchAdditionalData(facultyId, selectedCategory, callback) {
+    let urls = [];
+    if (selectedCategory === 'self') {
+        urls.push(`get_self_eval.php?faculty_id=${facultyId}`);
+    } else if (selectedCategory === 'dean_self') {
+        urls.push(`get_dean_self_eval.php?faculty_id=${facultyId}`);
+    } else {
+        urls.push(`get_faculty_ratings.php?faculty_id=${facultyId}&category=${selectedCategory}`);
+    }
 
-    // Create a downloadable Excel file
-    const blob = new Blob([`<html><head><meta charset="UTF-8"></head><body>${html}</body></html>`], { type: 'application/vnd.ms-excel' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', 'evaluation_report.xls');
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-});
+    // Fetch all URLs and collect data
+    Promise.all(urls.map(url => fetch(url).then(res => res.json())))
+        .then(responses => {
+            let additionalData = '';
+            responses.forEach(response => {
+                if (response.status === 'success') {
+                    response.data.forEach(item => {
+                        const formattedRow = Object.entries(item)
+                            .map(([key, value]) => `${key}: ${value}`)
+                            .join(', ');
+                        additionalData += formattedRow + '\n';
+                    });
+                } else {
+                    additionalData += 'No additional data available.\n';
+                }
+            });
+            callback(additionalData);
+        })
+        .catch(() => {
+            callback('Error fetching additional data.\n');
+        });
+}
 </script>
 <style>
     .comment-display {

@@ -15,7 +15,7 @@ if (!$student) {
 ?>
 
 <form id="accountForm" enctype="multipart/form-data">
-    <div class="form-group">
+    <!-- <div class="form-group">
         <label for="avatar" class="control-label">Avatar</label>
         <div class="custom-file">
             <input type="file" class="custom-file-input" id="avatar" name="avatar" onchange="displayImg(this, $(this))">
@@ -26,7 +26,7 @@ if (!$student) {
         <img src="<?php echo isset($student['avatar']) ? 'uploads/' . htmlspecialchars($student['avatar']) : ''; ?>"
             alt="Avatar" id="cimg" class="img-fluid img-thumbnail"
             style="height: 15vh; width: 15vh; object-fit: cover; border-radius: 100%;">
-    </div>
+    </div> -->
     <div class="form-group">
         <label for="email">Email</label>
         <input type="email" name="email" class="form-control" value="<?php echo htmlspecialchars($student['email']); ?>"

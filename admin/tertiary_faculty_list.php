@@ -5,7 +5,7 @@ include '../database/connection.php';
 
 $query = "
     SELECT 
-        faculty_id, email, firstname, lastname
+        faculty_id, school_id, email, firstname, lastname
     FROM college_faculty_list
 ";
 $stmt = $conn->prepare($query);
@@ -74,7 +74,7 @@ $end_page = min($current_segment * $segment_size, $total_pages);
                                 foreach ($users_data as $row): ?>
                                     <tr>
                                         <th class="text-center"><?php echo $i++; ?></th>
-                                        <td><b><?php echo htmlspecialchars($row['faculty_id']); ?></b></td>
+                                        <td><b><?php echo htmlspecialchars($row['school_id']); ?></b></td>
                                         <td><b><?php echo htmlspecialchars(ucwords($row['firstname'] . ' ' . $row['lastname'])); ?></b>
                                         </td>
                                         <td><b><?php echo htmlspecialchars($row['email']); ?></b></td>
