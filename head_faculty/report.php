@@ -2,6 +2,15 @@
 
 include "handlers/report_handler.php";
 
+$userDepartment = $_SESSION['user']['department']; // Ensure the 'department' key exists
+
+// Prepare the SQL statement to fetch faculty members with the same department
+$stmt = $conn->prepare("
+    SELECT faculty_id, firstname, lastname 
+    FROM college_faculty_list 
+    WHERE department = :department
+");
+$stmt->execute(['department' => $userDepartment]);
 ?>
 
 <div class="content">
@@ -19,7 +28,6 @@ include "handlers/report_handler.php";
                     <select name="" id="faculty_id" class="form-control form-control-sm select2">
                         <option value="">Select Faculty</option>
                         <?php
-                        $stmt = $conn->query("SELECT faculty_id, firstname, lastname FROM college_faculty_list");
                         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                             $fullName = htmlspecialchars($row['firstname'] . ' ' . $row['lastname']);
                             echo '<option value="' . $row['faculty_id'] . '" data-name="' . $fullName . '">' . $fullName . '</option>';
@@ -303,9 +311,21 @@ include "handlers/report_handler.php";
     const table = document.createElement('table');
     table.className = 'table table-condensed wborder';
     table.innerHTML = `
-    <thead>
+     <thead>
         <tr class="bg-gradient-secondary">
-            <th class="p-1"><b>Question</b></th>
+            <th class="p-1">
+                <b>
+                    <?php
+                    // Check if there are questions and extract the criteria_id
+                    if (is_array($criteriaList) && !empty($criteriaList)) {
+                        // Assuming all questions share the same criteria_id
+                        echo htmlspecialchars($criteriaList[0]['criteria']);
+                    } else {
+                        echo 'Question';
+                    }
+                    ?>
+                </b>
+            </th>
             <th width="5%" class="text-center">1</th>
             <th width="5%" class="text-center">2</th>
             <th width="5%" class="text-center">3</th>

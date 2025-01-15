@@ -24,15 +24,15 @@ include "handlers/verify_actions_handler.php";
                                 if (isset($_GET['status'])) {
                                     $status = $_GET['status'];
                                     if ($status == 'confirmed') {
-                                        echo "<div class='alert alert-success'>Student has been confirmed and added to the system.</div>";
+                                        echo "<div class='alert alert-success fade-alert'>Student has been confirmed and added to the system.</div>";
                                     } elseif ($status == 'rejected') {
-                                        echo "<div class='alert alert-danger'>Student has been rejected and removed from the system.</div>";
+                                        echo "<div class='alert alert-danger fade-alert'>Student has been rejected and removed from the system.</div>";
                                     } elseif ($status == 'bulk_confirmed') {
-                                        echo "<div class='alert alert-success'>All selected students have been confirmed and added to the system.</div>";
+                                        echo "<div class='alert alert-success fade-alert'>All selected students have been confirmed and added to the system.</div>";
                                     } elseif ($status == 'bulk_removed') {
-                                        echo "<div class='alert alert-danger'>All selected students have been removed from the system.</div>";
+                                        echo "<div class='alert alert-danger fade-alert'>All selected students have been removed from the system.</div>";
                                     } elseif ($status == 'no_selection') {
-                                        echo "<div class='alert alert-warning'>No students were selected for the action.</div>";
+                                        echo "<div class='alert alert-warning fade-alert'>No students were selected for the action.</div>";
                                     }
                                 }
                                 ?>
@@ -93,5 +93,12 @@ include "handlers/verify_actions_handler.php";
         max-height: 100vh;
         overflow-y: auto;
         scroll-behavior: smooth;
+    }
+
+    .fade-alert {
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 5s ease-in-out, visibility 0s linear 5s;
+        /* Add a delay to visibility change */
     }
 </style>

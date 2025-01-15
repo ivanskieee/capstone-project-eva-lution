@@ -310,15 +310,28 @@ include "handlers/report_handler.php";
     const table = document.createElement('table');
     table.className = 'table table-condensed wborder';
     table.innerHTML = `
-    <thead>
+        <thead>
         <tr class="bg-gradient-secondary">
-            <th class="p-1"><b>Question</b></th>
+            <th class="p-1">
+                <b>
+                    <?php
+                    // Check if there are questions and extract the criteria_id
+                    if (is_array($criteriaList) && !empty($criteriaList)) {
+                        // Assuming all questions share the same criteria_id
+                        echo htmlspecialchars($criteriaList[0]['criteria']);
+                    } else {
+                        echo 'Question';
+                    }
+                    ?>
+                </b>
+            </th>
             <th width="5%" class="text-center">1</th>
             <th width="5%" class="text-center">2</th>
             <th width="5%" class="text-center">3</th>
             <th width="5%" class="text-center">4</th>
         </tr>
-    </thead>`;
+    </thead>
+    `;
     const tbody = document.createElement('tbody');
     data.data.forEach(row => {
         tbody.innerHTML += row.question_type === 'text'
