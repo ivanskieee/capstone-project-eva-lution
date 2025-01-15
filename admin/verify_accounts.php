@@ -83,10 +83,27 @@ include "handlers/verify_actions_handler.php";
 </div>
 
 <script>
-    document.getElementById('select-all').addEventListener('change', function () {
-        const checkboxes = document.querySelectorAll('input[name="student_ids[]"]');
-        checkboxes.forEach(checkbox => checkbox.checked = this.checked);
-    });
+    window.onload = function () {
+        // Add the 'select all' checkbox event listener
+        document.getElementById('select-all').addEventListener('change', function () {
+            const checkboxes = document.querySelectorAll('input[name="student_ids[]"]');
+            checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+        });
+
+        // Fade-out alert after a delay
+        var alertElement = document.querySelector('.fade-alert');
+        if (alertElement) {
+            // Delay before starting the fade-out effect (3 seconds in this case)
+            setTimeout(function () {
+                alertElement.classList.add('fade-out');
+
+                // After the fade-out effect completes (5 seconds), redirect to verify_accounts.php
+                setTimeout(function () {
+                    window.location.href = 'verify_accounts.php'; // Redirect to verify_accounts.php
+                }, 1000); // 5000 ms (5 seconds) to match the fade duration
+            }, 1000); // Initial delay before fade-out (3 seconds)
+        }
+    };
 </script>
 <style>
     .content .main-header {
@@ -96,9 +113,14 @@ include "handlers/verify_actions_handler.php";
     }
 
     .fade-alert {
+        opacity: 1;
+        visibility: visible;
+        transition: opacity 1s ease-in-out, visibility 0s linear 1s;
+        /* Initially fully visible, and will fade out */
+    }
+
+    .fade-alert.fade-out {
         opacity: 0;
         visibility: hidden;
-        transition: opacity 5s ease-in-out, visibility 0s linear 5s;
-        /* Add a delay to visibility change */
     }
 </style>
