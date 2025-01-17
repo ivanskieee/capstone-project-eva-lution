@@ -438,7 +438,7 @@ $headList = fetchHeadFacultyList($conn);
     }
 
     .content .main-header {
-        max-height: 81vh;
+        max-height: 79vh;
         overflow-y: auto;
         scroll-behavior: smooth;
     }

@@ -49,7 +49,7 @@ include "submit_registration.php";
                             <div id="subjects-container">
                                 <div class="input-group mb-3 subject-item">
                                     <input type="text" class="form-control" name="subjects[]" required
-                                        placeholder="Subject">
+                                        placeholder="Subject Code (e.g. cc101)">
                                     <div class="input-group-append">
                                         <button type="button" class="btn btn-success add-subject">
                                             <i class="fas fa-plus"></i>

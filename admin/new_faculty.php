@@ -65,7 +65,7 @@ include "handlers/faculty_handler.php";
                                             foreach ($subjects as $subject) {
                                                 echo '
                                             <div class="input-group mb-3 subject-item">
-                                                <input type="text" class="form-control" name="subjects[]" required placeholder="Subject" value="' . htmlspecialchars(trim($subject), ENT_QUOTES) . '">
+                                                <input type="text" class="form-control" name="subjects[]" required placeholder="Subject Code (e.g. cc101)" value="' . htmlspecialchars(trim($subject), ENT_QUOTES) . '">
                                                 <div class="input-group-append">
                                                     <button type="button" class="btn btn-danger remove-subject">
                                                         <i class="fas fa-minus"></i>
@@ -77,7 +77,7 @@ include "handlers/faculty_handler.php";
                                             // Default to one empty input field if no subjects exist
                                             echo '
                                         <div class="input-group mb-3 subject-item">
-                                            <input type="text" class="form-control" name="subjects[]" required placeholder="Subject">
+                                            <input type="text" class="form-control" name="subjects[]" required placeholder="Subject Code (e.g. cc101)">
                                             <div class="input-group-append">
                                                 <button type="button" class="btn btn-success add-subject">
                                                     <i class="fas fa-plus"></i>
@@ -93,7 +93,7 @@ include "handlers/faculty_handler.php";
                                 <div class="form-group">
                                     <label for="department" class="control-label">Department</label>
                                     <input type="department" class="form-control form-control-sm" name="department"
-                                        required
+                                        required placeholder="Department Code (e.g. ccs, educ)"
                                         value="<?php echo isset($faculty['department']) ? $faculty['department'] : ''; ?>">
                                     <small id="msg"></small>
                                 </div>

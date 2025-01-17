@@ -56,7 +56,7 @@ include "handlers/head_faculty_handler.php";
                                 <div class="form-group">
                                     <label for="department" class="control-label">Department</label>
                                     <input type="department" class="form-control form-control-sm" name="department"
-                                        required
+                                        required placeholder="Department Code (e.g. ccs, educ)"
                                         value="<?php echo isset($faculty['department']) ? $faculty['department'] : ''; ?>">
                                     <small id="msg"></small>
                                 </div>
