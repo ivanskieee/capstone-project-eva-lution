@@ -16,17 +16,16 @@ if (isset($_GET['faculty_id']) && isset($_GET['category'])) {
         $totalCount = $stmt->fetchColumn();
     } elseif ($category === 'dean_self') {
         // Count from self_head_eval
-        $stmt = $conn->prepare("SELECT COUNT(DISTINCT faculty_id) FROM self_head_eval WHERE faculty_id = :faculty_id");
+        $stmt = $conn->prepare("SELECT COUNT(faculty_id) FROM self_head_eval WHERE faculty_id = :faculty_id");
         $stmt->bindParam(':faculty_id', $facultyId, PDO::PARAM_INT);
         $stmt->execute();
         $totalCount = $stmt->fetchColumn();
     } elseif ($category === 'faculty_faculty') {
         // Count from evaluation_answers for faculty-to-faculty
         $stmt = $conn->prepare("
-            SELECT COUNT(DISTINCT faculty_id) 
-            FROM evaluation_answers 
+            SELECT COUNT(DISTINCT CONCAT(faculty_id, '-', academic_id)) 
+            FROM evaluation_answers_faculty_faculty 
             WHERE faculty_id = :faculty_id 
-            AND question_id IN (4, 5, 6) 
             AND rate IS NOT NULL
         ");
         $stmt->bindParam(':faculty_id', $facultyId, PDO::PARAM_INT);
@@ -36,9 +35,8 @@ if (isset($_GET['faculty_id']) && isset($_GET['category'])) {
         // Count from evaluation_answers for head-to-faculty
         $stmt = $conn->prepare("
             SELECT COUNT(DISTINCT faculty_id) 
-            FROM evaluation_answers 
+            FROM evaluation_answers_dean_faculty 
             WHERE faculty_id = :faculty_id 
-            AND question_id IN (1, 2, 3) 
             AND rate IS NOT NULL
         ");
         $stmt->bindParam(':faculty_id', $facultyId, PDO::PARAM_INT);
@@ -46,7 +44,7 @@ if (isset($_GET['faculty_id']) && isset($_GET['category'])) {
         $totalCount = $stmt->fetchColumn();
     } elseif ($category === 'faculty_head') {
         // Count from evaluation_answers for faculty-to-head
-        $stmt = $conn->prepare("SELECT COUNT(DISTINCT faculty_id) FROM evaluation_answers WHERE faculty_id = :faculty_id AND question_id IS NOT NULL");
+        $stmt = $conn->prepare("SELECT COUNT(DISTINCT faculty_id) FROM evaluation_answers_faculty_dean WHERE faculty_id = :faculty_id AND question_id IS NOT NULL");
         $stmt->bindParam(':faculty_id', $facultyId, PDO::PARAM_INT);
         $stmt->execute();
         $totalCount = $stmt->fetchColumn();

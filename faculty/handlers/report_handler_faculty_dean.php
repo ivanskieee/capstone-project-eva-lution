@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $target_column = $faculty_id ? 'faculty_id' : 'head_id';
     $target_id = $faculty_id ?? $head_id;
 
-    $stmt = $conn->prepare("SELECT COUNT(*) FROM evaluation_answers WHERE $target_column = ? AND evaluator_id = ? AND academic_id = ?");
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM evaluation_answers_faculty_dean WHERE $target_column = ? AND evaluator_id = ? AND academic_id = ?");
     $stmt->execute([$target_id, $evaluator_id, $academic_id]);
     $evaluationExists = $stmt->fetchColumn();
 
@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Prepare SQL statement for inserting answers
-    $stmt = $conn->prepare("INSERT INTO evaluation_answers (evaluation_id, $target_column, evaluator_id, academic_id, question_id, rate, comment) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt = $conn->prepare("INSERT INTO evaluation_answers_faculty_dean (evaluation_id, $target_column, evaluator_id, academic_id, question_id, rate, comment) VALUES (?, ?, ?, ?, ?, ?, ?)");
 
     $success = true;
 

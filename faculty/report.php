@@ -1,6 +1,6 @@
 <?php
 
-include "handlers/report_handler.php";
+include "handlers/report_handler_faculty_faculty.php";
 
 ?>
 <nav class="main-header">

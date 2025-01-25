@@ -22,7 +22,7 @@ $questionToEdit = null;
 $stmt = $conn->prepare("
     SELECT a.*, 
            COALESCE(q.total_questions, 0) AS total_questions,  -- Total questions from the combined tables
-           COALESCE(ea.total_answers, 0) AS total_answers      -- Distinct student_id and faculty_id from evaluation_answers
+           COALESCE(ea.total_answers, 0) AS total_answers      -- Distinct faculty_id from all evaluation tables
     FROM academic_list a
     LEFT JOIN (
         SELECT academic_id, COUNT(*) AS total_questions
@@ -38,8 +38,20 @@ $stmt = $conn->prepare("
         GROUP BY academic_id
     ) q ON a.academic_id = q.academic_id
     LEFT JOIN (
-        SELECT academic_id, COUNT(DISTINCT student_id, faculty_id) AS total_answers
-        FROM evaluation_answers
+        SELECT academic_id, COUNT(DISTINCT faculty_id) AS total_answers
+        FROM (
+            SELECT academic_id, faculty_id FROM evaluation_answers
+            UNION ALL
+            SELECT academic_id, faculty_id FROM evaluation_answers_faculty_dean
+            UNION ALL
+            SELECT academic_id, faculty_id FROM evaluation_answers_faculty_faculty
+            UNION ALL
+            SELECT academic_id, faculty_id FROM evaluation_answers_dean_faculty
+            UNION ALL
+            SELECT NULL AS academic_id, faculty_id FROM self_faculty_eval
+            UNION ALL
+            SELECT NULL AS academic_id, faculty_id FROM self_head_eval
+        ) AS combined_evaluation_answers
         GROUP BY academic_id
     ) ea ON a.academic_id = ea.academic_id
 ");

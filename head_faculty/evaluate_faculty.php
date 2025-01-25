@@ -38,7 +38,12 @@ include 'handlers/report_handler.php';
                             if ($stmt->rowCount() > 0) {
                                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                     // Check if the faculty has already evaluated this faculty
-                                    $evaluationStmt = $conn->prepare('SELECT COUNT(*) FROM evaluation_answers WHERE faculty_id = ? AND evaluator_id = ?');
+                                    $evaluationStmt = $conn->prepare('SELECT COUNT(*) FROM evaluation_answers_dean_faculty WHERE faculty_id = ? AND evaluator_id = ? AND academic_id = (
+											  SELECT academic_id 
+											  FROM academic_list 
+											  WHERE status = 1 -- Only include active academic years
+											  LIMIT 1
+										  )');
                                     $evaluationStmt->execute([$row['fid'], $_SESSION['user']['head_id']]);
                                     $evaluationExists = $evaluationStmt->fetchColumn();
 

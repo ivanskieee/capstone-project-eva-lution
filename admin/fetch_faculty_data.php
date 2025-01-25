@@ -59,10 +59,10 @@ if (isset($_GET['faculty_id']) && isset($_GET['category'])) {
     } elseif ($category === 'faculty-to-faculty') {
         // Query for faculty ratings data
         $stmt = $conn->prepare("
-            SELECT ea.rate AS rating
-            FROM evaluation_answers ea
-            WHERE ea.faculty_id = :faculty_id AND ea.question_id IN (4, 5, 6) AND ea.rate IS NOT NULL
-            ORDER BY ea.evaluation_id ASC
+            SELECT eaf.rate AS rating
+            FROM evaluation_answers_faculty_faculty eaf
+            WHERE eaf.faculty_id = :faculty_id AND eaf.rate IS NOT NULL
+            ORDER BY eaf.evaluation_id ASC
         ");
         $stmt->execute(['faculty_id' => $facultyId]);
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -76,10 +76,10 @@ if (isset($_GET['faculty_id']) && isset($_GET['category'])) {
     } elseif ($category === 'faculty-to-head') {
         // Query for faculty ratings data
         $stmt = $conn->prepare("
-            SELECT ea.rate AS rating
-            FROM evaluation_answers ea
-            WHERE ea.faculty_id = :faculty_id AND ea.rate IS NOT NULL
-            ORDER BY ea.evaluation_id ASC
+            SELECT eah.rate AS rating
+            FROM evaluation_answers_faculty_dean eah
+            WHERE eah.faculty_id = :faculty_id AND eah.rate IS NOT NULL
+            ORDER BY eah.evaluation_id ASC
         ");
         $stmt->execute(['faculty_id' => $facultyId]);
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -93,10 +93,10 @@ if (isset($_GET['faculty_id']) && isset($_GET['category'])) {
     } elseif ($category === 'head-to-faculty') {
         // Query for faculty ratings data
         $stmt = $conn->prepare("
-            SELECT ea.rate AS rating
-            FROM evaluation_answers ea
-            WHERE ea.faculty_id = :faculty_id AND ea.question_id IN (1, 2, 3) AND ea.rate IS NOT NULL
-            ORDER BY ea.evaluation_id ASC
+            SELECT eahf.rate AS rating
+            FROM evaluation_answers_dean_faculty eahf
+            WHERE eahf.faculty_id = :faculty_id AND eahf.rate IS NOT NULL
+            ORDER BY eahf.evaluation_id ASC
         ");
         $stmt->execute(['faculty_id' => $facultyId]);
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);

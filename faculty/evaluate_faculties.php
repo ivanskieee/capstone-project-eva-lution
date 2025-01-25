@@ -1,5 +1,5 @@
 <?php
-include 'handlers/report_handler.php';
+include 'handlers/report_handler_faculty_faculty.php';
 ?>
 
 <nav class="main-header">
@@ -33,21 +33,35 @@ include 'handlers/report_handler.php';
 
 							if ($stmt->rowCount() > 0) {
 								while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-									// Check if the logged-in faculty has already evaluated this co-faculty
-									$evaluationStmt = $conn->prepare('SELECT COUNT(*) FROM evaluation_answers WHERE faculty_id = ? AND evaluator_id = ?');
-									$evaluationStmt->execute([$row['fid'], $_SESSION['user']['faculty_id']]);
+									// Check if the logged-in faculty has already evaluated this co-faculty for the current academic_id
+									$evaluationStmt = $conn->prepare('
+										SELECT COUNT(*) 
+										FROM evaluation_answers_faculty_faculty 
+										WHERE faculty_id = ? 
+										  AND evaluator_id = ? 
+										  AND academic_id = (
+											  SELECT academic_id 
+											  FROM academic_list 
+											  WHERE status = 1 -- Only include active academic years
+											  LIMIT 1
+										  )
+									');
+									$evaluationStmt->execute([
+										$row['fid'], 
+										$_SESSION['user']['faculty_id']
+									]);
 									$evaluationExists = $evaluationStmt->fetchColumn();
-
-									// Skip faculty members already evaluated by the logged-in faculty
+							
+									// Skip faculty members already evaluated by the logged-in faculty for the current academic_id
 									if ($evaluationExists > 0) {
 										continue;
 									}
-
+							
 									// Prevent duplicates
 									if (in_array($row['fid'], $displayedFaculty)) {
 										continue;
 									}
-
+							
 									$displayedFaculty[] = $row['fid'];
 									$is_active = (isset($_GET['rid']) && $_GET['rid'] == $row['fid']) ? 'list-group-item-success' : '';
 									?>
