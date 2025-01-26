@@ -34,7 +34,7 @@ if (isset($_GET['faculty_id']) && isset($_GET['category'])) {
     } elseif ($category === 'head_faculty') {
         // Count from evaluation_answers for head-to-faculty
         $stmt = $conn->prepare("
-            SELECT COUNT(DISTINCT faculty_id) 
+            SELECT COUNT(DISTINCT CONCAT(faculty_id, '-', academic_id)) 
             FROM evaluation_answers_dean_faculty 
             WHERE faculty_id = :faculty_id 
             AND rate IS NOT NULL
