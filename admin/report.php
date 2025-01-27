@@ -53,6 +53,7 @@ include "handlers/report_handler.php";
                             <label for="category">Select Category</label>
                             <div class="mx-2 col-md-8">
                                 <select id="category" class="form-control form-control-sm">
+                                    <option value="" selected disabled>Select Category</option>
                                     <option value="faculty">Student to Faculty</option>
                                     <option value="self">Self Faculty</option>
                                     <option value="dean_self">Self Head Faculty</option>
@@ -213,6 +214,41 @@ include "handlers/report_handler.php";
     </style>
 </noscript>
 <script>
+    // Add listener for category change
+    document.getElementById('category').addEventListener('change', function () {
+        const selectedCategory = this.value;
+        const facultyDropdown = document.getElementById('faculty_id');
+
+        // Reset faculty dropdown and related fields
+        facultyDropdown.innerHTML = '<option value="">Select Faculty</option>';
+        document.getElementById('fname').textContent = '';
+        document.getElementById('ay').textContent = 'Select faculty to view year and semester.';
+        document.getElementById('tse').textContent = 0;
+        const ratingsTable = document.querySelector('#printable .table-responsive');
+        ratingsTable.innerHTML = `<br><p class="text-center text-muted">Select faculty to view evaluation ratings.</p>`;
+
+        // Fetch filtered faculty list based on the selected category
+        fetch(`fetch_faculty_list.php?category=${selectedCategory}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    data.data.forEach(faculty => {
+                        const option = document.createElement('option');
+                        option.value = faculty.faculty_id;
+                        option.textContent = faculty.fullname;
+                        option.setAttribute('data-name', faculty.fullname); // Match 'data-name' used in faculty_id change
+                        facultyDropdown.appendChild(option);
+                    });
+                } else {
+                    console.error(data.message || 'Failed to fetch faculty list.');
+                }
+            })
+            .catch(() => {
+                console.error('Error fetching faculty list.');
+            });
+    });
+
+    // Existing listener for faculty change
     document.getElementById('faculty_id').addEventListener('change', function () {
         const facultyId = this.value;
         const facultyName = this.options[this.selectedIndex].getAttribute('data-name') || '';
@@ -285,6 +321,7 @@ include "handlers/report_handler.php";
         }
     });
 
+    // Render functions (unchanged)
     function renderSelfEval(data, container) {
         if (data.status === 'success') {
             container.innerHTML = `
@@ -306,52 +343,40 @@ include "handlers/report_handler.php";
     }
 
     function renderFacultyEval(data, container) {
-    container.innerHTML = ''; // Clear previous data
-    const table = document.createElement('table');
-    table.className = 'table table-condensed wborder';
-    table.innerHTML = `
-        <thead>
-        <tr class="bg-gradient-secondary">
-            <th class="p-1">
-                <b>
-                    <?php
-                    // Check if there are questions and extract the criteria_id
-                    if (is_array($criteriaList) && !empty($criteriaList)) {
-                        // Assuming all questions share the same criteria_id
-                        echo htmlspecialchars($criteriaList[0]['criteria']);
-                    } else {
-                        echo 'Question';
-                    }
-                    ?>
-                </b>
-            </th>
-            <th width="5%" class="text-center">1</th>
-            <th width="5%" class="text-center">2</th>
-            <th width="5%" class="text-center">3</th>
-            <th width="5%" class="text-center">4</th>
-        </tr>
-    </thead>
-    `;
-    const tbody = document.createElement('tbody');
-    data.data.forEach(row => {
-        tbody.innerHTML += row.question_type === 'text'
-            ? `<tr class="bg-white">
-                <td colspan="5">
-                    <div><strong>${row.question}</strong></div>
-                    <div class="comment-display mt-2">${row.comments ? row.comments.join('<br>') : '<em>No comments provided.</em>'}</div>
-                </td>
-            </tr>`
-            : `<tr class="bg-white">
-                <td class="p-1" width="20%">${row.question}</td>
-                <td class="text-center"><div class="circle">${row.rate1}%</div></td>
-                <td class="text-center"><div class="circle">${row.rate2}%</div></td>
-                <td class="text-center"><div class="circle">${row.rate3}%</div></td>
-                <td class="text-center"><div class="circle">${row.rate4}%</div></td>
-            </tr>`;
-    });
-    table.appendChild(tbody);
-    container.appendChild(table);
-}
+        container.innerHTML = ''; // Clear previous data
+        const table = document.createElement('table');
+        table.className = 'table table-condensed wborder';
+        table.innerHTML = `
+            <thead>
+                <tr class="bg-gradient-secondary">
+                    <th class="p-1"><b>Question</b></th>
+                    <th width="5%" class="text-center">1</th>
+                    <th width="5%" class="text-center">2</th>
+                    <th width="5%" class="text-center">3</th>
+                    <th width="5%" class="text-center">4</th>
+                </tr>
+            </thead>
+        `;
+        const tbody = document.createElement('tbody');
+        data.data.forEach(row => {
+            tbody.innerHTML += row.question_type === 'text'
+                ? `<tr class="bg-white">
+                    <td colspan="5">
+                        <div><strong>${row.question}</strong></div>
+                        <div class="comment-display mt-2">${row.comments ? row.comments.join('<br>') : '<em>No comments provided.</em>'}</div>
+                    </td>
+                </tr>`
+                : `<tr class="bg-white">
+                    <td class="p-1" width="20%">${row.question}</td>
+                    <td class="text-center"><div class="circle">${row.rate1}%</div></td>
+                    <td class="text-center"><div class="circle">${row.rate2}%</div></td>
+                    <td class="text-center"><div class="circle">${row.rate3}%</div></td>
+                    <td class="text-center"><div class="circle">${row.rate4}%</div></td>
+                </tr>`;
+        });
+        table.appendChild(tbody);
+        container.appendChild(table);
+    }
 </script>
 <script>
 document.getElementById('print-btn').addEventListener('click', function () {

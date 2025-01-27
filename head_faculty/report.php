@@ -57,6 +57,7 @@ $stmt->execute(['department' => $userDepartment]);
                             <label for="category">Select Category</label>
                             <div class="mx-2 col-md-8">
                                 <select id="category" class="form-control form-control-sm">
+                                    <option value="" selected disabled>Select Category</option>
                                     <option value="faculty">Student to Faculty</option>
                                     <option value="self">Self Faculty</option>
                                     <option value="faculty_faculty">Faculty to Faculty</option>
