@@ -362,6 +362,14 @@ document.getElementById('print-btn').addEventListener('click', function () {
         td.style.textAlign = 'left'; // Ensure left alignment for all question cells
     });
 
+    printableContent.querySelectorAll('input, textarea').forEach(el => {
+            const value = el.value || el.innerHTML;
+            const parent = el.parentElement;
+            const span = document.createElement('span');
+            span.textContent = value;
+            parent.replaceChild(span, el);
+    });
+
     const printWindow = window.open('', '', 'width=800,height=600');
 
     if (printWindow) {
