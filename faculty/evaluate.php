@@ -13,16 +13,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $performance = filter_var($_POST['performance'], FILTER_VALIDATE_INT);
     $comments = htmlspecialchars($_POST['comments']);
 
-    // Fetch faculty_id from faculty_list table based on session user email or unique identifier
+    // Fetch faculty_id and academic_id from the faculty_list table based on session user email or unique identifier
     $email = $_SESSION['user']['email']; // Assuming the session stores the faculty's email
 
     try {
-        // Query to get the faculty_id
-        $stmt = $conn->prepare("SELECT faculty_id FROM college_faculty_list WHERE email = :email");
+        // Query to get both faculty_id and academic_id
+        $stmt = $conn->prepare("SELECT faculty_id, academic_id FROM college_faculty_list WHERE email = :email");
         $stmt->bindParam(':email', $email, PDO::PARAM_STR);
         $stmt->execute();
 
-        // Fetch the faculty_id
+        // Fetch both faculty_id and academic_id
         $faculty = $stmt->fetch(PDO::FETCH_ASSOC);
         if (!$faculty) {
             echo "<script>
@@ -36,7 +36,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             exit;
         }
 
+        // Retrieve faculty_id and academic_id from the result
         $facultyId = $faculty['faculty_id'];
+        $academicId = $faculty['academic_id'];
 
         // Validate the ratings (should be between 1 and 5)
         if ($skills >= 1 && $skills <= 5 && $performance >= 1 && $performance <= 5) {
@@ -54,11 +56,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             // Insert the evaluation data into the database
-            $stmt = $conn->prepare("INSERT INTO self_faculty_eval (faculty_id, skills, performance, average_score, feedback, comments) 
-                                    VALUES (:faculty_id, :skills, :performance, :average_score, :feedback, :comments)");
+            $stmt = $conn->prepare("INSERT INTO self_faculty_eval (faculty_id, academic_id, skills, performance, average_score, feedback, comments) 
+                                    VALUES (:faculty_id, :academic_id, :skills, :performance, :average_score, :feedback, :comments)");
 
             // Bind parameters
             $stmt->bindParam(':faculty_id', $facultyId, PDO::PARAM_INT);
+            $stmt->bindParam(':academic_id', $academicId, PDO::PARAM_INT);
             $stmt->bindParam(':skills', $skills, PDO::PARAM_INT);
             $stmt->bindParam(':performance', $performance, PDO::PARAM_INT);
             $stmt->bindParam(':average_score', $averageScore, PDO::PARAM_STR);

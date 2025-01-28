@@ -18,7 +18,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     try {
         // Query to get the faculty_id
-        $stmt = $conn->prepare("SELECT head_id FROM head_faculty_list WHERE email = :email");
+        $stmt = $conn->prepare("SELECT head_id, academic_id FROM head_faculty_list WHERE email = :email");
         $stmt->bindParam(':email', $email, PDO::PARAM_STR);
         $stmt->execute();
 
@@ -29,6 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         $facultyId = $faculty['head_id'];
+        $academicId = $faculty['academic_id'];
 
         // Validate the ratings (should be between 1 and 5)
         if ($skills >= 1 && $skills <= 5 && $performance >= 1 && $performance <= 5) {
@@ -46,11 +47,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             // Insert the evaluation data into the database
-            $stmt = $conn->prepare("INSERT INTO self_head_eval (faculty_id, skills, performance, average_score, feedback, comments) 
-                                    VALUES (:faculty_id, :skills, :performance, :average_score, :feedback, :comments)");
+            $stmt = $conn->prepare("INSERT INTO self_head_eval (faculty_id, academic_id, skills, performance, average_score, feedback, comments) 
+                                    VALUES (:faculty_id, :academic_id, :skills, :performance, :average_score, :feedback, :comments)");
 
             // Bind parameters
             $stmt->bindParam(':faculty_id', $facultyId, PDO::PARAM_INT);
+            $stmt->bindParam(':academic_id', $academicId, PDO::PARAM_INT);
             $stmt->bindParam(':skills', $skills, PDO::PARAM_INT);
             $stmt->bindParam(':performance', $performance, PDO::PARAM_INT);
             $stmt->bindParam(':average_score', $averageScore, PDO::PARAM_STR);

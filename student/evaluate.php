@@ -1,5 +1,15 @@
 <?php
 include 'handlers/eval_handler.php';
+$query = "SELECT LOWER(subject) AS subject FROM student_list WHERE student_id = :student_id";
+$stmt = $conn->prepare($query);
+$stmt->execute(['student_id' => $student_id]);
+$student = $stmt->fetch(PDO::FETCH_ASSOC);
+
+$subjects = $student['subject'] ?? '';
+
+// Normalize the subjects
+$normalizedSubjects = array_map('trim', explode(',', strtolower($subjects)));
+$normalizedSubjectsString = implode(',', $normalizedSubjects);
 ?>
 
 <div class="content">
@@ -13,7 +23,7 @@ include 'handlers/eval_handler.php';
 						$subjectArray = explode(',', strtolower($subjects));
 
 						if (empty($subjects)) {
-							echo '<div class="alert alert-success">Successfully evaluated the faculty member.</div>';
+							echo '<div class="alert alert-success" id="success-message">Successfully evaluated the faculty member.</div>';
 						} else {
 							$displayedFaculty = [];
 
@@ -205,6 +215,20 @@ include 'handlers/eval_handler.php';
 			});
 		});
 	});
+</script>
+<script>
+$(document).ready(function () {
+    // Check if the success message is visible
+    if ($('#success-message').length) {
+        // Fade the message out after 1 second
+        setTimeout(function () {
+            $('#success-message').fadeOut('slow', function () {
+                // Use the normalized subjects string in the URL
+                window.location.href = 'evaluate.php?subjects=<?php echo urlencode($normalizedSubjectsString); ?>';
+            });
+        }, 1000); // 1000 ms = 1 second
+    }
+});
 </script>
 <style>
 	.content .main-header {

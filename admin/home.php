@@ -287,20 +287,21 @@ $headList = fetchHeadFacultyList($conn);
     </nav>
 </div>
 
-
 <script>
-    // Mock data for testing
-    const facultyList = <?php echo json_encode($facultyList); ?>; // Example [{faculty_id: 1, faculty_name: "John Doe"}]
-    const headList = <?php echo json_encode($headList); ?>; // Example [{head_id: 1, head_name: "Jane Smith"}]
+    const facultyList = <?php echo json_encode($facultyList); ?>;
+    const headList = <?php echo json_encode($headList); ?>;
+    const academicList = <?php echo json_encode($academicYearList); ?>; // Example: [{ academic_id: 1, year: "2023", semester: "First" }]
 
     const categoryTitle = document.getElementById('categoryTitle');
     const facultyLabel = document.getElementById('facultyLabel');
     const facultySelect = document.getElementById('facultySelect');
     const facultyButtons = document.querySelectorAll('[data-category]');
+    const academicSelect = document.getElementById('academicSelect');
+    const feedbackElement = document.getElementById('performanceFeedback'); // Element to display feedback
 
     // Populate dropdown based on category
     function populateDropdown(category) {
-        facultySelect.innerHTML = '<option value="" selected disabled>Select Faculty</option>'; // Reset options
+        facultySelect.innerHTML = '<option value="" selected disabled>Select Faculty</option>';
 
         if (category === 'faculty' || category === 'self-faculty') {
             facultyLabel.textContent = 'Faculty:';
@@ -334,105 +335,152 @@ $headList = fetchHeadFacultyList($conn);
         }
     }
 
-    // Handle category button clicks
     facultyButtons.forEach(button => {
         button.addEventListener('click', function () {
             facultyButtons.forEach(btn => btn.classList.remove('active'));
             this.classList.add('active');
-
             const category = this.getAttribute('data-category');
             populateDropdown(category);
         });
     });
 
-    // Initialize dropdown for default category
     populateDropdown('faculty');
 
-    // Update chart on selection
-    facultySelect.addEventListener('change', function () {
-        const id = this.value;
-        const activeCategory = document.querySelector('[data-category].active').getAttribute('data-category');
+    // Populate academicSelect with year and semester
 
-        if (id) {
-            fetch(`fetch_faculty_data.php?faculty_id=${id}&category=${activeCategory}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        alert(data.error);
-                        return;
-                    }
-                    updateLineChart(data.labels, data.dataset);
-                })
-                .catch(error => console.error('Error fetching data:', error));
-        }
-    });
-
-    // Chart setup
     const ctx = document.getElementById('facultyLineChart').getContext('2d');
+
+    // Create gradient background
+    let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(51, 128, 64, 0.5)'); // Green at the top
+    gradient.addColorStop(1, 'rgba(255, 0, 128, 0.3)'); // Pink at the bottom
+
     const lineChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: [],
+            labels: [], // Will be populated dynamically
             datasets: [{
                 label: 'Ratings',
                 data: [],
-                borderColor: 'rgb(51, 128, 64)',
-                tension: 0.1,
+                fill: true, // Enable fill for gradient effect
+                backgroundColor: gradient,
+                borderColor: 'rgba(255, 255, 255, 0.8)', // White Line
+                pointBackgroundColor: 'rgb(51, 128, 64)', // Themed Green Points
+                pointBorderColor: 'rgba(255, 255, 255, 1)', // White Border
+                pointRadius: 4, // Smaller and cooler design
+                pointHoverRadius: 6,
+                pointHoverBorderWidth: 2, // More defined hover effect
+                borderWidth: 3, // Thicker line for clarity
+                tension: 0.4, // Smooth curve for a modern look
             }]
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false, // Hide legend for a cleaner look
+                },
+                tooltip: {
+                    enabled: true,
+                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                    titleColor: 'white',
+                    bodyColor: 'white',
+                    padding: 10,
+                }
+            },
             scales: {
                 y: {
                     beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Rating (1-4)'
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)' // Faint grid lines
+                    },
+                    ticks: {
+                        color: 'white', // White labels
+                        font: {
+                            size: 14
+                        }
                     }
                 },
                 x: {
-                    title: {
-                        display: true,
-                        text: 'Evaluation Sequence'
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)' // Faint grid lines
+                    },
+                    ticks: {
+                        color: 'white', // White labels
+                        font: {
+                            size: 14
+                        }
                     }
                 }
             }
         }
     });
 
-    // Update chart data
-    // Update chart data and provide feedback
-    // Update chart data and provide feedback
+    // Function to update chart dynamically
     function updateLineChart(labels, dataset) {
         lineChart.data.labels = labels;
         lineChart.data.datasets[0].data = dataset;
         lineChart.update();
+    }
 
-        // Analyze performance based on the ratings
-        const performanceFeedback = analyzePerformance(dataset);
+    function updateChart() {
+        const facultyId = facultySelect.value;
+        const academicId = academicSelect.value;
+        const activeCategory = document.querySelector('[data-category].active')?.getAttribute('data-category');
 
-        // Display feedback below the chart
-        const feedbackElement = document.getElementById('performanceFeedback');
+        if (facultyId && academicId) {
+            fetch(`fetch_faculty_data.php?faculty_id=${facultyId}&category=${activeCategory}&academic_id=${academicId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                        return;
+                    }
+                    updateLineChart(data.labels, data.dataset, academicId);
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+    }
+
+    facultySelect.addEventListener('change', updateChart);
+    academicSelect.addEventListener('change', updateChart);
+
+    function updateLineChart(labels, dataset, academicId) {
+        lineChart.data.labels = labels;
+        lineChart.data.datasets[0].data = dataset;
+        lineChart.update();
+
+        // Skip feedback if there are no results
+        if (!dataset || dataset.length === 0) {
+            feedbackElement.textContent = ""; // Clear feedback
+            feedbackElement.classList.remove("text-success", "text-danger"); // Reset styling
+            return;
+        }
+
+        // Analyze performance based on academic year and dataset
+        const academicDetails = academicList.find(a => a.academic_id == academicId);
+        const performanceFeedback = analyzePerformance(dataset, academicDetails);
+
+        // Display feedback
         feedbackElement.textContent = performanceFeedback;
 
         // Change the feedback color based on the analysis
         if (performanceFeedback.includes("inconsistent")) {
             feedbackElement.classList.remove("text-success");
-            feedbackElement.classList.add("text-danger"); // Red color for danger
+            feedbackElement.classList.add("text-danger"); // Red for danger
         } else {
             feedbackElement.classList.remove("text-danger");
-            feedbackElement.classList.add("text-success"); // Green color for success
+            feedbackElement.classList.add("text-success"); // Green for success
         }
     }
 
-
-    // Function to analyze the performance of the faculty
-    function analyzePerformance(ratings) {
+    function analyzePerformance(ratings, academicDetails) {
         let improvement = 0;
         let consistency = 0;
         let needImprovement = 0;
 
-        // Analyze ratings
+        // Analyze ratings for the selected academic year
         ratings.forEach(rating => {
             if (rating >= 3) {
                 improvement++; // Consistently good rating
@@ -443,20 +491,18 @@ $headList = fetchHeadFacultyList($conn);
             }
         });
 
-        // Feedback based on the analysis
+        const year = academicDetails?.year || "Unknown Year";
+        const semester = academicDetails?.semester || "Unknown Semester";
+
         if (improvement > needImprovement) {
-            return "Performance is improving and consistent. Keep up the good work!";
+            return `For Year ${year}, ${semester} Semester, performance is improving and consistent. Keep up the good work!`;
         } else if (needImprovement > improvement) {
-            return "Performance needs improvement and is inconsistent. Please work on improving the ratings.";
+            return `For Year ${year}, ${semester} Semester, performance needs improvement and is inconsistent. Please work on improving the ratings.`;
         } else {
-            return "Performance is inconsistent. Aim to have consistent positive feedback.";
+            return `For Year ${year}, ${semester} Semester, performance is inconsistent. Aim to have consistent positive feedback.`;
         }
     }
-
-    
 </script>
-
-
 
 <style>
     .card {
@@ -505,7 +551,7 @@ $headList = fetchHeadFacultyList($conn);
     }
 
     .btn {
-   height: 40px;
+        height: 40px;
         /* Adjust height as needed */
         line-height: 1.5;
         /* Vertically centers text */
