@@ -28,6 +28,30 @@ function fetchHeadFacultyList($conn)
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
+function fetchAllAcademicYears($conn)
+{
+    $stmt = $conn->query("SELECT academic_id, year, semester, status FROM academic_list");
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// Fetch the user's current academic year
+$academic_id = $_SESSION['user']['academic_id'];  // Assuming the user's academic_id is stored in session
+$facultyList = fetchFacultyList($conn, $academic_id);
+$headList = fetchHeadFacultyList($conn, $academic_id);
+
+// Fetch all academic years (including closed ones)
+$academicYearList = fetchAllAcademicYears($conn);
+
+// Fetch the selected academic year details
+$query_academic = 'SELECT year, semester, status FROM academic_list WHERE academic_id = :academic_id';
+$stmt_academic = $conn->prepare($query_academic);
+$stmt_academic->bindParam(':academic_id', $academic_id, PDO::PARAM_INT);
+$stmt_academic->execute();
+$academic = $stmt_academic->fetch(PDO::FETCH_ASSOC);
+
+$status_labels = [0 => 'Default (Not Started)', 1 => 'Ongoing', 2 => 'Closed'];
+$status_label = $status_labels[$academic['status']] ?? 'Unknown';
+
 // Fetch data
 $facultyList = fetchFacultyList($conn);
 $headList = fetchHeadFacultyList($conn);
@@ -201,6 +225,31 @@ $headList = fetchHeadFacultyList($conn);
                                     <select class="form-control form-control-sm" id="facultySelect" name="faculty_id">
                                         <option value="" selected disabled>Select Faculty</option>
                                         <!-- Options dynamically populated -->
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-3">
+                <div class="col-md-8 offset-md-2">
+                    <div class="card shadow-sm rounded">
+                        <div class="card-header text-center py-2">
+                            <h5 class="mb-0">Select Academic Year</h5>
+                        </div>
+                        <div class="card-body py-3">
+                            <form id="academicForm">
+                                <div class="form-group">
+                                    <label for="academicSelect" class="form-label">Academic Year:</label>
+                                    <select class="form-control form-control-sm" id="academicSelect" name="academic_id">
+                                        <option value="" selected disabled>Select Academic Year</option>
+                                        <?php foreach ($academicYearList as $academicYear): ?>
+                                            <option value="<?php echo $academicYear['academic_id']; ?>" <?php echo ($academic_id == $academicYear['academic_id']) ? 'selected' : ''; ?>>
+                                                <?php echo htmlspecialchars($academicYear['year'] . ' - ' . $academicYear['semester']); ?>
+                                            </option>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
                             </form>
@@ -403,6 +452,8 @@ $headList = fetchHeadFacultyList($conn);
             return "Performance is inconsistent. Aim to have consistent positive feedback.";
         }
     }
+
+    
 </script>
 
 
@@ -454,7 +505,7 @@ $headList = fetchHeadFacultyList($conn);
     }
 
     .btn {
-        height: 40px;
+   height: 40px;
         /* Adjust height as needed */
         line-height: 1.5;
         /* Vertically centers text */

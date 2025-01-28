@@ -19,6 +19,7 @@ include 'handlers/academic_handler.php';
                     </div>
                 </div>
                 <div class="row mb-3">
+                    
                     <div class="col-8 col-md-4 ms-auto mt-3 mr-3">
                         <input type="text" id="searchInput" class="form-control form-control-sm"
                             placeholder="Search Academic Year">
@@ -49,7 +50,7 @@ include 'handlers/academic_handler.php';
                                 <?php
                                 $i = 1;
                                 foreach ($academics as $row):
-                                    ?>
+                                ?>
                                     <tr>
                                         <th class="text-center"><?php echo $i++ ?></th>
                                         <td><b><?php echo $row['year'] ?></b></td>
@@ -109,9 +110,9 @@ include 'handlers/academic_handler.php';
 </div>
 
 <script>
-    $(document).ready(function () {
+    $(document).ready(function() {
 
-        $(document).on('submit', '.delete-form', function (e) {
+        $(document).on('submit', '.delete-form', function(e) {
             e.preventDefault();
             var form = this;
 
@@ -127,9 +128,9 @@ include 'handlers/academic_handler.php';
                 if (result.isConfirmed) {
                     $.ajax({
                         type: 'POST',
-                        url: 'academic_list.php',  // Adjust the URL as needed
+                        url: 'academic_list.php', // Adjust the URL as needed
                         data: $(form).serialize(),
-                        success: function () {
+                        success: function() {
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Deleted!',
@@ -140,7 +141,7 @@ include 'handlers/academic_handler.php';
                                 window.location.href = 'academic_list.php'; // Adjust the redirect URL if needed
                             });
                         },
-                        error: function () {
+                        error: function() {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Oops...',
@@ -154,17 +155,17 @@ include 'handlers/academic_handler.php';
     });
 </script>
 <script>
-    document.getElementById('searchInput').addEventListener('keyup', function () {
+    document.getElementById('searchInput').addEventListener('keyup', function() {
         var searchValue = this.value.toLowerCase();
         var rows = document.querySelectorAll('#list tbody tr');
         var noRecordsMessage = document.getElementById('noRecordsMessage');
         var matchesFound = false;
 
-        rows.forEach(function (row) {
+        rows.forEach(function(row) {
             var cells = row.querySelectorAll('td');
             var matches = false;
 
-            cells.forEach(function (cell) {
+            cells.forEach(function(cell) {
                 if (cell.textContent.toLowerCase().includes(searchValue)) {
                     matches = true;
                 }
@@ -198,16 +199,16 @@ include 'handlers/academic_handler.php';
     }
 </style>
 <script>
-    $(document).on('click', '.update_status', function () {
+    $(document).on('click', '.update_status', function() {
         var academicId = $(this).data('id');
         var newStatus = $(this).data('status');
         var statusText = newStatus === 1 ? 'Start Evaluation' : 'Close Evaluation';
 
         Swal.fire({
             title: statusText + '?',
-            text: newStatus === 1
-                ? 'This will start the evaluation period and assign the current semester.'
-                : 'This will close the evaluation period. Data will remain stored.',
+            text: newStatus === 1 ?
+                'This will start the evaluation period and assign the current semester.' :
+                'This will close the evaluation period. Data will remain stored.',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#28a745',
@@ -218,8 +219,12 @@ include 'handlers/academic_handler.php';
                 $.ajax({
                     type: 'POST',
                     url: 'academic_list.php',
-                    data: { update_status: true, academic_id: academicId, status: newStatus },
-                    success: function () {
+                    data: {
+                        update_status: true,
+                        academic_id: academicId,
+                        status: newStatus
+                    },
+                    success: function() {
                         Swal.fire({
                             icon: 'success',
                             title: 'Status Updated!',
@@ -230,7 +235,7 @@ include 'handlers/academic_handler.php';
                             window.location.reload();
                         });
                     },
-                    error: function () {
+                    error: function() {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error!',
