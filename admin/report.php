@@ -349,7 +349,17 @@ include "handlers/report_handler.php";
         table.innerHTML = `
             <thead>
                 <tr class="bg-gradient-secondary">
-                    <th class="p-1"><b>Question</b></th>
+                   <th class="p-1">
+                        <b>
+                            <?php
+                            if (is_array($criteriaList) && !empty($criteriaList)) {
+                                echo implode(', ', array_column($criteriaList, 'criteria'));
+                            } else {
+                                echo 'Question';
+                            }
+                            ?>
+                        </b>
+                    </th>
                     <th width="5%" class="text-center">1</th>
                     <th width="5%" class="text-center">2</th>
                     <th width="5%" class="text-center">3</th>

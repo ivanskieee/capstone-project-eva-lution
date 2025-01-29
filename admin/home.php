@@ -50,7 +50,12 @@ $stmt_academic->execute();
 $academic = $stmt_academic->fetch(PDO::FETCH_ASSOC);
 
 $status_labels = [0 => 'Default (Not Started)', 1 => 'Ongoing', 2 => 'Closed'];
-$status_label = $status_labels[$academic['status']] ?? 'Unknown';
+// $status_label = $status_labels[$academic['status']] ?? 'Unknown';
+if (is_array($academic) && isset($academic['status']) && isset($status_labels[$academic['status']])) {
+    $status_label = $status_labels[$academic['status']];
+} else {
+    $status_label = ''; // Empty, so nothing is shown
+}
 
 // Fetch data
 $facultyList = fetchFacultyList($conn);

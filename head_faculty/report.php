@@ -314,19 +314,17 @@ $stmt->execute(['department' => $userDepartment]);
     table.innerHTML = `
      <thead>
         <tr class="bg-gradient-secondary">
-            <th class="p-1">
-                <b>
-                    <?php
-                    // Check if there are questions and extract the criteria_id
-                    if (is_array($criteriaList) && !empty($criteriaList)) {
-                        // Assuming all questions share the same criteria_id
-                        echo htmlspecialchars($criteriaList[0]['criteria']);
-                    } else {
-                        echo 'Question';
-                    }
-                    ?>
-                </b>
-            </th>
+             <th class="p-1">
+                        <b>
+                            <?php
+                            if (is_array($criteriaList) && !empty($criteriaList)) {
+                                echo implode(', ', array_column($criteriaList, 'criteria'));
+                            } else {
+                                echo 'Question';
+                            }
+                            ?>
+                        </b>
+              </th>
             <th width="5%" class="text-center">1</th>
             <th width="5%" class="text-center">2</th>
             <th width="5%" class="text-center">3</th>
