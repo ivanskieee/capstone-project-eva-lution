@@ -1,5 +1,6 @@
 <?php
 include 'handlers/eval_handler.php';
+
 $query = "SELECT LOWER(subject) AS subject FROM student_list WHERE student_id = :student_id";
 $stmt = $conn->prepare($query);
 $stmt->execute(['student_id' => $student_id]);

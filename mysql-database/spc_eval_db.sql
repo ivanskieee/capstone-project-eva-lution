@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 28, 2025 at 03:52 AM
+-- Generation Time: Jan 29, 2025 at 06:19 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -42,8 +42,8 @@ CREATE TABLE `academic_list` (
 --
 
 INSERT INTO `academic_list` (`academic_id`, `year`, `semester`, `is_default`, `status`, `start_date`, `end_date`) VALUES
-(17, '2025-2026', 1, 1, 1, '2025-01-26', '2026-01-26'),
-(18, '2027-2028', 1, 0, 0, NULL, NULL);
+(17, '2025-2026', 1, 0, 2, NULL, NULL),
+(18, '2027-2028', 1, 1, 1, '2025-01-28', '2026-01-28');
 
 -- --------------------------------------------------------
 
@@ -69,7 +69,8 @@ INSERT INTO `archives_student_list` (`id`, `student_id`, `email`, `archive_reaso
 (4, 98, 'beia@siomaipenge.com', '', '2025-01-26 15:36:46'),
 (5, 99, 'beia@siomaipenge.com', '', '2025-01-26 15:36:46'),
 (6, 100, 'brilataivan86@gmail.com', 'Academic period closed', '2025-01-26 15:44:13'),
-(7, 101, 'brilataivan86@gmail.com', 'Academic period closed', '2025-01-26 15:50:05');
+(7, 101, 'brilataivan86@gmail.com', 'Academic period closed', '2025-01-26 15:50:05'),
+(8, 102, 'brilataivan86@gmail.com', 'Academic period closed', '2025-01-29 00:12:55');
 
 -- --------------------------------------------------------
 
@@ -92,7 +93,8 @@ CREATE TABLE `audit_log` (
 
 INSERT INTO `audit_log` (`id`, `action_type`, `table_name`, `academic_id`, `user_id`, `date`) VALUES
 (1, '0', '0', 17, 5, '2025-01-26 15:44:13'),
-(2, 'archive', 'student_list', 17, 5, '2025-01-26 15:50:05');
+(2, 'archive', 'student_list', 17, 5, '2025-01-26 15:50:05'),
+(3, 'archive', 'student_list', 17, 5, '2025-01-29 00:12:55');
 
 -- --------------------------------------------------------
 
@@ -154,10 +156,10 @@ CREATE TABLE `college_faculty_list` (
 --
 
 INSERT INTO `college_faculty_list` (`faculty_id`, `school_id`, `firstname`, `lastname`, `subject`, `department`, `email`, `password`, `avatar`, `academic_id`, `account_status`, `date_created`) VALUES
-(62, '0001', 'jorge', 'resurreccion', 'cc101', 'ccs', 'jorge@res.com', '$2y$10$i8Xsn.HQBClMwYWZzppgFu2HiJtqYLEOZOysezHFgvzkbPWQTKiDm', '', 17, 0, '2025-01-15 14:06:44'),
-(63, '0002', 'joann', 'ganda', 'cc101, cc102', 'ccs', 'joann@ganda.com', '$2y$10$xPY1Is8BtL8RJ4SXsx.qmuarDtKcEZLuZF0CXqiAz9r/OQ2ebEHvG', '', 17, 0, '2025-01-15 19:22:04'),
-(64, '0003', 'kyle', 'ronyo', 'cc108', 'educ', 'kyle@ron.com', '$2y$10$Vz0LYRqq5/A3OY256zX5EuFuncP2X18EIRulwbXfIvk6LvTLn09b6', '', 17, 0, '2025-01-15 21:59:20'),
-(65, '0007', 'nizzle', 'brinas', 'cc108', 'educ', 'niz@brin.com', '$2y$10$acW2mAdoT5Sv9N85iqHiWes841PnNah80H5j04RxY5WDZP3.OF4sK', '', 17, 0, '2025-01-25 13:46:15');
+(62, '0001', 'jorge', 'resurreccion', 'cc101', 'ccs', 'jorge@res.com', '$2y$10$i8Xsn.HQBClMwYWZzppgFu2HiJtqYLEOZOysezHFgvzkbPWQTKiDm', '', 18, 0, '2025-01-15 14:06:44'),
+(63, '0002', 'joann', 'ganda', 'cc101, cc102', 'ccs', 'joann@ganda.com', '$2y$10$xPY1Is8BtL8RJ4SXsx.qmuarDtKcEZLuZF0CXqiAz9r/OQ2ebEHvG', '', 18, 0, '2025-01-15 19:22:04'),
+(64, '0003', 'kyle', 'ronyo', 'cc108', 'educ', 'kyle@ron.com', '$2y$10$Vz0LYRqq5/A3OY256zX5EuFuncP2X18EIRulwbXfIvk6LvTLn09b6', '', 18, 0, '2025-01-15 21:59:20'),
+(65, '0007', 'nizzle', 'brinas', 'cc108', 'educ', 'niz@brin.com', '$2y$10$acW2mAdoT5Sv9N85iqHiWes841PnNah80H5j04RxY5WDZP3.OF4sK', '', 18, 0, '2025-01-25 13:46:15');
 
 -- --------------------------------------------------------
 
@@ -260,7 +262,31 @@ INSERT INTO `evaluation_answers` (`evaluation_id`, `faculty_id`, `student_id`, `
 (409, 63, 101, 0, 0, 226, 3, 17, ''),
 (410, 63, 101, 0, 0, 227, 3, 17, ''),
 (411, 63, 101, 0, 0, 228, 3, 17, ''),
-(412, 63, 101, 0, 0, 230, NULL, 17, 'galing\r\n');
+(412, 63, 101, 0, 0, 230, NULL, 17, 'galing\r\n'),
+(461, 62, 102, 0, 0, 224, 4, 17, ''),
+(462, 62, 102, 0, 0, 225, 4, 17, ''),
+(463, 62, 102, 0, 0, 226, 3, 17, ''),
+(464, 62, 102, 0, 0, 227, 3, 17, ''),
+(465, 62, 102, 0, 0, 228, 3, 17, ''),
+(466, 62, 102, 0, 0, 230, NULL, 17, 'asdasasddaa'),
+(467, 63, 102, 0, 0, 224, 2, 17, ''),
+(468, 63, 102, 0, 0, 225, 2, 17, ''),
+(469, 63, 102, 0, 0, 226, 2, 17, ''),
+(470, 63, 102, 0, 0, 227, 2, 17, ''),
+(471, 63, 102, 0, 0, 228, 2, 17, ''),
+(472, 63, 102, 0, 0, 230, NULL, 17, 'asdasdadasd'),
+(473, 62, 103, 0, 0, 224, 1, 18, ''),
+(474, 62, 103, 0, 0, 225, 1, 18, ''),
+(475, 62, 103, 0, 0, 226, 1, 18, ''),
+(476, 62, 103, 0, 0, 227, 1, 18, ''),
+(477, 62, 103, 0, 0, 228, 1, 18, ''),
+(478, 62, 103, 0, 0, 230, NULL, 18, 'bawi ka'),
+(479, 63, 103, 0, 0, 224, 4, 18, ''),
+(480, 63, 103, 0, 0, 225, 4, 18, ''),
+(481, 63, 103, 0, 0, 226, 4, 18, ''),
+(482, 63, 103, 0, 0, 227, 4, 18, ''),
+(483, 63, 103, 0, 0, 228, 4, 18, ''),
+(484, 63, 103, 0, 0, 230, NULL, 18, 'good very job');
 
 -- --------------------------------------------------------
 
@@ -289,7 +315,9 @@ INSERT INTO `evaluation_answers_dean_faculty` (`evaluation_id`, `faculty_id`, `h
 (5, 62, 0, 18, 5, 2, 17, ''),
 (6, 63, 0, 18, 5, 4, 17, ''),
 (7, 62, 0, 18, 5, 1, 18, ''),
-(8, 63, 0, 18, 5, 2, 18, '');
+(8, 63, 0, 18, 5, 2, 18, ''),
+(9, 64, 0, 19, 5, 1, 18, ''),
+(10, 65, 0, 19, 5, 3, 18, '');
 
 -- --------------------------------------------------------
 
@@ -316,7 +344,8 @@ INSERT INTO `evaluation_answers_faculty_dean` (`evaluation_id`, `faculty_id`, `h
 (1, 19, 0, 64, 5, 4, 17, ''),
 (2, 18, 0, 62, 5, 4, 17, ''),
 (3, 18, 0, 63, 5, 4, 17, ''),
-(4, 18, 0, 62, 5, 4, 18, '');
+(4, 18, 0, 62, 5, 4, 18, ''),
+(5, 19, 0, 65, 5, 1, 18, '');
 
 -- --------------------------------------------------------
 
@@ -345,7 +374,9 @@ INSERT INTO `evaluation_answers_faculty_faculty` (`evaluation_id`, `faculty_id`,
 (10, 63, 0, 62, 11, 4, 17, ''),
 (11, 63, 0, 62, 12, 4, 17, ''),
 (12, 63, 0, 62, 11, 1, 18, ''),
-(13, 63, 0, 62, 12, 1, 18, '');
+(13, 63, 0, 62, 12, 1, 18, ''),
+(14, 64, 0, 65, 11, 4, 18, ''),
+(15, 64, 0, 65, 12, 3, 18, '');
 
 -- --------------------------------------------------------
 
@@ -396,8 +427,8 @@ CREATE TABLE `head_faculty_list` (
 --
 
 INSERT INTO `head_faculty_list` (`head_id`, `school_id`, `firstname`, `lastname`, `email`, `department`, `password`, `avatar`, `academic_id`, `account_status`, `date_created`) VALUES
-(18, '0001', 'jayson', 'guia', 'jay@jay.com', 'ccs', '$2y$10$jI8wOFskjwH.CBsOLsukg.mZT6jEGeQKCBS5Kr/2.8v9xNGGvlJaS', '', 17, 0, '2025-01-15 21:58:10'),
-(19, '0002', 'nizzle', 'brinas', 'nizzle@brinas.com', 'educ', '$2y$10$tZrBNHrqyGfzj0HrvoIg0.oe.r7z9YDZvPxNUo4B8d9C2KW8AISda', '', 17, 0, '2025-01-15 23:10:32');
+(18, '0001', 'jayson', 'guia', 'jay@jay.com', 'ccs', '$2y$10$jI8wOFskjwH.CBsOLsukg.mZT6jEGeQKCBS5Kr/2.8v9xNGGvlJaS', '', 18, 0, '2025-01-15 21:58:10'),
+(19, '0002', 'nizzle', 'brinas', 'nizzle@brinas.com', 'educ', '$2y$10$tZrBNHrqyGfzj0HrvoIg0.oe.r7z9YDZvPxNUo4B8d9C2KW8AISda', '', 18, 0, '2025-01-15 23:10:32');
 
 -- --------------------------------------------------------
 
@@ -412,6 +443,14 @@ CREATE TABLE `password_resets` (
   `expires_at` datetime NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `password_resets`
+--
+
+INSERT INTO `password_resets` (`id`, `email`, `token`, `expires_at`, `created_at`) VALUES
+(269, '', 'd94b839978d68a7590b7c900ad3ba601', '2025-01-29 09:50:23', '2025-01-28 08:50:23'),
+(270, '', '1dac52f0c81ce6d616f2b09e478f0ac0', '2025-01-29 17:19:00', '2025-01-28 16:19:00');
 
 -- --------------------------------------------------------
 
@@ -537,13 +576,6 @@ CREATE TABLE `secondary_faculty_list` (
   `date_created` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `secondary_faculty_list`
---
-
-INSERT INTO `secondary_faculty_list` (`secondary_id`, `school_id`, `firstname`, `lastname`, `email`, `password`, `avatar`, `date_created`) VALUES
-(1, '0909', 'test', 'secondary', 'tests@secondary.com', '$2y$10$ajekoRRJ.9uDYvqdd1O1ZeK2vdHev4YAiHX.6gqggtfCWCMzgN1Wa', '', '2024-10-28 23:48:23');
-
 -- --------------------------------------------------------
 
 --
@@ -552,6 +584,7 @@ INSERT INTO `secondary_faculty_list` (`secondary_id`, `school_id`, `firstname`, 
 
 CREATE TABLE `self_faculty_eval` (
   `faculty_id` int(11) NOT NULL,
+  `academic_id` int(11) NOT NULL,
   `skills` int(11) NOT NULL,
   `performance` int(11) NOT NULL,
   `average_score` int(11) NOT NULL,
@@ -564,8 +597,9 @@ CREATE TABLE `self_faculty_eval` (
 -- Dumping data for table `self_faculty_eval`
 --
 
-INSERT INTO `self_faculty_eval` (`faculty_id`, `skills`, `performance`, `average_score`, `feedback`, `comments`, `id`) VALUES
-(62, 4, 3, 4, 'Good performance, but there\'s room for improvement.', 'good job!', 7);
+INSERT INTO `self_faculty_eval` (`faculty_id`, `academic_id`, `skills`, `performance`, `average_score`, `feedback`, `comments`, `id`) VALUES
+(65, 17, 4, 4, 4, 'Excellent performance!', 'goods', 9),
+(65, 18, 1, 1, 1, 'Needs significant improvement.', 'asdasdasdsadas', 10);
 
 -- --------------------------------------------------------
 
@@ -575,6 +609,7 @@ INSERT INTO `self_faculty_eval` (`faculty_id`, `skills`, `performance`, `average
 
 CREATE TABLE `self_head_eval` (
   `faculty_id` int(11) NOT NULL,
+  `academic_id` int(11) NOT NULL,
   `skills` int(11) NOT NULL,
   `performance` int(11) NOT NULL,
   `average_score` int(11) NOT NULL,
@@ -587,8 +622,10 @@ CREATE TABLE `self_head_eval` (
 -- Dumping data for table `self_head_eval`
 --
 
-INSERT INTO `self_head_eval` (`faculty_id`, `skills`, `performance`, `average_score`, `feedback`, `comments`, `id`) VALUES
-(19, 4, 4, 4, 'Excellent performance!', 'good', 6);
+INSERT INTO `self_head_eval` (`faculty_id`, `academic_id`, `skills`, `performance`, `average_score`, `feedback`, `comments`, `id`) VALUES
+(19, 0, 4, 4, 4, 'Excellent performance!', 'good', 6),
+(18, 17, 4, 4, 4, 'Excellent performance!', 'good job\r\n', 7),
+(18, 17, 1, 1, 1, 'Needs significant improvement.', 'asdasadasd', 8);
 
 -- --------------------------------------------------------
 
@@ -610,6 +647,13 @@ CREATE TABLE `student_list` (
   `date_created` datetime NOT NULL DEFAULT current_timestamp(),
   `account_status` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `student_list`
+--
+
+INSERT INTO `student_list` (`student_id`, `school_id`, `firstname`, `lastname`, `email`, `password`, `subject`, `section`, `avatar`, `academic_id`, `date_created`, `account_status`) VALUES
+(103, '1001', 'van', 'bri', 'brilataivan86@gmail.com', '$2y$10$6MeZAW9FMLa71CfFH2V5JO62sU2QFgYLq4zSlXj6ACn1MDzSxYKmC', 'cc101', 'bsit', '', 18, '2025-01-29 00:19:47', 1);
 
 -- --------------------------------------------------------
 
@@ -654,7 +698,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `firstname`, `lastname`, `email`, `password`, `avatar`, `academic_id`, `date_created`) VALUES
-(5, 'test', 'admin', 'test@admin.com', '$2y$10$J6OgDIT6/U/FNMAqBki6YeWUEX7V3dzmUUaZ8zniF151cuQ.HhIHq', 'admin.jpg', 17, '2024-09-27 13:13:20');
+(5, 'test', 'admin', 'test@admin.com', '$2y$10$J6OgDIT6/U/FNMAqBki6YeWUEX7V3dzmUUaZ8zniF151cuQ.HhIHq', 'admin.jpg', 18, '2024-09-27 13:13:20');
 
 --
 -- Indexes for dumped tables
@@ -824,13 +868,13 @@ ALTER TABLE `academic_list`
 -- AUTO_INCREMENT for table `archives_student_list`
 --
 ALTER TABLE `archives_student_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `audit_log`
 --
 ALTER TABLE `audit_log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `class`
@@ -860,25 +904,25 @@ ALTER TABLE `criteria_list`
 -- AUTO_INCREMENT for table `evaluation_answers`
 --
 ALTER TABLE `evaluation_answers`
-  MODIFY `evaluation_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=413;
+  MODIFY `evaluation_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=485;
 
 --
 -- AUTO_INCREMENT for table `evaluation_answers_dean_faculty`
 --
 ALTER TABLE `evaluation_answers_dean_faculty`
-  MODIFY `evaluation_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `evaluation_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `evaluation_answers_faculty_dean`
 --
 ALTER TABLE `evaluation_answers_faculty_dean`
-  MODIFY `evaluation_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `evaluation_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `evaluation_answers_faculty_faculty`
 --
 ALTER TABLE `evaluation_answers_faculty_faculty`
-  MODIFY `evaluation_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `evaluation_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `evaluation_list`
@@ -896,7 +940,7 @@ ALTER TABLE `head_faculty_list`
 -- AUTO_INCREMENT for table `password_resets`
 --
 ALTER TABLE `password_resets`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=269;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=272;
 
 --
 -- AUTO_INCREMENT for table `pending_students`
@@ -938,19 +982,19 @@ ALTER TABLE `secondary_faculty_list`
 -- AUTO_INCREMENT for table `self_faculty_eval`
 --
 ALTER TABLE `self_faculty_eval`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `self_head_eval`
 --
 ALTER TABLE `self_head_eval`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `student_list`
 --
 ALTER TABLE `student_list`
-  MODIFY `student_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
+  MODIFY `student_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=104;
 
 --
 -- AUTO_INCREMENT for table `subject_list`

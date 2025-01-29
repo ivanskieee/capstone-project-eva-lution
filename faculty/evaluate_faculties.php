@@ -1,5 +1,17 @@
 <?php
 include 'handlers/report_handler_faculty_faculty.php';
+
+// Fetch the department of the logged-in faculty
+$query = "SELECT LOWER(department) AS department FROM college_faculty_list WHERE faculty_id = :faculty_id";
+$stmt = $conn->prepare($query);
+$stmt->execute(['faculty_id' => $faculty_id]);
+$faculty = $stmt->fetch(PDO::FETCH_ASSOC);
+
+$departments = $faculty['department'] ?? '';
+
+// Normalize the department string for use in URLs
+$normalizedDepartments = array_map('trim', explode(',', strtolower($departments)));
+$normalizedDepartmentsString = implode(',', $normalizedDepartments);
 ?>
 
 <nav class="main-header">
@@ -12,7 +24,7 @@ include 'handlers/report_handler_faculty_faculty.php';
 					$departmentArray = explode(',', strtolower($departments));
 
 					if (empty($departments)) {
-						echo '<div class="alert alert-success">Successfully evaluated the faculty member.</div>';
+						echo '<div class="alert alert-success" id="success-message">Successfully evaluated the faculty member.</div>';
 					} else {
 						$displayedFaculty = [];
 
@@ -47,21 +59,21 @@ include 'handlers/report_handler_faculty_faculty.php';
 										  )
 									');
 									$evaluationStmt->execute([
-										$row['fid'], 
+										$row['fid'],
 										$_SESSION['user']['faculty_id']
 									]);
 									$evaluationExists = $evaluationStmt->fetchColumn();
-							
+
 									// Skip faculty members already evaluated by the logged-in faculty for the current academic_id
 									if ($evaluationExists > 0) {
 										continue;
 									}
-							
+
 									// Prevent duplicates
 									if (in_array($row['fid'], $displayedFaculty)) {
 										continue;
 									}
-							
+
 									$displayedFaculty[] = $row['fid'];
 									$is_active = (isset($_GET['rid']) && $_GET['rid'] == $row['fid']) ? 'list-group-item-success' : '';
 									?>
@@ -212,5 +224,19 @@ include 'handlers/report_handler_faculty_faculty.php';
 				}
 			});
 		});
+	});
+</script>
+<script>
+	$(document).ready(function () {
+		// Check if the success message is visible
+		if ($('#success-message').length) {
+			// Fade the message out after 1 second
+			setTimeout(function () {
+				$('#success-message').fadeOut('slow', function () {
+					// Use the normalized subjects string in the URL
+					window.location.href = 'evaluate_faculties.php?departments=<?php echo urlencode($normalizedDepartmentsString); ?>';
+				});
+			}, 1000); // 1000 ms = 1 second
+		}
 	});
 </script>

@@ -1,5 +1,16 @@
 <?php
 include 'handlers/report_handler.php';
+
+$query = "SELECT LOWER(department) AS department FROM head_faculty_list WHERE head_id = :head_id";
+$stmt = $conn->prepare($query);
+$stmt->execute(['head_id' => $faculty_id]);
+$faculty = $stmt->fetch(PDO::FETCH_ASSOC);
+
+$departments = $faculty['department'] ?? '';
+
+// Normalize the department string for use in URLs
+$normalizedDepartments = array_map('trim', explode(',', strtolower($departments)));
+$normalizedDepartmentsString = implode(',', $normalizedDepartments);
 ?>
 
 <nav class="main-header">
@@ -12,7 +23,7 @@ include 'handlers/report_handler.php';
                     $departmentArray = explode(',', strtolower($departments));
 
                     if (empty($departments)) {
-                        echo '<div class="alert alert-success">Successfully evaluated the faculty member.</div>';
+                        echo '<div class="alert alert-success" id="success-message">Successfully evaluated the faculty member.</div>';
                     } else {
                         $displayedFaculties = [];
 
@@ -101,7 +112,7 @@ include 'handlers/report_handler.php';
                         <input type="hidden" name="evaluation_id"
                             value="<?= htmlspecialchars($evaluation_id ?? '', ENT_QUOTES, 'UTF-8') ?>">
                         <input type="hidden" name="head_id"
-							value="<?= htmlspecialchars($faculty_id, ENT_QUOTES, 'UTF-8') ?>">
+                            value="<?= htmlspecialchars($faculty_id, ENT_QUOTES, 'UTF-8') ?>">
                         <div class="clear-fix mt-2"></div>
 
                         <?php foreach ($criteriaList as $row): ?>
@@ -209,4 +220,18 @@ include 'handlers/report_handler.php';
             });
         });
     });
+</script>
+<script>
+	$(document).ready(function () {
+		// Check if the success message is visible
+		if ($('#success-message').length) {
+			// Fade the message out after 1 second
+			setTimeout(function () {
+				$('#success-message').fadeOut('slow', function () {
+					// Use the normalized subjects string in the URL
+					window.location.href = 'evaluate_faculty.php?departments=<?php echo urlencode($normalizedDepartmentsString); ?>';
+				});
+			}, 1000); // 1000 ms = 1 second
+		}
+	});
 </script>
