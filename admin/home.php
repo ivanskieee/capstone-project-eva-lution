@@ -86,7 +86,7 @@ $headList = fetchHeadFacultyList($conn);
                                 $stmt_user->bindParam(':user_id', $user_id, PDO::PARAM_INT);
                                 $stmt_user->execute();
                                 $user = $stmt_user->fetch(PDO::FETCH_ASSOC);
-
+                                
                                 if ($user && $user['academic_id']) {
                                     $academic_id = $user['academic_id'];
 
@@ -109,15 +109,15 @@ $headList = fetchHeadFacultyList($conn);
                                         // Display the academic year, semester, and status in the callout
                                         echo '
                                         <div class="callout callout-info" style="border-left: 5px solid rgb(51, 128, 64);">
-                                            <h5><b>Academic Year:</b> ' . htmlspecialchars($academic['year']) . ' <b>Semester:</b> ' . htmlspecialchars($academic['semester']) . '</h5>
+                                        <h5><b>Academic Year:</b> ' . htmlspecialchars($academic['year']) . ' <b>Semester:</b> ' . htmlspecialchars($academic['semester']) . '</h5>
                                             <h6><b>Evaluation Status:</b> ' . htmlspecialchars($status_label) . '</h6>
-                                        </div>';
+                                            </div>';
                                     } else {
                                         // No academic data found for the user's academic_id
                                         echo '
                                         <div class="callout callout-warning" style="border-left: 5px solid orange;">
-                                            <h5><b>No Academic Year Data</b></h5>
-                                            <h6>The user is not associated with an active academic year or semester.</h6>
+                                        <h5><b>No Academic Year Data</b></h5>
+                                        <h6>The user is not associated with an active academic year or semester.</h6>
                                         </div>';
                                     }
                                 } else {
@@ -135,29 +135,33 @@ $headList = fetchHeadFacultyList($conn);
                 </div>
             </div>
 
-            <div class="row mt-3">
+            <div class="row mt-4">
                 <?php
                 $dashboardData = [
-                    ["Total Faculties", "college_faculty_list", "fa-user-friends"],
-                    ["Total Students", "student_list", "ion-ios-people-outline"],
-                    ["Total Users", "users", "fa-users"],
-                    ["Total Head Faculties", "head_faculty_list", "fa-users"],
+                    ["Total Faculties", "college_faculty_list", "fa-user-friends", "tertiary_faculty_list.php"],
+                    ["Total Students", "student_list", "ion-ios-people-outline", "student_list.php"],
+                    ["Total Users", "users", "fa-users", "user_list.php"],
+                    ["Total Head Faculties", "head_faculty_list", "fa-users", "head_faculty_list.php"],
                 ];
-
+                
                 foreach ($dashboardData as $data) {
                     $stmt = $conn->query("SELECT * FROM {$data[1]}");
                     $total = $stmt->rowCount();
+                    $listPage = $data[3]; // Correct file name mapping
+                    
                     echo "
-                    <div class='col-12 col-sm-6 col-md-4 mb-3'>
-                        <div class='small-box bg-white shadow-sm rounded border'>
-                            <div class='inner'>
-                                <h3>{$total}</h3>
-                                <p>{$data[0]}</p>
-                            </div>
-                            <div class='icon'>
-                                <i class='fa {$data[2]}'></i>
-                            </div>
-                        </div>
+                    <div class='col-12 col-sm-6 col-md-3 mb-3'> 
+                    <a href='{$listPage}' class='text-decoration-none'>
+                    <div class='small-box bg-white shadow-sm rounded border p-4 text-center hover-effect'>
+                    <div class='inner'>
+                    <h3>{$total}</h3>
+                    <p class='mb-0'>{$data[0]}</p>
+                    </div>
+                    <div class='icon'>
+                    <i class='fa {$data[2]} fa-3x'></i>
+                    </div>
+                    </div>
+                        </a>
                     </div>";
                 }
                 ?>
@@ -174,7 +178,7 @@ $headList = fetchHeadFacultyList($conn);
                                 <!-- First Row of Buttons -->
                                 <div class="col-md-4 mb-2">
                                     <button type="button" class="btn btn-outline-success w-100" id="facultyButton"
-                                        data-category="faculty">
+                                    data-category="faculty">
                                         Student to Faculty
                                     </button>
                                 </div>
@@ -195,13 +199,13 @@ $headList = fetchHeadFacultyList($conn);
                                 <!-- Second Row of Buttons -->
                                 <div class="col-md-4 mb-2">
                                     <button type="button" class="btn btn-outline-success w-100"
-                                        id="FacultytoFacultyButton" data-category="faculty-to-faculty">
+                                    id="FacultytoFacultyButton" data-category="faculty-to-faculty">
                                         Faculty to Faculty
                                     </button>
                                 </div>
                                 <div class="col-md-4 mb-2">
                                     <button type="button" class="btn btn-outline-success w-100" id="FacultytoHeadButton"
-                                        data-category="faculty-to-head">
+                                    data-category="faculty-to-head">
                                         Faculty to Head
                                     </button>
                                 </div>
@@ -296,18 +300,18 @@ $headList = fetchHeadFacultyList($conn);
     const facultyList = <?php echo json_encode($facultyList); ?>;
     const headList = <?php echo json_encode($headList); ?>;
     const academicList = <?php echo json_encode($academicYearList); ?>; // Example: [{ academic_id: 1, year: "2023", semester: "First" }]
-
+    
     const categoryTitle = document.getElementById('categoryTitle');
     const facultyLabel = document.getElementById('facultyLabel');
     const facultySelect = document.getElementById('facultySelect');
     const facultyButtons = document.querySelectorAll('[data-category]');
     const academicSelect = document.getElementById('academicSelect');
     const feedbackElement = document.getElementById('performanceFeedback'); // Element to display feedback
-
+    
     // Populate dropdown based on category
     function populateDropdown(category) {
         facultySelect.innerHTML = '<option value="" selected disabled>Select Faculty</option>';
-
+        
         if (category === 'faculty' || category === 'self-faculty') {
             facultyLabel.textContent = 'Faculty:';
             categoryTitle.textContent = category === 'faculty' ? 'Select Faculty to Monitor' : 'Select Self Faculty to Monitor';
@@ -320,7 +324,7 @@ $headList = fetchHeadFacultyList($conn);
         } else if (category === 'self-head-faculty' || category === 'faculty-to-head') {
             facultyLabel.textContent = 'Head:';
             categoryTitle.textContent = category === 'self-head-faculty'
-                ? 'Select Self Head Faculty to Monitor'
+            ? 'Select Self Head Faculty to Monitor'
                 : 'Select Head for Faculty to Head Evaluation';
             headList.forEach(head => {
                 const option = document.createElement('option');
@@ -339,7 +343,7 @@ $headList = fetchHeadFacultyList($conn);
             });
         }
     }
-
+    
     facultyButtons.forEach(button => {
         button.addEventListener('click', function () {
             facultyButtons.forEach(btn => btn.classList.remove('active'));
@@ -348,18 +352,18 @@ $headList = fetchHeadFacultyList($conn);
             populateDropdown(category);
         });
     });
-
+    
     populateDropdown('faculty');
-
+    
     // Populate academicSelect with year and semester
-
+    
     const ctx = document.getElementById('facultyLineChart').getContext('2d');
 
     // Create gradient background
     let gradient = ctx.createLinearGradient(0, 0, 0, 400);
     gradient.addColorStop(0, 'rgba(51, 128, 64, 0.5)'); // Green at the top
     gradient.addColorStop(1, 'rgba(255, 0, 128, 0.3)'); // Pink at the bottom
-
+    
     const lineChart = new Chart(ctx, {
         type: 'line',
         data: {
@@ -433,14 +437,14 @@ $headList = fetchHeadFacultyList($conn);
         const facultyId = facultySelect.value;
         const academicId = academicSelect.value;
         const activeCategory = document.querySelector('[data-category].active')?.getAttribute('data-category');
-
+        
         if (facultyId && academicId) {
             fetch(`fetch_faculty_data.php?faculty_id=${facultyId}&category=${activeCategory}&academic_id=${academicId}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        alert(data.error);
-                        return;
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                    return;
                     }
                     updateLineChart(data.labels, data.dataset, academicId);
                 })
@@ -455,21 +459,21 @@ $headList = fetchHeadFacultyList($conn);
         lineChart.data.labels = labels;
         lineChart.data.datasets[0].data = dataset;
         lineChart.update();
-
+        
         // Skip feedback if there are no results
         if (!dataset || dataset.length === 0) {
             feedbackElement.textContent = ""; // Clear feedback
             feedbackElement.classList.remove("text-success", "text-danger"); // Reset styling
             return;
         }
-
+        
         // Analyze performance based on academic year and dataset
         const academicDetails = academicList.find(a => a.academic_id == academicId);
         const performanceFeedback = analyzePerformance(dataset, academicDetails);
-
+        
         // Display feedback
         feedbackElement.textContent = performanceFeedback;
-
+        
         // Change the feedback color based on the analysis
         if (performanceFeedback.includes("inconsistent")) {
             feedbackElement.classList.remove("text-success");
@@ -479,12 +483,12 @@ $headList = fetchHeadFacultyList($conn);
             feedbackElement.classList.add("text-success"); // Green for success
         }
     }
-
+    
     function analyzePerformance(ratings, academicDetails) {
         let improvement = 0;
         let consistency = 0;
         let needImprovement = 0;
-
+        
         // Analyze ratings for the selected academic year
         ratings.forEach(rating => {
             if (rating >= 3) {
@@ -498,7 +502,7 @@ $headList = fetchHeadFacultyList($conn);
 
         const year = academicDetails?.year || "Unknown Year";
         const semester = academicDetails?.semester || "Unknown Semester";
-
+        
         if (improvement > needImprovement) {
             return `For Year ${year}, ${semester} Semester, performance is improving and consistent. Keep up the good work!`;
         } else if (needImprovement > improvement) {
@@ -519,11 +523,11 @@ $headList = fetchHeadFacultyList($conn);
         background: rgb(51, 128, 64);
         color: white;
     }
-
+    
     .card-header h5 {
         font-size: 1rem;
     }
-
+    
     #facultySelect {
         border: 1px solid rgb(51, 128, 64);
         border-radius: 5px;
@@ -538,30 +542,44 @@ $headList = fetchHeadFacultyList($conn);
         font-size: 0.9rem;
         font-weight: 500;
     }
-
+    
     .content .main-header {
         max-height: 79vh;
         overflow-y: auto;
         scroll-behavior: smooth;
     }
-
+    
     .card-body {
         padding: 0.75rem;
     }
-
+    
     .form-control-sm {
         height: calc(1.5em + 0.5rem + 2px);
         padding: 0.25rem 0.5rem;
         font-size: 0.875rem;
     }
-
+    
     .btn {
         height: 40px;
         /* Adjust height as needed */
         line-height: 1.5;
         /* Vertically centers text */
     }
+    .small-box {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s;
+    }
+    
+    .small-box:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+    
+    .hover-effect:hover {
+        background-color: #f8f9fa;
+        
+    }
 </style>
+
 
 
 <?php include 'footer.php'; ?>
