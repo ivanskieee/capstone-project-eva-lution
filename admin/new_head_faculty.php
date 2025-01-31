@@ -10,7 +10,7 @@ include "handlers/head_faculty_handler.php";
                 <h2 class="text-start"
                     style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
                     Add New</h2>
-                    <h1>asdfasdjfklj</h1>
+                    
             </div>
             <div class="card">
                 <div class="card-body">
