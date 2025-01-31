@@ -29,12 +29,16 @@ include "login_handler.php";
                                 </div>
                             </div>
                             <div class="mb-3 text-right">
-                                <a href="forgot_password.php?access=allowed" class="text-decoration-none">Forgot Your Password?</a>
+                                <a href="forgot_password.php?access=allowed" class="text-decoration-none">Forgot Your
+                                    Password?</a>
                             </div>
-                            <!-- <div class="icheck-primary mb-3 text-left">
-                                <input type="checkbox" id="remember" name="remember" <?php echo isset($_COOKIE['email']) ? 'checked' : ''; ?>>
-                                <label for="remember">Remember Me</label>
-                            </div> -->
+                            <div class="d-flex flex-column align-items-center mt-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="rememberMe" name="remember"
+                                        <?php echo isset($_COOKIE['email']) ? 'checked' : ''; ?>>
+                                    <label class="form-check-label ms-2" for="rememberMe">Remember me</label>
+                                </div>
+                            </div>
                             <div id="loading-spinner" style="display: none;">
                                 <i class="fas fa-spinner fa-spin"></i> Logging in...
                             </div>
@@ -74,5 +78,15 @@ include "login_handler.php";
         <?php endif; ?>
     </div>
 </div>
+
+<style>
+     #loading-spinner {
+    display: none;
+    text-align: center;
+    font-size: 18px;
+    margin-top: 15px;
+    color: black;
+    }
+</style>
 
 <?php include 'includes/footer.php'; ?>
