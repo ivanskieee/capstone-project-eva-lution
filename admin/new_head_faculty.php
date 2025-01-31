@@ -55,10 +55,15 @@ include "handlers/head_faculty_handler.php";
                                 </div>
                                 <div class="form-group">
                                     <label for="department" class="control-label">Department</label>
-                                    <input type="department" class="form-control form-control-sm" name="department"
-                                        required placeholder="Department Code (e.g. ccs, educ)"
-                                        value="<?php echo isset($faculty['department']) ? $faculty['department'] : ''; ?>">
-                                    <small id="msg"></small>
+                                    <select id="department" class="form-control form-control-sm" name="department"
+                                        required>
+                                        <option value="" disabled selected>Select Department</option>
+                                        <option value="ccs">College of Computer Studies</option>
+                                        <option value="educ">College of Education</option>
+                                        <option value="cas">College of Arts & Sciences</option>
+                                        <option value="cba">College of Business Administration</option>
+                                        <option value="cas">College of Nursing</option>
+                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="password" class="control-label">Password</label>

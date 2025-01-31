@@ -138,10 +138,10 @@ $headList = fetchHeadFacultyList($conn);
             <div class="row mt-4">
                 <?php
                 $dashboardData = [
-                    ["Total Faculties", "college_faculty_list", "fa-user-friends", "tertiary_faculty_list.php"],
+                    ["Total Faculty Members", "college_faculty_list", "fa-user-friends", "tertiary_faculty_list.php"],
                     ["Total Students", "student_list", "ion-ios-people-outline", "student_list.php"],
                     ["Total Users", "users", "fa-users", "user_list.php"],
-                    ["Total Head Faculties", "head_faculty_list", "fa-users", "head_faculty_list.php"],
+                    ["Total Academic Head", "head_faculty_list", "fa-users", "head_faculty_list.php"],
                 ];
                 
                 foreach ($dashboardData as $data) {
