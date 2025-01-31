@@ -45,7 +45,7 @@ include "submit_registration.php";
                                         <i class="fas fa-envelope"></i>
                                     </div>
                                 </div>
-                            </div>
+                            </div>asdf
 
                             <div class="input-group mb-3">
                                 <select id="course" class="form-control" name="course" required>
