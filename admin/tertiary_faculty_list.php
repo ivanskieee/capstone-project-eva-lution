@@ -62,7 +62,7 @@ $end_page = min($current_segment * $segment_size, $total_pages);
                             <thead>
                                 <tr>
                                     <th class="text-center">#</th>
-                                    <th>School ID</th>
+                                    <th>Employee ID</th>
                                     <th>Name</th>
                                     <th>Email</th>
                                     <th>Action</th>
