@@ -6,12 +6,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $firstname = $_POST['firstname'];
     $lastname = $_POST['lastname'];
     $email = $_POST['email'];
-    $subjects = implode(',', $_POST['subjects']); // Join subjects array into a string
+    $course = $_POST['course'];
+    $subjects = isset($_POST['subjects']) ? implode(", ", $_POST['subjects']) : ''; // Convert array to string // Join subjects array into a string
     $section = $_POST['section'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-    $query = "INSERT INTO pending_students (school_id, firstname, lastname, email, subject, section, password) 
-              VALUES (:school_id, :firstname, :lastname, :email, :subject, :section, :password)";
+    $query = "INSERT INTO pending_students (school_id, firstname, lastname, email, course, subject, section, password) 
+              VALUES (:school_id, :firstname, :lastname, :email, :course, :subject, :section, :password)";
     
     $stmt = $conn->prepare($query);
 
@@ -19,14 +20,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bindParam(':firstname', $firstname);
     $stmt->bindParam(':lastname', $lastname);
     $stmt->bindParam(':email', $email);
+    $stmt->bindParam(':course', $course);
     $stmt->bindParam(':subject', $subjects); // Bind the joined subjects string
     $stmt->bindParam(':section', $section);
     $stmt->bindParam(':password', $password);
 
     if ($stmt->execute()) {
         header('Location: pending_approval.php'); 
+        exit();
     } else {
         header('Location: error.php'); 
+        exit();
     }
 }
 

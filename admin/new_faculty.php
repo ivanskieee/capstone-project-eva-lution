@@ -54,40 +54,16 @@ include "handlers/faculty_handler.php";
                                     <small id="msg"></small>
                                 </div>
                                 <div class="form-group">
-                                    <label for="subjects" class="control-label">Subjects</label>
-                                    <div id="subjects-container">
-                                        <?php
-                                        // Check if subjects exist, assuming $faculty['subject'] is stored as a string for multiple subjects or a single subject.
-                                        $subjects = isset($faculty['subject']) ? explode(',', $faculty['subject']) : []; // If it's a single subject or comma-separated, use explode().
-                                        
-                                        // If subjects exist, display them individually
-                                        if (!empty($subjects)) {
-                                            foreach ($subjects as $subject) {
-                                                echo '
-                                            <div class="input-group mb-3 subject-item">
-                                                <input type="text" class="form-control" name="subjects[]" required placeholder="Subject Code (e.g. cc101)" value="' . htmlspecialchars(trim($subject), ENT_QUOTES) . '">
-                                                <div class="input-group-append">
-                                                    <button type="button" class="btn btn-danger remove-subject">
-                                                        <i class="fas fa-minus"></i>
-                                                    </button>
-                                                </div>
-                                            </div>';
-                                            }
-                                        } else {
-                                            // Default to one empty input field if no subjects exist
-                                            echo '
-                                        <div class="input-group mb-3 subject-item">
-                                            <input type="text" class="form-control" name="subjects[]" required placeholder="Subject Code (e.g. cc101)">
-                                            <div class="input-group-append">
-                                                <button type="button" class="btn btn-success add-subject">
-                                                    <i class="fas fa-plus"></i>
-                                                </button>
-                                            </div>
-                                        </div>';
-                                        }
-                                        ?>
-                                    </div>
-                                    <small id="msg"></small>
+                                    <label for="department" class="control-label">Department</label>
+                                    <select id="department" class="form-control form-control-sm" name="department"
+                                        required>
+                                        <option value="" disabled selected>Select Department</option>
+                                        <option value="ccs">College of Computer Studies</option>
+                                        <option value="educ">College of Education</option>
+                                        <option value="cas">College of Arts & Sciences</option>
+                                        <option value="cba">College of Business Administration</option>
+                                        <option value="cas">College of Nursing</option>
+                                    </select>
                                 </div>
 
                                 <div class="form-group">

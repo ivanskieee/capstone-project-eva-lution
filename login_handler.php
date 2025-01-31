@@ -37,6 +37,7 @@ if (isset($_SESSION['user'])) {
 if ($_POST) {
     $email = $_POST['email'] ?? '';
     $password = $_POST['password'] ?? '';
+    $remember = isset($_POST['remember']);
 
     if (empty($email) || empty($password)) {
         flash('Email and password are required.', 'danger');
@@ -120,6 +121,16 @@ if ($_POST) {
                 header('location: index.php');
                 exit;
             }
+        }
+
+         // Set cookies if "Remember Me" is checked
+         if ($remember) {
+            setcookie('email', $email, time() + (86400 * 30), "/"); // expires in 30 days
+            setcookie('password', $password, time() + (86400 * 30), "/"); // expires in 30 days (optional)
+        } else {
+            // Clear cookies if not checked
+            setcookie('email', '', time() - 3600, "/");
+            setcookie('password', '', time() - 3600, "/");
         }
     
         // Redirect based on role
