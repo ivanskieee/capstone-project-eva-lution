@@ -66,8 +66,7 @@ include "handlers/faculty_handler.php";
                                     </select>
                                 </div>
 
-                                <div class="form-group">
-                                    <label for="subjects" class="control-label">Subjects</label>
+                                <div class="input-group mb-4">
                                     <select class="form-control subject-dropdown" name="subjects[]" multiple required>
                                         <option value="" disabled>Select Subjects</option>
                                     </select>
@@ -340,4 +339,13 @@ include "handlers/faculty_handler.php";
     }
 
     departmentSelect.addEventListener("change", updateSubjects);
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('.subject-dropdown').select2({
+            placeholder: "Select Subjects",
+            width: "100%" // Ensures full width
+        });
+    });
 </script>
