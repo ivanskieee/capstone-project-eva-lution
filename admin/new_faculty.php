@@ -19,7 +19,7 @@ include "handlers/faculty_handler.php";
                         <div class="row">
                             <div class="col-md-6 border-right">
                                 <div class="form-group">
-                                    <label for="school_id" class="control-label">School ID</label>
+                                    <label for="school_id" class="control-label">Employee ID</label>
                                     <input type="text" name="school_id" class="form-control form-control-sm" required
                                         value="<?php echo isset($faculty['school_id']) ? $faculty['school_id'] : ''; ?>">
                                 </div>
