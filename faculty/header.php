@@ -109,8 +109,8 @@
           </span>
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="account_settings">
-          <!-- <a class="dropdown-item" href="javascript:void(0)" id="manage_account"><i class="fa fa-cog"></i> Manage
-            Account</a> -->
+          <a class="dropdown-item" href="javascript:void(0)" id="manage_account"><i class="fa fa-cog"></i> Manage
+            Account</a>
           <a class="dropdown-item" href="../database/logout.php"><i class="fa fa-power-off"></i> Logout</a>
         </div>
       </li>
@@ -136,7 +136,79 @@
     </div>
   </div>
   <script>
-    $('#manage_account').click(function () {
-      uni_modal('Manage Account', 'manage_user.php?id=<?php echo $_SESSION['login_id'] ?>')
-    })
+    $(document).ready(function() {
+      // When the Manage Account item is clicked
+      $('#manage_account').on('click', function() {
+        $.ajax({
+          url: 'fetch_account_data.php', // Adjust the URL if needed
+          type: 'GET',
+          success: function(data) {
+            $('#manageAccountContent').html(data);
+            // Show the modal using Bootstrap 5's modal method
+            var myModal = new bootstrap.Modal(document.getElementById('manageAccountModal'));
+            myModal.show();
+          },
+          error: function() {
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Failed to load account data.',
+            });
+          },
+        });
+      });
+
+      // Save Account Changes when the Save button is clicked
+      $('#saveAccountChanges').on('click', function() {
+        const password = $('#password').val();
+        const cpass = $('#cpass').val();
+
+        // Check if passwords match
+        if (password && password !== cpass) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Passwords do not match!',
+          });
+          return; // Stop further execution
+        }
+
+        const formData = new FormData($('#accountForm')[0]);
+
+        $.ajax({
+          url: 'update_account.php',
+          type: 'POST',
+          data: formData,
+          contentType: false,
+          processData: false,
+          dataType: 'json',
+          success: function(response) {
+            if (response.success) {
+              Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Account updated successfully. You will now be logged out.',
+              }).then(() => {
+                // Redirect to logout after the user dismisses the success message
+                window.location.href = '../database/logout.php';
+              });
+            } else {
+              Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: response.message || 'Failed to update account.',
+              });
+            }
+          },
+          error: function(xhr, status, error) {
+            console.error(xhr.responseText);
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'An error occurred while updating the account.',
+            });
+          }
+        });
+      });
+    });
   </script>
