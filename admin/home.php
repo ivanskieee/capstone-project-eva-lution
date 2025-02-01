@@ -138,10 +138,10 @@ $headList = fetchHeadFacultyList($conn);
             <div class="row mt-4">
                 <?php
                 $dashboardData = [
-                    ["Total Faculty Members", "college_faculty_list", "fa-user-friends", "tertiary_faculty_list.php"],
-                    ["Total Students", "student_list", "ion-ios-people-outline", "student_list.php"],
-                    ["Total Users", "users", "fa-users", "user_list.php"],
-                    ["Total Academic Head", "head_faculty_list", "fa-users", "head_faculty_list.php"],
+                    ["Faculty Members", "college_faculty_list", "fa-user-friends", "tertiary_faculty_list.php"],
+                    ["Students", "student_list", "ion-ios-people-outline", "student_list.php"],
+                    ["Users", "users", "fa-users", "user_list.php"],
+                    ["Academic Heads", "head_faculty_list", "fa-users", "head_faculty_list.php"],
                 ];
                 
                 foreach ($dashboardData as $data) {
@@ -179,19 +179,19 @@ $headList = fetchHeadFacultyList($conn);
                                 <div class="col-md-4 mb-2">
                                     <button type="button" class="btn btn-outline-success w-100" id="facultyButton"
                                     data-category="faculty">
-                                        Student to Faculty
+                                        Student to Faculty Evaluation
                                     </button>
                                 </div>
                                 <div class="col-md-4 mb-2">
                                     <button type="button" class="btn btn-outline-success w-100" id="selfFacultyButton"
                                         data-category="self-faculty">
-                                        Self Faculty
+                                        Faculty Self-Evaluation
                                     </button>
                                 </div>
                                 <div class="col-md-4 mb-2">
                                     <button type="button" class="btn btn-outline-success w-100"
                                         id="selfHeadFacultyButton" data-category="self-head-faculty">
-                                        Self Head Faculty
+                                        Head Self-Evaluation
                                     </button>
                                 </div>
                             </div>
@@ -200,19 +200,19 @@ $headList = fetchHeadFacultyList($conn);
                                 <div class="col-md-4 mb-2">
                                     <button type="button" class="btn btn-outline-success w-100"
                                     id="FacultytoFacultyButton" data-category="faculty-to-faculty">
-                                        Faculty to Faculty
+                                        Peer to Peer Evaluation
                                     </button>
                                 </div>
                                 <div class="col-md-4 mb-2">
                                     <button type="button" class="btn btn-outline-success w-100" id="FacultytoHeadButton"
                                     data-category="faculty-to-head">
-                                        Faculty to Head
+                                        Peer to Head Evaluation
                                     </button>
                                 </div>
                                 <div class="col-md-4 mb-2">
                                     <button type="button" class="btn btn-outline-success w-100" id="HeadtoFacultyButton"
                                         data-category="head-to-faculty">
-                                        Head to Faculty
+                                        Head to Faculty Evaluation
                                     </button>
                                 </div>
                             </div>
@@ -544,7 +544,7 @@ $headList = fetchHeadFacultyList($conn);
     }
     
     .content .main-header {
-        max-height: 79vh;
+        max-height: 87vh;
         overflow-y: auto;
         scroll-behavior: smooth;
     }

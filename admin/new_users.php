@@ -9,7 +9,7 @@ include "handlers/user_handler.php";
 			<div class="col-12 mb-3">
 				<h2 class="text-start"
 					style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
-					Add New</h2>
+					Add New User</h2>
 			</div>
 			<div class="card">
 				<div class="card-body">
@@ -31,6 +31,13 @@ include "handlers/user_handler.php";
 										class="form-control form-control-sm" required
 										value="<?php echo isset($admin['lastname']) ? $admin['lastname'] : ''; ?>">
 								</div>
+								<div class="form-group">
+									<label class="control-label">Email</label>
+									<input type="email" class="form-control form-control-sm" name="email" id="email"
+										required value="<?php echo isset($admin['email']) ? $admin['email'] : ''; ?>">
+									<small id="msg" class="form-text text-muted">Please enter a valid email
+										address.</small>
+								</div>
 
 								<!-- <div class="form-group">
 									<label for="" class="control-label">Avatar</label>
@@ -46,17 +53,14 @@ include "handlers/user_handler.php";
 								</div> -->
 							</div>
 							<div class="col-md-6">
-								<div class="form-group">
-									<label class="control-label">Email</label>
-									<input type="email" class="form-control form-control-sm" name="email" id="email"
-										required value="<?php echo isset($admin['email']) ? $admin['email'] : ''; ?>">
-									<small id="msg"></small>
-								</div>
+								<div class="error-message" id="password-error">Password must be at least 8 characters
+									long,
+									include an uppercase letter, a lowercase letter, and a special character.</div>
 								<div class="form-group">
 									<label for="password" class="control-label">Password</label>
 									<input type="password" class="form-control form-control-sm" name="password"
 										id="password" <?php echo isset($admin) ? '' : 'required'; ?>>
-									<small><i><?php echo isset($id) ? 'Leave this blank if you do not want to change your password' : ''; ?></i></small>
+									<small><i><?php echo isset($id) ? 'Leave this blank if you do not want to change your password' : 'Choose a strong password.'; ?></i></small>
 								</div>
 								<div class="form-group">
 									<label class="label control-label">Confirm Password</label>
@@ -68,7 +72,7 @@ include "handlers/user_handler.php";
 						<hr>
 						<div class="col-lg-12 text-right justify-content-center d-flex">
 							<button type="submit"
-								class="btn btn-success btn-secondary-blue mr-3"><?php echo isset($admin) ? 'Submit' : 'Update'; ?></button>
+								class="btn btn-success btn-secondary-blue mr-3"><?php echo isset($id) ? 'Update' : 'Submit'; ?></button>
 							<button type="button" class="btn btn-secondary"
 								onclick="window.location.href = './user_list.php';">Cancel</button>
 						</div>
@@ -97,6 +101,12 @@ include "handlers/user_handler.php";
 		overflow-y: auto;
 		scroll-behavior: smooth;
 	}
+	.error-message {
+        color: red;
+        font-size: 12px;
+        margin-bottom: 5px;
+        display: none;
+    }
 </style>
 <script>
 	$('[name="password"],[name="cpass"]').keyup(function () {
@@ -158,4 +168,21 @@ include "handlers/user_handler.php";
 			}
 		})
 	})
+</script>
+<script>
+    document.getElementById('password').addEventListener('input', function () {
+        const password = this.value;
+        const errorMessage = document.getElementById('password-error');
+
+        // Regular expression for validation
+        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
+
+        if (password.length === 0) {
+            errorMessage.style.display = 'none'; // Hide error message when input is empty
+        } else if (!regex.test(password)) {
+            errorMessage.style.display = 'block'; // Show error message if password is invalid
+        } else {
+            errorMessage.style.display = 'none'; // Hide error message if valid
+        }
+    });
 </script>

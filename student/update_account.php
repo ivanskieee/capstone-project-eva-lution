@@ -14,36 +14,42 @@ $user_id = $_SESSION['user']['student_id'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
+    $firstname = $_POST['firstname'] ?? null;
+    $lastname = $_POST['lastname'] ?? null;
     $password = $_POST['password'] ?? null;
     $cpass = $_POST['cpass'] ?? null;
-    $avatar = $_FILES['avatar'] ?? null;
 
     try {
-        if ($avatar && $avatar['size'] > 0) {
-            $avatarPath = 'uploads/' . basename($avatar['name']);
-            if (move_uploaded_file($avatar['tmp_name'], $avatarPath)) {
-                $updateAvatar = $conn->prepare("UPDATE student_list SET avatar = :avatar WHERE student_id = :student_id");
-                $updateAvatar->bindParam(':avatar', $avatarPath);
-                $updateAvatar->bindParam(':student_id', $user_id);
-                $updateAvatar->execute();
-            } else {
-                throw new Exception('Failed to upload avatar.');
-            }
+        // Validate password
+        if ($password && $password !== $cpass) {
+            throw new Exception('Passwords do not match.');
         }
 
-        $updateEmail = $conn->prepare("UPDATE student_list SET email = :email WHERE student_id = :student_id");
-        $updateEmail->bindParam(':email', $email);
-        $updateEmail->bindParam(':student_id', $user_id);
-        $updateEmail->execute();
+        // Update firstname, lastname, and email
+        $updateQuery = $conn->prepare("
+            UPDATE student_list 
+            SET email = :email, 
+                firstname = :firstname, 
+                lastname = :lastname 
+            WHERE student_id = :student_id
+        ");
+        $updateQuery->bindParam(':email', $email);
+        $updateQuery->bindParam(':firstname', $firstname);
+        $updateQuery->bindParam(':lastname', $lastname);
+        $updateQuery->bindParam(':student_id', $user_id);
+        $updateQuery->execute();
 
-        if ($password && $password === $cpass) {
+        // Update password (if provided)
+        if ($password) {
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
-            $updatePassword = $conn->prepare("UPDATE student_list SET password = :password WHERE student_id = :student_id");
+            $updatePassword = $conn->prepare("
+                UPDATE student_list 
+                SET password = :password 
+                WHERE student_id = :student_id
+            ");
             $updatePassword->bindParam(':password', $hashedPassword);
             $updatePassword->bindParam(':student_id', $user_id);
             $updatePassword->execute();
-        } elseif ($password && $password !== $cpass) {
-            throw new Exception('Passwords do not match.');
         }
 
         $response['success'] = true;

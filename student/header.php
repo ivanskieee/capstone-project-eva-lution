@@ -144,6 +144,7 @@
   </script>
   <script>
     $(document).ready(function () {
+      // Open Manage Account Modal and Load Form
       $('#manage_account').on('click', function () {
         $.ajax({
           url: 'fetch_account_data.php',
@@ -153,12 +154,30 @@
             $('#manageAccountModal').modal('show');
           },
           error: function () {
-            alert('Failed to load account data.');
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'Failed to load account data.',
+            });
           }
         });
       });
 
+      // Save Account Changes
       $('#saveAccountChanges').on('click', function () {
+        const password = $('#password').val();
+        const cpass = $('#cpass').val();
+
+        // Check if passwords match
+        if (password && password !== cpass) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Passwords do not match!',
+          });
+          return; // Stop further execution
+        }
+
         const formData = new FormData($('#accountForm')[0]);
 
         $.ajax({
@@ -167,19 +186,32 @@
           data: formData,
           contentType: false,
           processData: false,
-          dataType: 'json', 
+          dataType: 'json',
           success: function (response) {
             if (response.success) {
-              alert('Account updated successfully.');
-              $('#manageAccountModal').modal('hide');
-              location.reload();
+              Swal.fire({
+                icon: 'success',
+                title: 'Success',
+                text: 'Account updated successfully.',
+              }).then(() => {
+                $('#manageAccountModal').modal('hide');
+                location.reload(); // Reload the page to reflect changes
+              });
             } else {
-              alert(response.message || 'Failed to update account.');
+              Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: response.message || 'Failed to update account.',
+              });
             }
           },
           error: function (xhr, status, error) {
-            console.error(xhr.responseText); 
-            alert('An error occurred while updating the account.');
+            console.error(xhr.responseText);
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: 'An error occurred while updating the account.',
+            });
           }
         });
       });

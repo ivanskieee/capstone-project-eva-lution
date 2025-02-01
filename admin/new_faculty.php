@@ -9,7 +9,7 @@ include "handlers/faculty_handler.php";
             <div class="col-12 mb-3">
                 <h2 class="text-start"
                     style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
-                    Add New</h2>
+                    Add New Faculty Member</h2>
             </div>
             <div class="card">
                 <div class="card-body">
@@ -37,7 +37,8 @@ include "handlers/faculty_handler.php";
                                     <label for="email" class="control-label">Email</label>
                                     <input type="email" class="form-control form-control-sm" name="email" required
                                         value="<?php echo isset($faculty['email']) ? $faculty['email'] : ''; ?>">
-                                    <small id="msg"></small>
+                                    <small id="msg" class="form-text text-muted">Please enter a valid email
+                                    address.</small>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -67,19 +68,26 @@ include "handlers/faculty_handler.php";
                                 </div>
 
                                 <div class="input-group mb-4">
+                                    <label for="subjects" class="control-label">Subjects</label>
                                     <select class="form-control subject-dropdown" name="subjects[]" multiple required>
                                         <option value="" disabled>Select Subjects</option>
                                     </select>
                                 </div>
 
+                                <div class="error-message" id="password-error">Password must be at least 8 characters
+                                    long,
+                                    include an uppercase letter, a lowercase letter, and a special character.</div>
+
                                 <div class="form-group">
                                     <label for="password" class="control-label">Password</label>
-                                    <input type="password" class="form-control form-control-sm" name="password" <?php echo isset($faculty) ? '' : 'required'; ?>>
-                                    <small><i><?php echo isset($faculty) ? 'Leave this blank if you do not want to change your password' : ''; ?></i></small>
+                                    <input type="password" class="form-control form-control-sm" name="password" id="password"
+                                        minlength="8" <?php echo isset($faculty) ? '' : 'required'; ?>>
+                                    <small><i><?php echo isset($faculty) ? 'Leave this blank if you do not want to change your password' : 'Choose a strong password.'; ?></i></small>
                                 </div>
                                 <div class="form-group">
                                     <label for="cpass" class="control-label">Confirm Password</label>
-                                    <input type="password" class="form-control form-control-sm" name="cpass" <?php echo isset($faculty) ? '' : 'required'; ?>>
+                                    <input type="password" class="form-control form-control-sm" name="cpass" id="cpass"
+                                        minlength="8" <?php echo isset($faculty) ? '' : 'required'; ?>>
                                     <small id="pass_match" data-status=''></small>
                                 </div>
                             </div>
@@ -124,6 +132,17 @@ include "handlers/faculty_handler.php";
         max-height: 90vh;
         overflow-y: auto;
         scroll-behavior: smooth;
+    }
+
+    .custom-selection {
+        color: black !important;
+    }
+
+    .error-message {
+        color: red;
+        font-size: 12px;
+        margin-bottom: 5px;
+        display: none;
     }
 </style>
 <script>
@@ -345,7 +364,31 @@ include "handlers/faculty_handler.php";
     $(document).ready(function () {
         $('.subject-dropdown').select2({
             placeholder: "Select Subjects",
-            width: "100%" // Ensures full width
+            width: "100%", // Ensures full width
+            templateSelection: function (data) {
+                // Apply a custom class to the selected item
+                return $('<span>')
+                    .text(data.text)
+                    .addClass('custom-selection');
+            }
         });
+    });
+</script>
+
+<script>
+    document.getElementById('password').addEventListener('input', function () {
+        const password = this.value;
+        const errorMessage = document.getElementById('password-error');
+
+        // Regular expression for validation
+        const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
+
+        if (password.length === 0) {
+            errorMessage.style.display = 'none'; // Hide error message when input is empty
+        } else if (!regex.test(password)) {
+            errorMessage.style.display = 'block'; // Show error message if password is invalid
+        } else {
+            errorMessage.style.display = 'none'; // Hide error message if valid
+        }
     });
 </script>

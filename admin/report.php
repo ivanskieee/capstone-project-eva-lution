@@ -16,7 +16,7 @@ include "handlers/report_handler.php";
             <div class="d-flex w-100 justify-content-center align-items-center">
                 <label for="faculty">Select Faculty</label>
                 <div class="mx-2 col-md-4">
-                    <select name="" id="faculty_id" class="form-control form-control-sm select2">
+                    <select name="" id="faculty_id" class="form-control form-control-sm">
                         <option value="">Select Faculty</option>
                         <?php
                         $stmt = $conn->query("
@@ -54,12 +54,12 @@ include "handlers/report_handler.php";
                             <div class="mx-2 col-md-8">
                                 <select id="category" class="form-control form-control-sm">
                                     <option value="" selected disabled>Select Category</option>
-                                    <option value="faculty">Student to Faculty</option>
-                                    <option value="self">Self Faculty</option>
-                                    <option value="dean_self">Self Head Faculty</option>
-                                    <option value="faculty_faculty">Faculty to Faculty</option>
-                                    <option value="faculty_head">Faculty to Head</option>
-                                    <option value="head_faculty">Head to Faculty</option>
+                                    <option value="faculty">Student to Faculty Evaluation</option>
+                                    <option value="self">Faculty Self-Evaluation</option>
+                                    <option value="dean_self">Head Self-Evaluation</option>
+                                    <option value="faculty_faculty">Peer to Peer Evaluation</option>
+                                    <option value="faculty_head">Peer to Head Evaluation</option>
+                                    <option value="head_faculty">Head to Faculty Evaluation</option>
                                 </select>
                             </div>
                         </div>

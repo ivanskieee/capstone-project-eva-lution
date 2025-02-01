@@ -79,8 +79,18 @@ $end_page = min($current_segment * $segment_size, $total_pages);
                                         <td><b><?php echo htmlspecialchars(ucwords($row['firstname'] . ' ' . $row['lastname'])); ?></b>
                                         </td>
                                         <td><b><?php echo htmlspecialchars($row['email']); ?></b></td>
-                                        <td><b><?php echo htmlspecialchars($row['subject']); ?></b></td>
-                                        <td><b><?php echo htmlspecialchars($row['section']); ?></b></td>
+                                        <td style="white-space: normal;">
+                                            <?php
+                                            // Split the subjects by comma
+                                            $subjects = explode(',', $row['subject']);
+                                            // Loop through each subject and apply spacing
+                                            foreach ($subjects as $subject) {
+                                                $trimmedSubject = trim($subject); // Remove extra spaces
+                                                echo '<span class="subject-item">' . htmlspecialchars(strtoupper($trimmedSubject)) . '</span>';
+                                            }
+                                            ?>
+                                        </td>
+                                        <td><b><?php echo htmlspecialchars(ucwords($row['section'])); ?></b></td>
                                         </td>
                                         <!-- <td class="text-center">
                                         <button type="button"
@@ -233,5 +243,14 @@ $end_page = min($current_segment * $segment_size, $total_pages);
         max-height: 100vh;
         overflow-y: auto;
         scroll-behavior: smooth;
+    }
+
+    .subject-item {
+        display: inline-block;
+        margin-right: 8px;
+        margin-bottom: 4px;
+        font-weight: bold;
+        text-transform: uppercase;
+        color: #333;
     }
 </style>
