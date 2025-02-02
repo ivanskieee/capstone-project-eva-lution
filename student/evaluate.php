@@ -91,7 +91,7 @@ $normalizedSubjectsString = implode(',', $normalizedSubjects);
 							<b>Evaluation Questionnaires</b>
 							<div class="card-tools">
 								<form id="evaluation-form" method="POST" action="eval_handler.php">
-									<button type="submit"
+									<button type="submit" id="submit-btn"
 										class="btn btn-sm btn-flat btn-success bg-gradient-success mx-1">Submit
 										Evaluation</button>
 							</div>
@@ -165,6 +165,51 @@ $normalizedSubjectsString = implode(',', $normalizedSubjects);
 		</div>
 	</nav>
 </div>
+
+<script>
+    $(document).ready(function () {
+        // Disable submit button initially
+        $('#submit-btn').prop('disabled', true);
+
+        // Handle faculty item click
+        $('.list-group-item').click(function (e) {
+            e.preventDefault(); // Prevent the default link action
+
+            // Remove 'list-group-item-success' from all items
+            $('.list-group-item').removeClass('list-group-item-success');
+
+            // Add 'list-group-item-success' to the clicked item
+            $(this).addClass('list-group-item-success');
+
+            // Get the faculty ID from the link's href
+            let facultyId = $(this).attr('href').split('=')[1]; // Get the faculty ID after 'rid='
+
+            if (facultyId) {
+                // Set the faculty ID in the hidden input field
+                $('input[name="faculty_id"]').val(facultyId);
+
+                // Enable the submit button
+                $('#submit-btn').prop('disabled', false);
+
+
+            }
+        });
+
+        // Ensure submit button stays disabled if no faculty is selected
+        $('#evaluation-form').on('submit', function (e) {
+            let selectedFaculty = $('input[name="faculty_id"]').val();
+            if (!selectedFaculty) {
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Faculty Not Selected',
+                    text: 'Please select a faculty member before submitting your evaluation.',
+                    confirmButtonText: 'Okay'
+                });
+            }
+        });
+    });
+</script>
 
 <script>
 	$(document).ready(function () {
