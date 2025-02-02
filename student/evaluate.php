@@ -18,6 +18,7 @@ $normalizedSubjectsString = implode(',', $normalizedSubjects);
 		<div class="col-lg-12 mt-5">
 			<div class="row">
 				<div class="col-md-3">
+					<h4 class="mb-3 mx-5" style="color: #333; font-weight: bold;">Faculty Members</h4>
 					<div class="list-group">
 						<?php
 						$subjects = $_GET['subjects'] ?? '';
@@ -96,7 +97,8 @@ $normalizedSubjectsString = implode(',', $normalizedSubjects);
 										Evaluation</button>
 							</div>
 						</div>
-						<div class="card-body">
+						<!-- Add a wrapper div with a class for grayed-out state -->
+						<div class="card-body" id="evaluation-questions" class="disabled-section">
 							<fieldset class="border border-success p-2 w-100">
 								<legend class="w-auto">Rating Legend</legend>
 								<p>4 = Strongly Agree, 3 = Agree, 2 = Disagree, 1 = Strongly Disagree</p>
@@ -137,7 +139,7 @@ $normalizedSubjectsString = implode(',', $normalizedSubjects);
 																<div class="icheck-success d-inline">
 																	<input type="radio" name="rate[<?= $qRow['question_id'] ?>]"
 																		id="qradio<?= $qRow['question_id'] . '_' . $c ?>" value="<?= $c ?>"
-																		required>
+																		required disabled>
 																	<label for="qradio<?= $qRow['question_id'] . '_' . $c ?>"></label>
 																</div>
 															</td>
@@ -146,7 +148,7 @@ $normalizedSubjectsString = implode(',', $normalizedSubjects);
 														<!-- Comment textarea in the same row -->
 														<td colspan="4" class="text-center">
 															<textarea name="comment[<?= $qRow['question_id'] ?>]" class="form-control"
-																rows="3" placeholder="Enter your answer" required></textarea>
+																rows="3" placeholder="Enter your answer" required disabled></textarea>
 														</td>
 													<?php endif; ?>
 												</tr>
@@ -191,7 +193,12 @@ $normalizedSubjectsString = implode(',', $normalizedSubjects);
                 // Enable the submit button
                 $('#submit-btn').prop('disabled', false);
 
+                // Remove the grayed-out state and enable interaction
+                $('#evaluation-questions')
+                    .addClass('show').show();
 
+                // Enable all disabled input fields within the evaluation section
+                $('#evaluation-questions input, #evaluation-questions textarea').prop('disabled', false);
             }
         });
 
@@ -263,18 +270,18 @@ $normalizedSubjectsString = implode(',', $normalizedSubjects);
 	});
 </script>
 <script>
-$(document).ready(function () {
-    // Check if the success message is visible
-    if ($('#success-message').length) {
-        // Fade the message out after 1 second
-        setTimeout(function () {
-            $('#success-message').fadeOut('slow', function () {
-                // Use the normalized subjects string in the URL
-                window.location.href = 'evaluate.php?subjects=<?php echo urlencode($normalizedSubjectsString); ?>';
-            });
-        }, 1000); // 1000 ms = 1 second
-    }
-});
+	$(document).ready(function () {
+		// Check if the success message is visible
+		if ($('#success-message').length) {
+			// Fade the message out after 1 second
+			setTimeout(function () {
+				$('#success-message').fadeOut('slow', function () {
+					// Use the normalized subjects string in the URL
+					window.location.href = 'evaluate.php?subjects=<?php echo urlencode($normalizedSubjectsString); ?>';
+				});
+			}, 1000); // 1000 ms = 1 second
+		}
+	});
 </script>
 <style>
 	.content .main-header {
@@ -282,5 +289,30 @@ $(document).ready(function () {
 		overflow-y: auto;
 		scroll-behavior: smooth;
 	}
+
+	#evaluation-questions {
+		opacity: 0.5;
+		/* Gray out the section */
+		pointer-events: none;
+		/* Disable interaction */
+	}
+
+	#evaluation-questions.show {
+		opacity: 1;
+		/* Restore full opacity */
+		pointer-events: auto;
+		/* Enable interaction */
+	}
+	/* Grayed-out and non-interactive state */
+    .disabled-section {
+        opacity: 0.5; /* Make the section semi-transparent */
+        pointer-events: none; /* Disable interaction */
+    }
+
+    /* Active state (when a faculty member is selected) */
+    .active-section {
+        opacity: 1; /* Restore full opacity */
+        pointer-events: auto; /* Enable interaction */
+    }
 </style>
 <?php include 'footer.php'; ?>

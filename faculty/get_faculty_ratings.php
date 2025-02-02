@@ -26,12 +26,14 @@ if (!$facultyData) {
 
 $facultyName = $facultyData['firstname'] . ' ' . $facultyData['lastname'];
 
-// Fetch ratings
+// Fetch criteria-wise ratings
 $stmt = $conn->prepare("
     SELECT 
+        q.criteria_id, -- Include criteria_id
+        c.criteria, -- Fetch criteria name
         q.question_id,
         q.question,
-        q.question_type, -- Fetch question type (e.g., 'mcq' or 'text')
+        q.question_type, 
         COUNT(CASE WHEN ea.rate = 1 THEN 1 END) AS rate1,
         COUNT(CASE WHEN ea.rate = 2 THEN 1 END) AS rate2,
         COUNT(CASE WHEN ea.rate = 3 THEN 1 END) AS rate3,
@@ -40,20 +42,31 @@ $stmt = $conn->prepare("
     FROM question_list q
     LEFT JOIN evaluation_answers ea 
         ON q.question_id = ea.question_id AND ea.faculty_id = :faculty_id
+    LEFT JOIN criteria_list c ON q.criteria_id = c.criteria_id -- Join with criteria table
     WHERE q.question_type = 'mcq' -- Only include MCQ questions
-    GROUP BY q.question_id, q.question, q.question_type
+    GROUP BY q.criteria_id, c.criteria, q.question_id, q.question, q.question_type
 ");
 $stmt->bindParam(':faculty_id', $facultyId, PDO::PARAM_INT);
 $stmt->execute();
 $ratings = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Prepare the response
-$response = [];
+// Organize data based on criteria
+$criteriaRatings = [];
 foreach ($ratings as $row) {
+    $criteriaId = $row['criteria_id'];
+    $criteriaName = $row['criteria'];
+
+    if (!isset($criteriaRatings[$criteriaId])) {
+        $criteriaRatings[$criteriaId] = [
+            'criteria' => $criteriaName,
+            'questions' => []
+        ];
+    }
+
     $total = $row['total_responses'];
-    $response[] = [
+    $criteriaRatings[$criteriaId]['questions'][] = [
         'question' => $row['question'],
-        'question_type' => $row['question_type'], // Include question type in the response
+        'question_type' => $row['question_type'],
         'rate1' => $total ? round(($row['rate1'] / $total) * 100, 2) : 0,
         'rate2' => $total ? round(($row['rate2'] / $total) * 100, 2) : 0,
         'rate3' => $total ? round(($row['rate3'] / $total) * 100, 2) : 0,
@@ -65,6 +78,6 @@ foreach ($ratings as $row) {
 echo json_encode([
     'status' => 'success',
     'faculty_name' => $facultyName,
-    'ratings' => $response
+    'criteria_ratings' => $criteriaRatings
 ]);
 ?>

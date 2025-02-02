@@ -52,11 +52,7 @@ include "handlers/report_handler_faculty_faculty.php";
                                 <table class="table table-condensed wborder">
                                     <thead>
                                         <tr class="bg-gradient-secondary">
-                                            <th class=" p-1"><b><?php echo $row['criteria'] ?></b></th>
-                                            <th width="5%" class="text-center">1</th>
-                                            <th width="5%" class="text-center">2</th>
-                                            <th width="5%" class="text-center">3</th>
-                                            <th width="5%" class="text-center">4</th>
+                                            <th class=" p-1"><b></b></th>
                                         </tr>
                                     </thead>
                                     <tbody class="tr-sortable" id="ratings-table-body">
@@ -68,7 +64,7 @@ include "handlers/report_handler_faculty_faculty.php";
                                                 if (is_array($qRow) && $qRow['criteria_id'] == $row['criteria_id']) {
                                                     $hasQuestions = true;
                                                     ?>
-                                                    <tr class="bg-white">
+                                                    <!-- <tr class="bg-white">
                                                         <td class="p-1" width="20%">
                                                             <?= htmlspecialchars($qRow['question']) ?>
                                                             <input type="hidden" name="qid[]" value="<?= $qRow['question_id'] ?>">
@@ -83,7 +79,7 @@ include "handlers/report_handler_faculty_faculty.php";
                                                                 </div>
                                                             </td>
                                                         <?php endfor; ?>
-                                                    </tr>
+                                                    </tr> -->
                                                     <?php
                                                 }
                                             }
@@ -155,30 +151,42 @@ include "handlers/report_handler_faculty_faculty.php";
                     // Update faculty name
                     document.getElementById('fname').innerText = data.faculty_name;
 
-                    // Populate the ratings table with only MCQs
-                    const ratingsTable = document.getElementById('ratings-table-body'); // Assuming a table body exists
+                    const ratingsTable = document.getElementById('ratings-table-body');
                     ratingsTable.innerHTML = ''; // Clear old data
 
-                    // Filter MCQ questions and populate the table
-                    data.ratings
-                        .filter(row => row.question_type === 'mcq') // Only include MCQs
-                        .forEach(row => {
+                    // Iterate over criteria-based ratings
+                    Object.values(data.criteria_ratings).forEach(criteria => {
+                        // Append criteria row with rating headers
+                        const criteriaRow = document.createElement('tr');
+                        criteriaRow.innerHTML = `
+                        <td class="font-weight-bold bg-light">${criteria.criteria}</td>
+                        <th width="5%" class="text-center">1</th>
+                        <th width="5%" class="text-center">2</th>
+                        <th width="5%" class="text-center">3</th>
+                        <th width="5%" class="text-center">4</th>
+                    `;
+                        ratingsTable.appendChild(criteriaRow);
+
+                        // Append question rows
+                        criteria.questions.forEach(row => {
                             const tr = document.createElement('tr');
                             tr.innerHTML = `
-                        <td>${row.question}</td>
-                        <td>${row.rate1}%</td>
-                        <td>${row.rate2}%</td>
-                        <td>${row.rate3}%</td>
-                        <td>${row.rate4}%</td>
-                    `;
+                            <td>${row.question}</td>
+                            <td class="text-center">${row.rate1}%</td>
+                            <td class="text-center">${row.rate2}%</td>
+                            <td class="text-center">${row.rate3}%</td>
+                            <td class="text-center">${row.rate4}%</td>
+                        `;
                             ratingsTable.appendChild(tr);
                         });
+                    });
                 } else {
                     console.error('Error:', data.message);
                 }
             })
             .catch(error => console.error('Error fetching ratings:', error));
     }
+
     function fetchTotalEvaluations() {
         fetch('get_total_evaluated.php')
             .then(response => response.text())
