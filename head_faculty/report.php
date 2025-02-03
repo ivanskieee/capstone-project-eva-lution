@@ -311,43 +311,49 @@ $stmt->execute(['department' => $userDepartment]);
     container.innerHTML = ''; // Clear previous data
     const table = document.createElement('table');
     table.className = 'table table-condensed wborder';
+
+    // Table header
     table.innerHTML = `
-     <thead>
-        <tr class="bg-gradient-secondary">
-             <th class="p-1">
-                        <b>
-                            <?php
-                            if (is_array($criteriaList) && !empty($criteriaList)) {
-                                echo implode(', ', array_column($criteriaList, 'criteria'));
-                            } else {
-                                echo 'Question';
-                            }
-                            ?>
-                        </b>
-              </th>
-            <th width="5%" class="text-center">1</th>
-            <th width="5%" class="text-center">2</th>
-            <th width="5%" class="text-center">3</th>
-            <th width="5%" class="text-center">4</th>
-        </tr>
-    </thead>`;
+        <thead>
+            <tr class="bg-gradient-secondary">
+                <th class="p-2"><b>Evaluation Questions</b></th>
+                <th width="5%" class="text-center">1</th>
+                <th width="5%" class="text-center">2</th>
+                <th width="5%" class="text-center">3</th>
+                <th width="5%" class="text-center">4</th>
+            </tr>
+        </thead>
+    `;
+
     const tbody = document.createElement('tbody');
-    data.data.forEach(row => {
-        tbody.innerHTML += row.question_type === 'text'
-            ? `<tr class="bg-white">
-                <td colspan="5">
-                    <div><strong>${row.question}</strong></div>
-                    <div class="comment-display mt-2">${row.comments ? row.comments.join('<br>') : '<em>No comments provided.</em>'}</div>
-                </td>
-            </tr>`
-            : `<tr class="bg-white">
-                <td class="p-1" width="20%">${row.question}</td>
-                <td class="text-center"><div class="circle">${row.rate1}%</div></td>
-                <td class="text-center"><div class="circle">${row.rate2}%</div></td>
-                <td class="text-center"><div class="circle">${row.rate3}%</div></td>
-                <td class="text-center"><div class="circle">${row.rate4}%</div></td>
-            </tr>`;
+
+    Object.keys(data.data).forEach(criteria => {
+        // Add a criteria header row that aligns with questions
+        tbody.innerHTML += `
+            <tr class="bg-light">
+                <td class="p-2" colspan="5"><strong>${criteria}</strong></td>
+            </tr>
+        `;
+
+        // Add questions under the respective criteria
+        data.data[criteria].forEach(row => {
+            tbody.innerHTML += row.question_type === 'text'
+                ? `<tr class="bg-white">
+                    <td colspan="5" class="p-2">
+                        <strong>${row.question}</strong>
+                        <div class="comment-display mt-2">${row.comments ? row.comments.join('<br>') : '<em>No comments provided.</em>'}</div>
+                    </td>
+                </tr>`
+                : `<tr class="bg-white">
+                    <td class="p-2">${row.question}</td>
+                    <td class="text-center p-2"><div class="circle">${row.rate1}%</div></td>
+                    <td class="text-center p-2"><div class="circle">${row.rate2}%</div></td>
+                    <td class="text-center p-2"><div class="circle">${row.rate3}%</div></td>
+                    <td class="text-center p-2"><div class="circle">${row.rate4}%</div></td>
+                </tr>`;
+        });
     });
+
     table.appendChild(tbody);
     container.appendChild(table);
 }
@@ -502,3 +508,31 @@ function fetchAdditionalData(facultyId, selectedCategory, callback) {
         color: #4a4a4a;
     }
 </style>
+<script>
+    // Check if the criteria contains any 'text' type questions
+    document.addEventListener('DOMContentLoaded', function() {
+        const tables = document.querySelectorAll('table');
+        
+        tables.forEach(table => {
+            const rows = table.querySelectorAll('tbody tr');
+            let hasTextQuestion = false;
+
+            // Check if there's a text-type question in the current table
+            rows.forEach(row => {
+                if (row.querySelector('textarea')) {
+                    hasTextQuestion = true;
+                }
+            });
+
+            if (hasTextQuestion) {
+                // Hide the rating columns (1 to 4)
+                const headerCells = table.querySelectorAll('thead th');
+                headerCells.forEach((cell, index) => {
+                    if (index > 0) {
+                        cell.style.display = 'none'; // Hide columns 1 to 4
+                    }
+                });
+            }
+        });
+    });
+</script>
