@@ -46,7 +46,7 @@ include "submit_registration.php";
                                     </div>
                                 </div>
                             </div>
-aaaa
+                            
                             <div class="input-group mb-3">
                                 <select id="course" class="form-control" name="course" required>
                                     <option value="" disabled selected>Select Course</option>
