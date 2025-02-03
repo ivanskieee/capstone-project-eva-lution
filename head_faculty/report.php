@@ -58,9 +58,9 @@ $stmt->execute(['department' => $userDepartment]);
                             <div class="mx-2 col-md-8">
                                 <select id="category" class="form-control form-control-sm">
                                     <option value="" selected disabled>Select Category</option>
-                                    <option value="faculty">Student to Faculty</option>
-                                    <option value="self">Self Faculty</option>
-                                    <option value="faculty_faculty">Faculty to Faculty</option>
+                                    <option value="faculty">Student to Faculty Evaluation</option>
+                                    <option value="self">Faculty Self-Evaluation</option>
+                                    <option value="faculty_faculty">Peer to Peer Evaluation</option>
                                 </select>
                             </div>
                         </div>

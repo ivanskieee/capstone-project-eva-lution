@@ -37,35 +37,41 @@ if ($faculty_id && $category) {
         $answerTable = $tableMapping[$category]['answers'];
 
         try {
-            // Prepare query for ratings
+            // Fetch all criteria and group questions under each
             $query = $conn->prepare("
                 SELECT 
-                    q.question_id,
-                    q.question,
+                    c.criteria_id, 
+                    c.criteria, 
+                    q.question_id, 
+                    q.question, 
                     q.question_type,
                     COUNT(CASE WHEN e.rate = 1 THEN 1 END) AS rate1,
                     COUNT(CASE WHEN e.rate = 2 THEN 1 END) AS rate2,
                     COUNT(CASE WHEN e.rate = 3 THEN 1 END) AS rate3,
                     COUNT(CASE WHEN e.rate = 4 THEN 1 END) AS rate4,
                     COUNT(e.rate) AS total_responses
-                FROM $questionTable q
+                FROM criteria_list c
+                JOIN $questionTable q ON q.criteria_id = c.criteria_id
                 LEFT JOIN $answerTable e 
-                    ON e.question_id = q.question_id AND e.faculty_id = :faculty_id
-                GROUP BY q.question_id
+                    ON e.question_id = q.question_id 
+                    AND e.faculty_id = :faculty_id
+                GROUP BY c.criteria_id, q.question_id
+                ORDER BY c.criteria_id
             ");
 
             $query->bindParam(':faculty_id', $faculty_id, PDO::PARAM_INT);
             $query->execute();
             $ratings = $query->fetchAll(PDO::FETCH_ASSOC);
 
-            // Fetch comments for the selected category
+            // Fetch comments
             $commentQuery = $conn->prepare("
                 SELECT 
                     q.question_id,
                     e.comment
                 FROM $questionTable q
                 LEFT JOIN $answerTable e 
-                    ON e.question_id = q.question_id AND e.faculty_id = :faculty_id
+                    ON e.question_id = q.question_id 
+                    AND e.faculty_id = :faculty_id
                 WHERE e.comment IS NOT NULL
             ");
 
@@ -79,11 +85,11 @@ if ($faculty_id && $category) {
                 $commentsByQuestion[$comment['question_id']][] = $comment['comment'];
             }
 
-            // Compile the response
+            // Organize data by criteria
             $responseData = [];
             foreach ($ratings as $row) {
                 $total = $row['total_responses'];
-                $responseData[] = [
+                $responseData[$row['criteria']][] = [
                     'question_id' => $row['question_id'],
                     'question' => $row['question'],
                     'question_type' => $row['question_type'],

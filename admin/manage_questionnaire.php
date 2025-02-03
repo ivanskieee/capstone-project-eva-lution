@@ -29,11 +29,11 @@ include 'handlers/questionnaire_handler.php';
                                     <label for="sector">Sector</label>
                                     <select name="sector" id="sector" class="form-control" required>
                                         <option value="student_faculty" <?= ($sector === 'student_faculty') ? 'selected' : '' ?>>Student to Faculty</option>
-                                        <option value="faculty_faculty" <?= ($sector === 'faculty_faculty') ? 'selected' : '' ?>>Faculty to Faculty</option>
+                                        <option value="faculty_faculty" <?= ($sector === 'faculty_faculty') ? 'selected' : '' ?>>Peer to Peer</option>
                                         <option value="faculty_dean" <?= ($sector === 'faculty_dean') ? 'selected' : '' ?>>
-                                            Faculty to Dean</option>
+                                            Peer to Head</option>
                                         <option value="dean_faculty" <?= ($sector === 'dean_faculty') ? 'selected' : '' ?>>
-                                            Dean
+                                            Head
                                             to Faculty</option>
                                     </select>
                                 </div>
@@ -338,3 +338,31 @@ include 'handlers/questionnaire_handler.php';
         scroll-behavior: smooth;
     }
 </style>
+<script>
+    // Check if the criteria contains any 'text' type questions
+    document.addEventListener('DOMContentLoaded', function() {
+        const tables = document.querySelectorAll('table');
+        
+        tables.forEach(table => {
+            const rows = table.querySelectorAll('tbody tr');
+            let hasTextQuestion = false;
+
+            // Check if there's a text-type question in the current table
+            rows.forEach(row => {
+                if (row.querySelector('textarea')) {
+                    hasTextQuestion = true;
+                }
+            });
+
+            if (hasTextQuestion) {
+                // Hide the rating columns (1 to 4)
+                const headerCells = table.querySelectorAll('thead th');
+                headerCells.forEach((cell, index) => {
+                    if (index > 0) {
+                        cell.style.display = 'none'; // Hide columns 1 to 4
+                    }
+                });
+            }
+        });
+    });
+</script>

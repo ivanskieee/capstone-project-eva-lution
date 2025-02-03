@@ -315,4 +315,33 @@ $normalizedSubjectsString = implode(',', $normalizedSubjects);
         pointer-events: auto; /* Enable interaction */
     }
 </style>
+<script>
+    // Check if the criteria contains any 'text' type questions
+    document.addEventListener('DOMContentLoaded', function() {
+        const tables = document.querySelectorAll('table');
+        
+        tables.forEach(table => {
+            const rows = table.querySelectorAll('tbody tr');
+            let hasTextQuestion = false;
+
+            // Check if there's a text-type question in the current table
+            rows.forEach(row => {
+                if (row.querySelector('textarea')) {
+                    hasTextQuestion = true;
+                }
+            });
+
+            if (hasTextQuestion) {
+                // Hide the rating columns (1 to 4)
+                const headerCells = table.querySelectorAll('thead th');
+                headerCells.forEach((cell, index) => {
+                    if (index > 0) {
+                        cell.style.display = 'none'; // Hide columns 1 to 4
+                    }
+                });
+            }
+        });
+    });
+</script>
+
 <?php include 'footer.php'; ?>
