@@ -56,7 +56,7 @@
                         class="nav-link nav-evaluate <?php echo basename($_SERVER['PHP_SELF']) == 'evaluate_faculties.php' ? 'active' : ''; ?>"
                         style="<?php echo basename($_SERVER['PHP_SELF']) == 'evaluate_faculties.php' ? 'background-color: rgb(51, 128, 64); color: #fff; border: 1px solid #343a40;' : 'background-color: #343a40; color: #fff; border: 1px solid #343a40;'; ?>">
                         <i class="nav-icon fas fa-th-list"></i>
-                        <p>Evaluate Faculties</p>
+                        <p>Evaluate Faculty Members</p>
                     </a>
                 </li>
                 <li class="nav-item dropdown">
@@ -64,7 +64,7 @@
                         class="nav-link nav-evaluate <?php echo basename($_SERVER['PHP_SELF']) == 'evaluate_deans.php' ? 'active' : ''; ?>"
                         style="<?php echo basename($_SERVER['PHP_SELF']) == 'evaluate_deans.php' ? 'background-color: rgb(51, 128, 64); color: #fff; border: 1px solid #343a40;' : 'background-color: #343a40; color: #fff; border: 1px solid #343a40;'; ?>">
                         <i class="nav-icon fas fa-th-list"></i>
-                        <p>Evaluate Dean</p>
+                        <p>Evaluate Academic Head</p>
                     </a>
                 </li>
                 <li class="nav-item dropdown">
