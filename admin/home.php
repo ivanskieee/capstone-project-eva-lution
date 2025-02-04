@@ -76,7 +76,7 @@ $headList = fetchHeadFacultyList($conn);
                 <div class="col-12">
                     <div class="card shadow-sm rounded">
                         <div class="card-body">
-                            <h4>Welcome, <?php echo $_SESSION['login_name']; ?>!</h4>
+                            <h4 class="ml-2">Welcome, <?php echo $_SESSION['login_name']; ?>!</h4>
                             <div class="col-md-5 mt-3">
                                 <?php
                                 // Fetch the user's academic_id from the `users` table (assuming the user is logged in)
@@ -86,7 +86,7 @@ $headList = fetchHeadFacultyList($conn);
                                 $stmt_user->bindParam(':user_id', $user_id, PDO::PARAM_INT);
                                 $stmt_user->execute();
                                 $user = $stmt_user->fetch(PDO::FETCH_ASSOC);
-                                
+
                                 if ($user && $user['academic_id']) {
                                     $academic_id = $user['academic_id'];
 
@@ -143,12 +143,12 @@ $headList = fetchHeadFacultyList($conn);
                     ["Users", "users", "fa-users", "user_list.php"],
                     ["Academic Heads", "head_faculty_list", "fa-users", "head_faculty_list.php"],
                 ];
-                
+
                 foreach ($dashboardData as $data) {
                     $stmt = $conn->query("SELECT * FROM {$data[1]}");
                     $total = $stmt->rowCount();
                     $listPage = $data[3]; // Correct file name mapping
-                    
+                
                     echo "
                     <div class='col-12 col-sm-6 col-md-3 mb-3'> 
                     <a href='{$listPage}' class='text-decoration-none'>
@@ -167,419 +167,485 @@ $headList = fetchHeadFacultyList($conn);
                 ?>
             </div>
 
-            <div class="row mt-3">
-                <div class="col-md-8 offset-md-2">
-                    <div class="card shadow-sm rounded">
-                        <div class="card-header text-center py-2">
-                            <h5 class="mb-0">Select Category</h5>
+            <div class="row mt-4">
+                <div class="col-md-4 mb-3">
+                    <div class="card glass-card" data-category="faculty">
+                        <div class="card-body text-center">
+                            <h6 class="card-title">Student to Faculty Evaluation</h6>
                         </div>
-                        <div class="card-body py-3">
-                            <div class="row">
-                                <!-- First Row of Buttons -->
-                                <div class="col-md-4 mb-2">
-                                    <button type="button" class="btn btn-outline-success w-100" id="facultyButton"
-                                    data-category="faculty">
-                                        Student to Faculty Evaluation
-                                    </button>
-                                </div>
-                                <div class="col-md-4 mb-2">
-                                    <button type="button" class="btn btn-outline-success w-100" id="selfFacultyButton"
-                                        data-category="self-faculty">
-                                        Faculty Self-Evaluation
-                                    </button>
-                                </div>
-                                <div class="col-md-4 mb-2">
-                                    <button type="button" class="btn btn-outline-success w-100"
-                                        id="selfHeadFacultyButton" data-category="self-head-faculty">
-                                        Head Self-Evaluation
-                                    </button>
-                                </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card glass-card" data-category="self-faculty">
+                        <div class="card-body text-center">
+                            <h6 class="card-title">Faculty Self-Evaluation</h6>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card glass-card" data-category="self-head-faculty">
+                        <div class="card-body text-center">
+                            <h6 class="card-title">Head Self-Evaluation</h6>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card glass-card" data-category="faculty-to-faculty">
+                        <div class="card-body text-center">
+                            <h6 class="card-title">Peer to Peer Evaluation</h6>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card glass-card" data-category="faculty-to-head">
+                        <div class="card-body text-center">
+                            <h6 class="card-title">Peer to Head Evaluation</h6>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="card glass-card" data-category="head-to-faculty">
+                        <div class="card-body text-center">
+                            <h6 class="card-title">Head to Faculty Evaluation</h6>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container mt-5">
+                <!-- Faculty and Academic Year Selection -->
+                <div class="row mt-3">
+                    <div class="col-md-8 offset-md-2">
+                        <div class="card shadow-sm rounded">
+                            <div class="card-header text-center py-2">
+                                <h5 class="mb-0" id="categoryTitle">Select Faculty to Monitor</h5>
                             </div>
-                            <div class="row">
-                                <!-- Second Row of Buttons -->
-                                <div class="col-md-4 mb-2">
-                                    <button type="button" class="btn btn-outline-success w-100"
-                                    id="FacultytoFacultyButton" data-category="faculty-to-faculty">
-                                        Peer to Peer Evaluation
-                                    </button>
-                                </div>
-                                <div class="col-md-4 mb-2">
-                                    <button type="button" class="btn btn-outline-success w-100" id="FacultytoHeadButton"
-                                    data-category="faculty-to-head">
-                                        Peer to Head Evaluation
-                                    </button>
-                                </div>
-                                <div class="col-md-4 mb-2">
-                                    <button type="button" class="btn btn-outline-success w-100" id="HeadtoFacultyButton"
-                                        data-category="head-to-faculty">
-                                        Head to Faculty Evaluation
-                                    </button>
-                                </div>
+                            <div class="card-body py-3">
+                                <form id="facultyForm">
+                                    <div class="form-group">
+                                        <label for="facultySelect" class="form-label" id="facultyLabel">Faculty:</label>
+                                        <select class="form-control form-control-sm" id="facultySelect"
+                                            name="faculty_id">
+                                            <option value="" selected disabled>Select Faculty</option>
+                                            <!-- Options dynamically populated -->
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Academic Year Selection -->
+                <div class="row mt-3">
+                    <div class="col-md-8 offset-md-2">
+                        <div class="card shadow-sm rounded">
+                            <div class="card-header text-center py-2">
+                                <h5 class="mb-0">Select Academic Year</h5>
+                            </div>
+                            <div class="card-body py-3">
+                                <form id="academicForm">
+                                    <div class="form-group">
+                                        <label for="academicSelect" class="form-label">Academic Year:</label>
+                                        <select class="form-control form-control-sm" id="academicSelect"
+                                            name="academic_id">
+                                            <option value="" selected disabled>Select Academic Year</option>
+                                            <?php foreach ($academicYearList as $academicYear): ?>
+                                                <option value="<?php echo $academicYear['academic_id']; ?>" <?php echo ($academic_id == $academicYear['academic_id']) ? 'selected' : ''; ?>>
+                                                    <?php echo htmlspecialchars($academicYear['year'] . ' - ' . $academicYear['semester']); ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Line Graph Section -->
+                <div class="row mt-3">
+                    <div class="col-md-8 offset-md-2">
+                        <div class="card shadow-sm rounded">
+                            <div class="card-header text-center py-2">
+                                <h5 class="mb-0">Performance Over Time</h5>
+                            </div>
+                            <div class="card-body py-3">
+                                <canvas id="facultyLineChart" style="max-height: 400px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bar Graph Section -->
+                <div class="row mt-3">
+                    <div class="col-md-8 offset-md-2">
+                        <div class="card shadow-sm rounded">
+                            <div class="card-header text-center py-2">
+                                <h5 class="mb-0">Mean Score Per Question</h5>
+                            </div>
+                            <div class="card-body py-3">
+                                <canvas id="facultyBarChart" style="max-height: 400px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feedback Section -->
+                <div class="row mt-3">
+                    <div class="col-md-8 offset-md-2">
+                        <div class="card shadow-sm rounded">
+                            <div class="card-header text-center py-2">
+                                <h5 class="mb-0">Performance Feedback</h5>
+                            </div>
+                            <div class="card-body py-3 text-center">
+                                <p id="performanceFeedback" class="text-success"></p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="row mt-3">
-                <div class="col-md-8 offset-md-2">
-                    <div class="card shadow-sm rounded">
-                        <div class="card-header text-center py-2">
-                            <h5 class="mb-0" id="categoryTitle">Select Faculty to Monitor</h5>
-                        </div>
-                        <div class="card-body py-3">
-                            <form id="facultyForm">
-                                <div class="form-group">
-                                    <label for="facultySelect" class="form-label" id="facultyLabel">Faculty:</label>
-                                    <select class="form-control form-control-sm" id="facultySelect" name="faculty_id">
-                                        <option value="" selected disabled>Select Faculty</option>
-                                        <!-- Options dynamically populated -->
-                                    </select>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <script>
+                const facultyList = <?php echo json_encode($facultyList); ?>;
+                const headList = <?php echo json_encode($headList); ?>;
+                const academicList = <?php echo json_encode($academicYearList); ?>;
 
-            <div class="row mt-3">
-                <div class="col-md-8 offset-md-2">
-                    <div class="card shadow-sm rounded">
-                        <div class="card-header text-center py-2">
-                            <h5 class="mb-0">Select Academic Year</h5>
-                        </div>
-                        <div class="card-body py-3">
-                            <form id="academicForm">
-                                <div class="form-group">
-                                    <label for="academicSelect" class="form-label">Academic Year:</label>
-                                    <select class="form-control form-control-sm" id="academicSelect" name="academic_id">
-                                        <option value="" selected disabled>Select Academic Year</option>
-                                        <?php foreach ($academicYearList as $academicYear): ?>
-                                            <option value="<?php echo $academicYear['academic_id']; ?>" <?php echo ($academic_id == $academicYear['academic_id']) ? 'selected' : ''; ?>>
-                                                <?php echo htmlspecialchars($academicYear['year'] . ' - ' . $academicYear['semester']); ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    </select>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                const categoryTitle = document.getElementById('categoryTitle');
+                const facultyLabel = document.getElementById('facultyLabel');
+                const facultySelect = document.getElementById('facultySelect');
+                const facultyButtons = document.querySelectorAll('[data-category]');
+                const academicSelect = document.getElementById('academicSelect');
+                const feedbackElement = document.getElementById('performanceFeedback');
 
-            <div class="row mt-3">
-                <div class="col-md-8 offset-md-2">
-                    <div class="card shadow-sm rounded">
-                        <div class="card-header text-center py-2">
-                            <h5 class="mb-0">Performance Over Time</h5>
-                        </div>
-                        <div class="card-body py-3">
-                            <canvas id="facultyLineChart" style="max-height: 400px;"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                // Populate dropdown based on category
+                function populateDropdown(category) {
+                    facultySelect.innerHTML = '<option value="" selected disabled>Select Faculty</option>';
 
-            <div class="row mt-3">
-                <div class="col-md-8 offset-md-2">
-                    <div class="card shadow-sm rounded">
-                        <div class="card-header text-center py-2">
-                            <h5 class="mb-0">Performance Feedback</h5>
-                        </div>
-                        <div class="card-body py-3 text-center">
-                            <p id="performanceFeedback" class="text-success"></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
-</div>
-
-<script>
-    const facultyList = <?php echo json_encode($facultyList); ?>;
-    const headList = <?php echo json_encode($headList); ?>;
-    const academicList = <?php echo json_encode($academicYearList); ?>; // Example: [{ academic_id: 1, year: "2023", semester: "First" }]
-    
-    const categoryTitle = document.getElementById('categoryTitle');
-    const facultyLabel = document.getElementById('facultyLabel');
-    const facultySelect = document.getElementById('facultySelect');
-    const facultyButtons = document.querySelectorAll('[data-category]');
-    const academicSelect = document.getElementById('academicSelect');
-    const feedbackElement = document.getElementById('performanceFeedback'); // Element to display feedback
-    
-    // Populate dropdown based on category
-    function populateDropdown(category) {
-        facultySelect.innerHTML = '<option value="" selected disabled>Select Faculty</option>';
-        
-        if (category === 'faculty' || category === 'self-faculty') {
-            facultyLabel.textContent = 'Faculty:';
-            categoryTitle.textContent = category === 'faculty' ? 'Select Faculty to Monitor' : 'Select Self Faculty to Monitor';
-            facultyList.forEach(faculty => {
-                const option = document.createElement('option');
-                option.value = faculty.faculty_id;
-                option.textContent = faculty.faculty_name;
-                facultySelect.appendChild(option);
-            });
-        } else if (category === 'self-head-faculty' || category === 'faculty-to-head') {
-            facultyLabel.textContent = 'Head:';
-            categoryTitle.textContent = category === 'self-head-faculty'
-            ? 'Select Self Head Faculty to Monitor'
-                : 'Select Head for Faculty to Head Evaluation';
-            headList.forEach(head => {
-                const option = document.createElement('option');
-                option.value = head.head_id;
-                option.textContent = head.head_name;
-                facultySelect.appendChild(option);
-            });
-        } else if (category === 'faculty-to-faculty' || category === 'head-to-faculty') {
-            facultyLabel.textContent = 'Faculty:';
-            categoryTitle.textContent = `Select Faculty for ${category.replace(/-/g, ' ')}`;
-            facultyList.forEach(faculty => {
-                const option = document.createElement('option');
-                option.value = faculty.faculty_id;
-                option.textContent = faculty.faculty_name;
-                facultySelect.appendChild(option);
-            });
-        }
-    }
-    
-    facultyButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            facultyButtons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-            const category = this.getAttribute('data-category');
-            populateDropdown(category);
-        });
-    });
-    
-    populateDropdown('faculty');
-    
-    // Populate academicSelect with year and semester
-    
-    const ctx = document.getElementById('facultyLineChart').getContext('2d');
-
-    // Create gradient background
-    let gradient = ctx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, 'rgba(51, 128, 64, 0.5)'); // Green at the top
-    gradient.addColorStop(1, 'rgba(255, 0, 128, 0.3)'); // Pink at the bottom
-    
-    const lineChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: [], // Will be populated dynamically
-            datasets: [{
-                label: 'Ratings',
-                data: [],
-                fill: true, // Enable fill for gradient effect
-                backgroundColor: gradient,
-                borderColor: 'rgba(255, 255, 255, 0.8)', // White Line
-                pointBackgroundColor: 'rgb(51, 128, 64)', // Themed Green Points
-                pointBorderColor: 'rgba(255, 255, 255, 1)', // White Border
-                pointRadius: 4, // Smaller and cooler design
-                pointHoverRadius: 6,
-                pointHoverBorderWidth: 2, // More defined hover effect
-                borderWidth: 3, // Thicker line for clarity
-                tension: 0.4, // Smooth curve for a modern look
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false, // Hide legend for a cleaner look
-                },
-                tooltip: {
-                    enabled: true,
-                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                    titleColor: 'white',
-                    bodyColor: 'white',
-                    padding: 10,
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.1)' // Faint grid lines
-                    },
-                    ticks: {
-                        color: 'white', // White labels
-                        font: {
-                            size: 14
-                        }
-                    }
-                },
-                x: {
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.1)' // Faint grid lines
-                    },
-                    ticks: {
-                        color: 'white', // White labels
-                        font: {
-                            size: 14
-                        }
+                    if (category === 'faculty' || category === 'self-faculty') {
+                        facultyLabel.textContent = 'Faculty:';
+                        categoryTitle.textContent = category === 'faculty' ? 'Select Faculty to Monitor' : 'Select Self Faculty to Monitor';
+                        facultyList.forEach(faculty => {
+                            const option = document.createElement('option');
+                            option.value = faculty.faculty_id;
+                            option.textContent = faculty.faculty_name;
+                            facultySelect.appendChild(option);
+                        });
+                    } else if (category === 'self-head-faculty' || category === 'faculty-to-head') {
+                        facultyLabel.textContent = 'Head:';
+                        categoryTitle.textContent = category === 'self-head-faculty'
+                            ? 'Select Self Head Faculty to Monitor'
+                            : 'Select Head for Faculty to Head Evaluation';
+                        headList.forEach(head => {
+                            const option = document.createElement('option');
+                            option.value = head.head_id;
+                            option.textContent = head.head_name;
+                            facultySelect.appendChild(option);
+                        });
+                    } else if (category === 'faculty-to-faculty' || category === 'head-to-faculty') {
+                        facultyLabel.textContent = 'Faculty:';
+                        categoryTitle.textContent = `Select Faculty for ${category.replace(/-/g, ' ')}`;
+                        facultyList.forEach(faculty => {
+                            const option = document.createElement('option');
+                            option.value = faculty.faculty_id;
+                            option.textContent = faculty.faculty_name;
+                            facultySelect.appendChild(option);
+                        });
                     }
                 }
-            }
-        }
-    });
 
-    // Function to update chart dynamically
-    function updateLineChart(labels, dataset) {
-        lineChart.data.labels = labels;
-        lineChart.data.datasets[0].data = dataset;
-        lineChart.update();
-    }
+                facultyButtons.forEach(button => {
+                    button.addEventListener('click', function () {
+                        facultyButtons.forEach(btn => btn.classList.remove('active'));
+                        this.classList.add('active');
+                        const category = this.getAttribute('data-category');
+                        populateDropdown(category);
+                    });
+                });
 
-    function updateChart() {
-        const facultyId = facultySelect.value;
-        const academicId = academicSelect.value;
-        const activeCategory = document.querySelector('[data-category].active')?.getAttribute('data-category');
-        
-        if (facultyId && academicId) {
-            fetch(`fetch_faculty_data.php?faculty_id=${facultyId}&category=${activeCategory}&academic_id=${academicId}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    alert(data.error);
-                    return;
+                populateDropdown('faculty');
+
+                // Create Line Chart
+                const ctxLine = document.getElementById('facultyLineChart').getContext('2d');
+
+                // Create gradient background for line chart
+                let gradientLine = ctxLine.createLinearGradient(0, 0, 0, 400);
+                gradientLine.addColorStop(0, 'rgba(51, 128, 64, 0.5)'); // Green at the top
+                gradientLine.addColorStop(1, 'rgba(255, 0, 128, 0.3)'); // Pink at the bottom
+
+                const lineChart = new Chart(ctxLine, {
+                    type: 'line',
+                    data: {
+                        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'], // Months from January to December
+                        datasets: [{
+                            label: 'Ratings',
+                            data: [], // Will be populated dynamically
+                            fill: true, // Enable fill for gradient effect
+                            backgroundColor: gradientLine,
+                            borderColor: 'rgba(255, 255, 255, 0.8)', // White Line
+                            pointBackgroundColor: 'rgb(51, 128, 64)', // Themed Green Points
+                            pointBorderColor: 'rgba(255, 255, 255, 1)', // White Border
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            pointHoverBorderWidth: 2,
+                            borderWidth: 3,
+                            tension: 0.4,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false,
+                            },
+                            tooltip: {
+                                enabled: true,
+                                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                titleColor: 'white',
+                                bodyColor: 'white',
+                                padding: 10,
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: 'white',
+                                    font: {
+                                        size: 14
+                                    }
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: 'white',
+                                    font: {
+                                        size: 14
+                                    }
+                                }
+                            }
+                        }
                     }
-                    updateLineChart(data.labels, data.dataset, academicId);
-                })
-                .catch(error => console.error('Error fetching data:', error));
-        }
-    }
+                });
 
-    facultySelect.addEventListener('change', updateChart);
-    academicSelect.addEventListener('change', updateChart);
+                // Create Bar Chart for Faculty Performance (Using Same Data as Line Chart)
+                const ctxBar = document.getElementById('facultyBarChart').getContext('2d');
+                const barChart = new Chart(ctxBar, {
+                    type: 'bar',
+                    data: {
+                        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'], // Months from January to December
+                        datasets: [{
+                            label: 'Ratings',
+                            data: [], // Will be populated dynamically (same as line chart data)
+                            backgroundColor: 'rgba(51, 128, 64, 0.6)',
+                            borderColor: 'rgba(255, 255, 255, 0.8)',
+                            borderWidth: 1,
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false,
+                            },
+                            tooltip: {
+                                enabled: true,
+                                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                                titleColor: 'white',
+                                bodyColor: 'white',
+                                padding: 10,
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: 'white',
+                                    font: {
+                                        size: 14
+                                    }
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: 'white',
+                                    font: {
+                                        size: 14
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
 
-    function updateLineChart(labels, dataset, academicId) {
-        lineChart.data.labels = labels;
-        lineChart.data.datasets[0].data = dataset;
-        lineChart.update();
-        
-        // Skip feedback if there are no results
-        if (!dataset || dataset.length === 0) {
-            feedbackElement.textContent = ""; // Clear feedback
-            feedbackElement.classList.remove("text-success", "text-danger"); // Reset styling
-            return;
-        }
-        
-        // Analyze performance based on academic year and dataset
-        const academicDetails = academicList.find(a => a.academic_id == academicId);
-        const performanceFeedback = analyzePerformance(dataset, academicDetails);
-        
-        // Display feedback
-        feedbackElement.textContent = performanceFeedback;
-        
-        // Change the feedback color based on the analysis
-        if (performanceFeedback.includes("inconsistent")) {
-            feedbackElement.classList.remove("text-success");
-            feedbackElement.classList.add("text-danger"); // Red for danger
-        } else {
-            feedbackElement.classList.remove("text-danger");
-            feedbackElement.classList.add("text-success"); // Green for success
-        }
-    }
-    
-    function analyzePerformance(ratings, academicDetails) {
-        let improvement = 0;
-        let consistency = 0;
-        let needImprovement = 0;
-        
-        // Analyze ratings for the selected academic year
-        ratings.forEach(rating => {
-            if (rating >= 3) {
-                improvement++; // Consistently good rating
-            } else if (rating <= 2) {
-                needImprovement++; // Needs improvement
-            } else {
-                consistency++; // Neutral or inconsistent
-            }
-        });
+                // Function to update both charts dynamically
+                function updateCharts(labels, dataset) {
+                    // Update Line Chart
+                    lineChart.data.labels = labels;
+                    lineChart.data.datasets[0].data = dataset;
+                    lineChart.update();
 
-        const year = academicDetails?.year || "Unknown Year";
-        const semester = academicDetails?.semester || "Unknown Semester";
-        
-        if (improvement > needImprovement) {
-            return `For Year ${year}, ${semester} Semester, performance is improving and consistent. Keep up the good work!`;
-        } else if (needImprovement > improvement) {
-            return `For Year ${year}, ${semester} Semester, performance needs improvement and is inconsistent. Please work on improving the ratings.`;
-        } else {
-            return `For Year ${year}, ${semester} Semester, performance is inconsistent. Aim to have consistent positive feedback.`;
-        }
-    }
-</script>
+                    // Update Bar Chart
+                    barChart.data.labels = labels;
+                    barChart.data.datasets[0].data = dataset;
+                    barChart.update();
+                }
 
-<style>
-    .card {
-        border-radius: 10px;
-        overflow: hidden;
-    }
+                function updateChart() {
+                    const facultyId = facultySelect.value;
+                    const academicId = academicSelect.value;
+                    const activeCategory = document.querySelector('[data-category].active')?.getAttribute('data-category');
 
-    .card-header {
-        background: rgb(51, 128, 64);
-        color: white;
-    }
-    
-    .card-header h5 {
-        font-size: 1rem;
-    }
-    
-    #facultySelect {
-        border: 1px solid rgb(51, 128, 64);
-        border-radius: 5px;
-        font-size: 0.9rem;
-    }
+                    if (facultyId && academicId) {
+                        fetch(`fetch_faculty_data.php?faculty_id=${facultyId}&category=${activeCategory}&academic_id=${academicId}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.error) {
+                                    alert(data.error);
+                                    return;
+                                }
+                                updateCharts(data.labels, data.dataset);
+                            })
+                            .catch(error => console.error('Error fetching data:', error));
+                    }
+                }
 
-    .container-fluid {
-        max-width: 90%;
-    }
+                facultySelect.addEventListener('change', updateChart);
+                academicSelect.addEventListener('change', updateChart);
+            </script>
 
-    .form-label {
-        font-size: 0.9rem;
-        font-weight: 500;
-    }
-    
-    .content .main-header {
-        max-height: 87vh;
-        overflow-y: auto;
-        scroll-behavior: smooth;
-    }
-    
-    .card-body {
-        padding: 0.75rem;
-    }
-    
-    .form-control-sm {
-        height: calc(1.5em + 0.5rem + 2px);
-        padding: 0.25rem 0.5rem;
-        font-size: 0.875rem;
-    }
-    
-    .btn {
-        height: 40px;
-        /* Adjust height as needed */
-        line-height: 1.5;
-        /* Vertically centers text */
-    }
-    .small-box {
-        transition: transform 0.2s ease-in-out, box-shadow 0.2s;
-    }
-    
-    .small-box:hover {
-        transform: scale(1.05);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    }
-    
-    .hover-effect:hover {
-        background-color: #f8f9fa;
-        
-    }
-</style>
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const cards = document.querySelectorAll(".glass-card");
+
+                    cards.forEach(card => {
+                        card.addEventListener("click", function () {
+                            // Toggle selection on click
+                            if (this.classList.contains("selected")) {
+                                this.classList.remove("selected"); // Unselect if already selected
+                                console.log("Deselected:", this.getAttribute("data-category"));
+                            } else {
+                                // Remove 'selected' class from all other cards
+                                cards.forEach(c => c.classList.remove("selected"));
+
+                                // Add 'selected' class to the clicked card
+                                this.classList.add("selected");
+                                console.log("Selected:", this.getAttribute("data-category"));
+                            }
+                        });
+                    });
+                });
+            </script>
+
+            <style>
+                .card {
+                    border-radius: 10px;
+                    overflow: hidden;
+                }
+
+                .card-header {
+                    background: rgb(51, 128, 64);
+                    color: white;
+                }
+
+                .card-header h5 {
+                    font-size: 1rem;
+                }
+
+                #facultySelect {
+                    border: 1px solid rgb(51, 128, 64);
+                    border-radius: 5px;
+                    font-size: 0.9rem;
+                }
+
+                .container-fluid {
+                    max-width: 90%;
+                }
+
+                .form-label {
+                    font-size: 0.9rem;
+                    font-weight: 500;
+                }
+
+                .content .main-header {
+                    max-height: 81vh;
+                    overflow-y: auto;
+                    scroll-behavior: smooth;
+                }
+
+                .card-body {
+                    padding: 0.75rem;
+                }
+
+                .form-control-sm {
+                    height: calc(1.5em + 0.5rem + 2px);
+                    padding: 0.25rem 0.5rem;
+                    font-size: 0.875rem;
+                }
+
+                .btn {
+                    height: 40px;
+                    /* Adjust height as needed */
+                    line-height: 1.5;
+                    /* Vertically centers text */
+                }
+
+                .small-box {
+                    transition: transform 0.2s ease-in-out, box-shadow 0.2s;
+                }
+
+                .small-box:hover {
+                    transform: scale(1.05);
+                    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+                }
+
+                .hover-effect:hover {
+                    background-color: #f8f9fa;
+
+                }
+
+                .glass-card {
+                    background: rgba(255, 255, 255, 0.4);
+                    backdrop-filter: blur(10px);
+                    border-radius: 15px;
+                    padding: 20px;
+                    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+                    border: 1px solid rgba(0, 0, 0, 0.1);
+                    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, background 0.3s, border 0.3s;
+                    cursor: pointer;
+                }
+
+                .glass-card:hover {
+                    transform: scale(1.05);
+                    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+                }
+
+                /* Selected card effect */
+                .glass-card.selected {
+                    border: 2px solid rgb(51, 128, 64);
+                    background: rgba(51, 128, 64, 0.2);
+                }
+            </style>
 
 
 
-<?php include 'footer.php'; ?>
+            <?php include 'footer.php'; ?>
