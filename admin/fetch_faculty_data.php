@@ -1,74 +1,72 @@
 <?php
 include '../database/connection.php';
 
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
 if (isset($_GET['faculty_id'], $_GET['category'], $_GET['academic_id'])) {
     $facultyId = $_GET['faculty_id'];
     $category = $_GET['category'];
     $academicId = $_GET['academic_id'];
 
+    $query = "";
     if ($category === 'faculty') {
-        $stmt = $conn->prepare("
-            SELECT ea.rate AS rating
-            FROM evaluation_answers ea
-            WHERE ea.faculty_id = :faculty_id AND ea.academic_id = :academic_id AND ea.rate IS NOT NULL
-            ORDER BY ea.evaluation_id ASC
-        ");
-        $stmt->execute(['faculty_id' => $facultyId, 'academic_id' => $academicId]);
+        $query = "SELECT ea.rate, COUNT(*) AS count
+                  FROM evaluation_answers ea
+                  WHERE ea.faculty_id = :faculty_id AND ea.academic_id = :academic_id AND ea.rate IS NOT NULL
+                  GROUP BY ea.rate
+                  ORDER BY ea.rate ASC";
     } elseif ($category === 'self-faculty') {
-        // Fetch average_score for self-faculty evaluations
-        $stmt = $conn->prepare("
-            SELECT sfe.average_score AS average_score
-            FROM self_faculty_eval sfe
-            WHERE sfe.faculty_id = :faculty_id AND sfe.academic_id = :academic_id
-            ORDER BY sfe.faculty_id ASC
-        ");
-        $stmt->execute(['faculty_id' => $facultyId, 'academic_id' => $academicId]);
+        $query = "SELECT sfe.average_score AS rate, COUNT(*) AS count
+                  FROM self_faculty_eval sfe
+                  WHERE sfe.faculty_id = :faculty_id AND sfe.academic_id = :academic_id
+                  GROUP BY sfe.average_score
+                  ORDER BY sfe.average_score ASC";
     } elseif ($category === 'self-head-faculty') {
-        // Fetch average_score for self-head-faculty evaluations
-        $stmt = $conn->prepare("
-            SELECT she.average_score AS average_score
-            FROM self_head_eval she
-            WHERE she.faculty_id = :faculty_id AND she.academic_id = :academic_id
-            ORDER BY she.faculty_id ASC
-        ");
-        $stmt->execute(['faculty_id' => $facultyId, 'academic_id' => $academicId]);
+        $query = "SELECT she.average_score AS rate, COUNT(*) AS count
+                  FROM self_head_eval she
+                  WHERE she.faculty_id = :faculty_id AND she.academic_id = :academic_id
+                  GROUP BY she.average_score
+                  ORDER BY she.average_score ASC";
     } elseif ($category === 'faculty-to-faculty') {
-        $stmt = $conn->prepare("
-            SELECT eaf.rate AS rating
-            FROM evaluation_answers_faculty_faculty eaf
-            WHERE eaf.faculty_id = :faculty_id AND eaf.academic_id = :academic_id AND eaf.rate IS NOT NULL
-            ORDER BY eaf.evaluation_id ASC
-        ");
-        $stmt->execute(['faculty_id' => $facultyId, 'academic_id' => $academicId]);
+        $query = "SELECT eaf.rate, COUNT(*) AS count
+                  FROM evaluation_answers_faculty_faculty eaf
+                  WHERE eaf.faculty_id = :faculty_id AND eaf.academic_id = :academic_id AND eaf.rate IS NOT NULL
+                  GROUP BY eaf.rate
+                  ORDER BY eaf.rate ASC";
     } elseif ($category === 'faculty-to-head') {
-        $stmt = $conn->prepare("
-            SELECT eah.rate AS rating
-            FROM evaluation_answers_faculty_dean eah
-            WHERE eah.faculty_id = :faculty_id AND eah.academic_id = :academic_id AND eah.rate IS NOT NULL
-            ORDER BY eah.evaluation_id ASC
-        ");
-        $stmt->execute(['faculty_id' => $facultyId, 'academic_id' => $academicId]);
+        $query = "SELECT eah.rate, COUNT(*) AS count
+                  FROM evaluation_answers_faculty_dean eah
+                  WHERE eah.faculty_id = :faculty_id AND eah.academic_id = :academic_id AND eah.rate IS NOT NULL
+                  GROUP BY eah.rate
+                  ORDER BY eah.rate ASC";
     } elseif ($category === 'head-to-faculty') {
-        $stmt = $conn->prepare("
-            SELECT eahf.rate AS rating
-            FROM evaluation_answers_dean_faculty eahf
-            WHERE eahf.faculty_id = :faculty_id AND eahf.academic_id = :academic_id AND eahf.rate IS NOT NULL
-            ORDER BY eahf.evaluation_id ASC
-        ");
-        $stmt->execute(['faculty_id' => $facultyId, 'academic_id' => $academicId]);
+        $query = "SELECT eahf.rate, COUNT(*) AS count
+                  FROM evaluation_answers_dean_faculty eahf
+                  WHERE eahf.faculty_id = :faculty_id AND eahf.academic_id = :academic_id AND eahf.rate IS NOT NULL
+                  GROUP BY eahf.rate
+                  ORDER BY eahf.rate ASC";
     } else {
         echo json_encode(['error' => 'Invalid category']);
         exit;
     }
 
-    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    $labels = range(1, count($data));
+    $stmt = $conn->prepare($query);
+    $stmt->execute(['faculty_id' => $facultyId, 'academic_id' => $academicId]);
 
-    // Determine if the category involves average_score or rating
-    if ($category === 'self-faculty' || $category === 'self-head-faculty') {
-        $dataset = array_column($data, 'average_score');
-    } else {
-        $dataset = array_column($data, 'rating');
+    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Get total responses to calculate percentage
+    $totalResponses = array_sum(array_column($data, 'count'));
+
+    // Prepare labels (ratings) and dataset (percentage for each rating)
+    $labels = [];
+    $dataset = [];
+
+    foreach ($data as $row) {
+        $labels[] = "Rate " . $row['rate']; // Label like "Rate 1", "Rate 2", etc.
+        $percentage = ($row['count'] / $totalResponses) * 100;
+        $dataset[] = round($percentage, 2); // Rounded to 2 decimal places
     }
 
     echo json_encode(['labels' => $labels, 'dataset' => $dataset]);

@@ -218,19 +218,18 @@ $headList = fetchHeadFacultyList($conn);
             </div>
 
             <div class="container mt-5">
-                <!-- Faculty and Academic Year Selection -->
-                <div class="row mt-3">
-                    <div class="col-md-8 offset-md-2">
+                <div class="row">
+                    <!-- Faculty and Academic Year Selection -->
+                    <div class="col-md-6">
                         <div class="card shadow-sm rounded">
                             <div class="card-header text-center py-2">
-                                <h5 class="mb-0" id="categoryTitle">Select Faculty to Monitor</h5>
+                                <h5 class="mb-0">Select Faculty to Monitor</h5>
                             </div>
                             <div class="card-body py-3">
                                 <form id="facultyForm">
                                     <div class="form-group">
-                                        <label for="facultySelect" class="form-label" id="facultyLabel">Faculty:</label>
-                                        <select class="form-control form-control-sm" id="facultySelect"
-                                            name="faculty_id">
+                                        <label for="facultySelect" class="form-label">Faculty:</label>
+                                        <select class="form-control form-control-sm" id="facultySelect" name="faculty_id">
                                             <option value="" selected disabled>Select Faculty</option>
                                             <!-- Options dynamically populated -->
                                         </select>
@@ -239,11 +238,8 @@ $headList = fetchHeadFacultyList($conn);
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Academic Year Selection -->
-                <div class="row mt-3">
-                    <div class="col-md-8 offset-md-2">
+                    <div class="col-md-6">
                         <div class="card shadow-sm rounded">
                             <div class="card-header text-center py-2">
                                 <h5 class="mb-0">Select Academic Year</h5>
@@ -252,11 +248,11 @@ $headList = fetchHeadFacultyList($conn);
                                 <form id="academicForm">
                                     <div class="form-group">
                                         <label for="academicSelect" class="form-label">Academic Year:</label>
-                                        <select class="form-control form-control-sm" id="academicSelect"
-                                            name="academic_id">
+                                        <select class="form-control form-control-sm" id="academicSelect" name="academic_id">
                                             <option value="" selected disabled>Select Academic Year</option>
                                             <?php foreach ($academicYearList as $academicYear): ?>
-                                                <option value="<?php echo $academicYear['academic_id']; ?>" <?php echo ($academic_id == $academicYear['academic_id']) ? 'selected' : ''; ?>>
+                                                <option value="<?php echo $academicYear['academic_id']; ?>" 
+                                                    <?php echo ($academic_id == $academicYear['academic_id']) ? 'selected' : ''; ?>>
                                                     <?php echo htmlspecialchars($academicYear['year'] . ' - ' . $academicYear['semester']); ?>
                                                 </option>
                                             <?php endforeach; ?>
@@ -268,9 +264,9 @@ $headList = fetchHeadFacultyList($conn);
                     </div>
                 </div>
 
-                <!-- Line Graph Section -->
+                <!-- Graphs Section -->
                 <div class="row mt-3">
-                    <div class="col-md-8 offset-md-2">
+                    <div class="col-md-6">
                         <div class="card shadow-sm rounded">
                             <div class="card-header text-center py-2">
                                 <h5 class="mb-0">Performance Over Time</h5>
@@ -280,14 +276,11 @@ $headList = fetchHeadFacultyList($conn);
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Bar Graph Section -->
-                <div class="row mt-3">
-                    <div class="col-md-8 offset-md-2">
+                    <div class="col-md-6">
                         <div class="card shadow-sm rounded">
                             <div class="card-header text-center py-2">
-                                <h5 class="mb-0">Mean Score Per Question</h5>
+                                <h5 class="mb-0">Mean Score</h5>
                             </div>
                             <div class="card-body py-3">
                                 <canvas id="facultyBarChart" style="max-height: 400px;"></canvas>
@@ -295,10 +288,28 @@ $headList = fetchHeadFacultyList($conn);
                         </div>
                     </div>
                 </div>
+                <div class="d-flex justify-content-center align-items-center mt-3">
+                    <div class="legend-item mx-2 text-center">
+                        <div class="legend-color" style="background-color: #4CAF50;"></div>
+                        <small>4 - Strongly Agree</small>
+                    </div>
+                    <div class="legend-item mx-2 text-center">
+                        <div class="legend-color" style="background-color: #8BC34A;"></div>
+                        <small>3 - Agree</small>
+                    </div>
+                    <div class="legend-item mx-2 text-center">
+                        <div class="legend-color" style="background-color: #FFC107;"></div>
+                        <small>2 - Disagree</small>
+                    </div>
+                    <div class="legend-item mx-2 text-center">
+                        <div class="legend-color" style="background-color: #F44336;"></div>
+                        <small>1 - Strongly Disagree</small>
+                    </div>
+                </div>
 
                 <!-- Feedback Section -->
                 <div class="row mt-3">
-                    <div class="col-md-8 offset-md-2">
+                    <div class="col-md-10 mx-auto">
                         <div class="card shadow-sm rounded">
                             <div class="card-header text-center py-2">
                                 <h5 class="mb-0">Performance Feedback</h5>
@@ -314,224 +325,140 @@ $headList = fetchHeadFacultyList($conn);
             <script>
                 const facultyList = <?php echo json_encode($facultyList); ?>;
                 const headList = <?php echo json_encode($headList); ?>;
-                const academicList = <?php echo json_encode($academicYearList); ?>;
 
-                const categoryTitle = document.getElementById('categoryTitle');
-                const facultyLabel = document.getElementById('facultyLabel');
-                const facultySelect = document.getElementById('facultySelect');
-                const facultyButtons = document.querySelectorAll('[data-category]');
-                const academicSelect = document.getElementById('academicSelect');
-                const feedbackElement = document.getElementById('performanceFeedback');
+                document.addEventListener("DOMContentLoaded", function () {
+                    let barChart;
+                    let lineChart;
 
-                // Populate dropdown based on category
-                function populateDropdown(category) {
-                    facultySelect.innerHTML = '<option value="" selected disabled>Select Faculty</option>';
+                    const facultyButtons = document.querySelectorAll('[data-category]');
+                    const facultySelect = document.getElementById('facultySelect');
+                    const academicSelect = document.getElementById('academicSelect');
+                    const feedbackElement = document.getElementById('performanceFeedback');
 
-                    if (category === 'faculty' || category === 'self-faculty') {
-                        facultyLabel.textContent = 'Faculty:';
-                        categoryTitle.textContent = category === 'faculty' ? 'Select Faculty to Monitor' : 'Select Self Faculty to Monitor';
-                        facultyList.forEach(faculty => {
-                            const option = document.createElement('option');
-                            option.value = faculty.faculty_id;
-                            option.textContent = faculty.faculty_name;
-                            facultySelect.appendChild(option);
-                        });
-                    } else if (category === 'self-head-faculty' || category === 'faculty-to-head') {
-                        facultyLabel.textContent = 'Head:';
-                        categoryTitle.textContent = category === 'self-head-faculty'
-                            ? 'Select Self Head Faculty to Monitor'
-                            : 'Select Head for Faculty to Head Evaluation';
-                        headList.forEach(head => {
-                            const option = document.createElement('option');
-                            option.value = head.head_id;
-                            option.textContent = head.head_name;
-                            facultySelect.appendChild(option);
-                        });
-                    } else if (category === 'faculty-to-faculty' || category === 'head-to-faculty') {
-                        facultyLabel.textContent = 'Faculty:';
-                        categoryTitle.textContent = `Select Faculty for ${category.replace(/-/g, ' ')}`;
-                        facultyList.forEach(faculty => {
-                            const option = document.createElement('option');
-                            option.value = faculty.faculty_id;
-                            option.textContent = faculty.faculty_name;
-                            facultySelect.appendChild(option);
-                        });
+                    // Populate dropdown based on category
+                    function populateDropdown(category) {
+                        facultySelect.innerHTML = '<option value="" selected disabled>Select Faculty</option>';
+
+                        if (category === 'faculty' || category === 'self-faculty' || category === 'faculty-to-faculty' || category === 'head-to-faculty') {
+                            facultyList.forEach(faculty => {
+                                const option = document.createElement('option');
+                                option.value = faculty.faculty_id;
+                                option.textContent = faculty.faculty_name;
+                                facultySelect.appendChild(option);
+                            });
+                        } else if (category === 'self-head-faculty' || category === 'faculty-to-head') {
+                            headList.forEach(head => {
+                                const option = document.createElement('option');
+                                option.value = head.head_id;
+                                option.textContent = head.head_name;
+                                facultySelect.appendChild(option);
+                            });
+                        }
                     }
-                }
 
-                facultyButtons.forEach(button => {
-                    button.addEventListener('click', function () {
-                        facultyButtons.forEach(btn => btn.classList.remove('active'));
-                        this.classList.add('active');
-                        const category = this.getAttribute('data-category');
-                        populateDropdown(category);
+                    facultyButtons.forEach(button => {
+                        button.addEventListener('click', function () {
+                            facultyButtons.forEach(btn => btn.classList.remove('active'));
+                            this.classList.add('active');
+                            const category = this.getAttribute('data-category');
+                            populateDropdown(category);
+
+                            // Trigger data fetch on dropdown change
+                            facultySelect.addEventListener('change', () => fetchData(category));
+                            academicSelect.addEventListener('change', () => fetchData(category));
+                        });
                     });
-                });
 
-                populateDropdown('faculty');
+                    function fetchData(category) {
+                            const facultyId = facultySelect.value;
+                            const academicId = academicSelect.value;
 
-                // Create Line Chart
-                const ctxLine = document.getElementById('facultyLineChart').getContext('2d');
-
-                // Create gradient background for line chart
-                let gradientLine = ctxLine.createLinearGradient(0, 0, 0, 400);
-                gradientLine.addColorStop(0, 'rgba(51, 128, 64, 0.5)'); // Green at the top
-                gradientLine.addColorStop(1, 'rgba(255, 0, 128, 0.3)'); // Pink at the bottom
-
-                const lineChart = new Chart(ctxLine, {
-                    type: 'line',
-                    data: {
-                        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'], // Months from January to December
-                        datasets: [{
-                            label: 'Ratings',
-                            data: [], // Will be populated dynamically
-                            fill: true, // Enable fill for gradient effect
-                            backgroundColor: gradientLine,
-                            borderColor: 'rgba(255, 255, 255, 0.8)', // White Line
-                            pointBackgroundColor: 'rgb(51, 128, 64)', // Themed Green Points
-                            pointBorderColor: 'rgba(255, 255, 255, 1)', // White Border
-                            pointRadius: 4,
-                            pointHoverRadius: 6,
-                            pointHoverBorderWidth: 2,
-                            borderWidth: 3,
-                            tension: 0.4,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false,
-                            },
-                            tooltip: {
-                                enabled: true,
-                                backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                                titleColor: 'white',
-                                bodyColor: 'white',
-                                padding: 10,
-                            }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
-                                },
-                                ticks: {
-                                    color: 'white',
-                                    font: {
-                                        size: 14
-                                    }
-                                }
-                            },
-                            x: {
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
-                                },
-                                ticks: {
-                                    color: 'white',
-                                    font: {
-                                        size: 14
-                                    }
-                                }
+                            if (facultyId && academicId) {
+                                fetch(`fetch_faculty_data.php?faculty_id=${facultyId}&category=${category}&academic_id=${academicId}`)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        updateBarChart(data.labels, data.dataset); 
+                                        updateFeedback(data.dataset);             
+                                    })
+                                    .catch(error => console.error('Error fetching data:', error));
                             }
                         }
-                    }
-                });
 
-                // Create Bar Chart for Faculty Performance (Using Same Data as Line Chart)
-                const ctxBar = document.getElementById('facultyBarChart').getContext('2d');
-                const barChart = new Chart(ctxBar, {
-                    type: 'bar',
-                    data: {
-                        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'], // Months from January to December
-                        datasets: [{
-                            label: 'Ratings',
-                            data: [], // Will be populated dynamically (same as line chart data)
-                            backgroundColor: 'rgba(51, 128, 64, 0.6)',
-                            borderColor: 'rgba(255, 255, 255, 0.8)',
-                            borderWidth: 1,
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: false,
-                            },
-                            tooltip: {
-                                enabled: true,
-                                backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                                titleColor: 'white',
-                                bodyColor: 'white',
-                                padding: 10,
+                        function updateBarChart(labels, dataset) {
+                            const ctxBar = document.getElementById("facultyBarChart").getContext("2d");
+
+                            if (barChart) {
+                                barChart.destroy();
                             }
-                        },
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
+
+                            barChart = new Chart(ctxBar, {
+                                type: "bar",
+                                data: {
+                                    labels: labels,
+                                    datasets: [{
+                                        label: "Performance Score (%)",
+                                        backgroundColor: "rgb(51, 128, 64)",
+                                        data: dataset
+                                    }]
                                 },
-                                ticks: {
-                                    color: 'white',
-                                    font: {
-                                        size: 14
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            max: 100 
+                                        }
                                     }
                                 }
-                            },
-                            x: {
-                                grid: {
-                                    color: 'rgba(255, 255, 255, 0.1)'
-                                },
-                                ticks: {
-                                    color: 'white',
-                                    font: {
-                                        size: 14
-                                    }
-                                }
-                            }
+                            });
                         }
-                    }
-                });
-
-                // Function to update both charts dynamically
-                function updateCharts(labels, dataset) {
-                    // Update Line Chart
-                    lineChart.data.labels = labels;
-                    lineChart.data.datasets[0].data = dataset;
-                    lineChart.update();
-
-                    // Update Bar Chart
-                    barChart.data.labels = labels;
-                    barChart.data.datasets[0].data = dataset;
-                    barChart.update();
-                }
-
-                function updateChart() {
-                    const facultyId = facultySelect.value;
-                    const academicId = academicSelect.value;
-                    const activeCategory = document.querySelector('[data-category].active')?.getAttribute('data-category');
-
-                    if (facultyId && academicId) {
-                        fetch(`fetch_faculty_data.php?faculty_id=${facultyId}&category=${activeCategory}&academic_id=${academicId}`)
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.error) {
-                                    alert(data.error);
-                                    return;
+                    function initializeLineChart() {
+                        const ctxLine = document.getElementById("facultyLineChart").getContext("2d");
+                        lineChart = new Chart(ctxLine, {
+                            type: "line",
+                            data: {
+                                labels: ["January", "February", "March", "April", "May", "June"],
+                                datasets: [{
+                                    label: "Faculty Performance Score",
+                                    borderColor: "rgb(51, 128, 64)",
+                                    backgroundColor: "rgba(51, 128, 64, 0.2)",
+                                    data: [78, 85, 90, 88, 92, 95],
+                                    fill: true,
+                                    tension: 0.3
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        max: 100
+                                    }
                                 }
-                                updateCharts(data.labels, data.dataset);
-                            })
-                            .catch(error => console.error('Error fetching data:', error));
+                            }
+                        });
                     }
-                }
 
-                facultySelect.addEventListener('change', updateChart);
-                academicSelect.addEventListener('change', updateChart);
+                    initializeLineChart();
+
+                    function updateFeedback(dataset) {
+                        if (!dataset || dataset.length === 0) {
+                            feedbackElement.textContent = "No data available for the selected criteria.";
+                            return;
+                        }
+
+                        const averageScore = dataset.reduce((acc, val) => acc + val, 0) / dataset.length;
+                        feedbackElement.textContent = `Average Performance Score: ${averageScore.toFixed(2)}%`; // ✅ Added % symbol
+                    }
+
+                    // Default category load
+                    populateDropdown('faculty');
+                    updateLineChart(); // Initialize line chart without connecting it to data fetching
+                });
             </script>
+
 
             <script>
                 document.addEventListener("DOMContentLoaded", function () {
@@ -643,6 +570,19 @@ $headList = fetchHeadFacultyList($conn);
                 .glass-card.selected {
                     border: 2px solid rgb(51, 128, 64);
                     background: rgba(51, 128, 64, 0.2);
+                }
+                .legend-item {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    font-size: 0.75rem;
+                }
+
+                .legend-color {
+                    width: 15px;
+                    height: 15px;
+                    border-radius: 3px;
+                    margin-bottom: 4px;
                 }
             </style>
 
