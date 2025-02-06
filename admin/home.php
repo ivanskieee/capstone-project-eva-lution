@@ -327,160 +327,173 @@ $headList = fetchHeadFacultyList($conn);
                 const headList = <?php echo json_encode($headList); ?>;
 
                 document.addEventListener("DOMContentLoaded", function () {
-                    let barChart;
-                    let lineChart;
+    let barChart;
+    let lineChart;
 
-                    const facultyButtons = document.querySelectorAll('[data-category]');
-                    const facultySelect = document.getElementById('facultySelect');
-                    const academicSelect = document.getElementById('academicSelect');
-                    const feedbackElement = document.getElementById('performanceFeedback');
+    const facultyButtons = document.querySelectorAll('[data-category]');
+    const facultySelect = document.getElementById('facultySelect');
+    const academicSelect = document.getElementById('academicSelect');
+    const feedbackElement = document.getElementById('performanceFeedback');
 
-                    // Populate dropdown based on category
-                    function populateDropdown(category) {
-                        facultySelect.innerHTML = '<option value="" selected disabled>Select Faculty</option>';
+    function populateDropdown(category) {
+        facultySelect.innerHTML = '<option value="" selected disabled>Select Faculty</option>';
 
-                        if (category === 'faculty' || category === 'self-faculty' || category === 'faculty-to-faculty' || category === 'head-to-faculty') {
-                            facultyList.forEach(faculty => {
-                                const option = document.createElement('option');
-                                option.value = faculty.faculty_id;
-                                option.textContent = faculty.faculty_name;
-                                facultySelect.appendChild(option);
-                            });
-                        } else if (category === 'self-head-faculty' || category === 'faculty-to-head') {
-                            headList.forEach(head => {
-                                const option = document.createElement('option');
-                                option.value = head.head_id;
-                                option.textContent = head.head_name;
-                                facultySelect.appendChild(option);
-                            });
-                        }
+        if (['faculty', 'self-faculty', 'faculty-to-faculty', 'head-to-faculty'].includes(category)) {
+            facultyList.forEach(faculty => {
+                const option = document.createElement('option');
+                option.value = faculty.faculty_id;
+                option.textContent = faculty.faculty_name;
+                facultySelect.appendChild(option);
+            });
+        } else if (['self-head-faculty', 'faculty-to-head'].includes(category)) {
+            headList.forEach(head => {
+                const option = document.createElement('option');
+                option.value = head.head_id;
+                option.textContent = head.head_name;
+                facultySelect.appendChild(option);
+            });
+        }
+    }
+
+    facultyButtons.forEach(button => {
+        button.addEventListener('click', function () {
+            facultyButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            const category = this.getAttribute('data-category');
+            populateDropdown(category);
+
+            facultySelect.addEventListener('change', () => fetchData(category));
+            academicSelect.addEventListener('change', () => fetchData(category));
+        });
+    });
+
+    function fetchData(category) {
+        const facultyId = facultySelect.value;
+        const academicId = academicSelect.value;
+
+        if (facultyId && academicId) {
+            fetch(`fetch_faculty_data.php?faculty_id=${facultyId}&category=${category}&academic_id=${academicId}`)
+                .then(response => response.json())
+                .then(data => {
+                    updateBarChart(data.labels, data.dataset);
+                    updateLineChart(data.line_labels, data.line_dataset);
+                    updateFeedback(data.line_dataset, category);
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+    }
+
+    function updateBarChart(labels, dataset) {
+        const ctxBar = document.getElementById("facultyBarChart").getContext("2d");
+
+        if (barChart) {
+            barChart.destroy();
+        }
+
+        barChart = new Chart(ctxBar, {
+            type: "bar",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Performance Score (%)",
+                    backgroundColor: "rgb(51, 128, 64)",
+                    data: dataset
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
                     }
+                }
+            }
+        });
+    }
 
-                    facultyButtons.forEach(button => {
-                        button.addEventListener('click', function () {
-                            facultyButtons.forEach(btn => btn.classList.remove('active'));
-                            this.classList.add('active');
-                            const category = this.getAttribute('data-category');
-                            populateDropdown(category);
+    function updateLineChart(labels, dataset) {
+        const ctxLine = document.getElementById("facultyLineChart").getContext("2d");
 
-                            // Trigger data fetch on dropdown change
-                            facultySelect.addEventListener('change', () => fetchData(category));
-                            academicSelect.addEventListener('change', () => fetchData(category));
-                        });
-                    });
+        if (lineChart) {
+            lineChart.destroy();
+        }
 
-                    function fetchData(category) {
-                            const facultyId = facultySelect.value;
-                            const academicId = academicSelect.value;
-
-                            if (facultyId && academicId) {
-                                fetch(`fetch_faculty_data.php?faculty_id=${facultyId}&category=${category}&academic_id=${academicId}`)
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        updateBarChart(data.labels, data.dataset); 
-                                        updateFeedback(data.dataset);             
-                                    })
-                                    .catch(error => console.error('Error fetching data:', error));
-                            }
-                        }
-
-                        function updateBarChart(labels, dataset) {
-                            const ctxBar = document.getElementById("facultyBarChart").getContext("2d");
-
-                            if (barChart) {
-                                barChart.destroy();
-                            }
-
-                            barChart = new Chart(ctxBar, {
-                                type: "bar",
-                                data: {
-                                    labels: labels,
-                                    datasets: [{
-                                        label: "Performance Score (%)",
-                                        backgroundColor: "rgb(51, 128, 64)",
-                                        data: dataset
-                                    }]
-                                },
-                                options: {
-                                    responsive: true,
-                                    maintainAspectRatio: false,
-                                    scales: {
-                                        y: {
-                                            beginAtZero: true,
-                                            max: 100 
-                                        }
-                                    }
-                                }
-                            });
-                        }
-                    function initializeLineChart() {
-                        const ctxLine = document.getElementById("facultyLineChart").getContext("2d");
-                        lineChart = new Chart(ctxLine, {
-                            type: "line",
-                            data: {
-                                labels: ["January", "February", "March", "April", "May", "June"],
-                                datasets: [{
-                                    label: "Faculty Performance Score",
-                                    borderColor: "rgb(51, 128, 64)",
-                                    backgroundColor: "rgba(51, 128, 64, 0.2)",
-                                    data: [78, 85, 90, 88, 92, 95],
-                                    fill: true,
-                                    tension: 0.3
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                scales: {
-                                    y: {
-                                        beginAtZero: true,
-                                        max: 100
-                                    }
-                                }
-                            }
-                        });
+        lineChart = new Chart(ctxLine, {
+            type: "line",
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: "Average Performance Score",
+                    borderColor: "rgb(51, 128, 64)",
+                    backgroundColor: "rgba(51, 128, 64, 0.2)",
+                    data: dataset,
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
                     }
+                }
+            }
+        });
+    }
 
-                    initializeLineChart();
+    function updateFeedback(dataset, category) {
+        if (dataset.length < 2) {
+            feedbackElement.textContent = "Not enough data to analyze performance.";
+            feedbackElement.className = "text-secondary";
+            return;
+        }
+        
+        const firstScore = dataset[0];
+        const lastScore = dataset[dataset.length - 1];
 
-                    function updateFeedback(dataset) {
-                        if (!dataset || dataset.length === 0) {
-                            feedbackElement.textContent = "No data available for the selected criteria.";
-                            return;
-                        }
+        if (lastScore > firstScore) {
+            feedbackElement.textContent = `Great job! Performance in ${category} has improved.`;
+            feedbackElement.className = "text-success";
+        } else if (lastScore < firstScore) {
+            feedbackElement.textContent = `Performance in ${category} has declined. Consider reviewing areas for improvement.`;
+            feedbackElement.className = "text-danger";
+        } else {
+            feedbackElement.textContent = `Performance in ${category} remains stable.`;
+            feedbackElement.className = "text-warning";
+        }
+    }
 
-                        const averageScore = dataset.reduce((acc, val) => acc + val, 0) / dataset.length;
-                        feedbackElement.textContent = `Average Performance Score: ${averageScore.toFixed(2)}%`; // ✅ Added % symbol
-                    }
-
-                    // Default category load
-                    populateDropdown('faculty');
-                    updateLineChart(); // Initialize line chart without connecting it to data fetching
-                });
+    populateDropdown('faculty');
+});
             </script>
 
 
-            <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                    const cards = document.querySelectorAll(".glass-card");
+                    <script>
+                        document.addEventListener("DOMContentLoaded", function () {
+                            const cards = document.querySelectorAll(".glass-card");
 
-                    cards.forEach(card => {
-                        card.addEventListener("click", function () {
-                            // Toggle selection on click
-                            if (this.classList.contains("selected")) {
-                                this.classList.remove("selected"); // Unselect if already selected
-                                console.log("Deselected:", this.getAttribute("data-category"));
-                            } else {
-                                // Remove 'selected' class from all other cards
-                                cards.forEach(c => c.classList.remove("selected"));
+                            cards.forEach(card => {
+                                card.addEventListener("click", function () {
+                                    // Toggle selection on click
+                                    if (this.classList.contains("selected")) {
+                                        this.classList.remove("selected"); // Unselect if already selected
+                                        console.log("Deselected:", this.getAttribute("data-category"));
+                                    } else {
+                                        // Remove 'selected' class from all other cards
+                                        cards.forEach(c => c.classList.remove("selected"));
 
-                                // Add 'selected' class to the clicked card
-                                this.classList.add("selected");
-                                console.log("Selected:", this.getAttribute("data-category"));
-                            }
+                                        // Add 'selected' class to the clicked card
+                                        this.classList.add("selected");
+                                        console.log("Selected:", this.getAttribute("data-category"));
+                                    }
+                                });
+                            });
                         });
-                    });
-                });
             </script>
 
             <style>

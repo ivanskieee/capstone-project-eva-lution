@@ -53,7 +53,6 @@ if (isset($_GET['faculty_id'], $_GET['category'], $_GET['academic_id'])) {
 
     $stmt = $conn->prepare($query);
     $stmt->execute(['faculty_id' => $facultyId, 'academic_id' => $academicId]);
-
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Get total responses to calculate percentage
@@ -64,13 +63,37 @@ if (isset($_GET['faculty_id'], $_GET['category'], $_GET['academic_id'])) {
     $dataset = [];
 
     foreach ($data as $row) {
-        $labels[] = "Rate " . $row['rate']; // Label like "Rate 1", "Rate 2", etc.
+        $labels[] = "Rate " . $row['rate'];
         $percentage = ($row['count'] / $totalResponses) * 100;
-        $dataset[] = round($percentage, 2); // Rounded to 2 decimal places
+        $dataset[] = round($percentage, 2);
     }
 
-    echo json_encode(['labels' => $labels, 'dataset' => $dataset]);
+    // Fetch the average score per academic_id including semester
+    $averageQuery = "SELECT CONCAT(al.year, ' - ', al.semester) AS academic_period, AVG(ea.rate) AS average_score
+                 FROM evaluation_answers ea
+                 JOIN academic_list al ON ea.academic_id = al.academic_id
+                 WHERE ea.faculty_id = :faculty_id
+                 GROUP BY al.academic_id, al.year, al.semester
+                 ORDER BY al.year ASC, al.semester ASC";
+
+    $avgStmt = $conn->prepare($averageQuery);
+    $avgStmt->execute(['faculty_id' => $facultyId]);
+    $averageData = $avgStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $lineLabels = [];
+    $lineDataset = [];
+
+    foreach ($averageData as $row) {
+        $lineLabels[] = $row['academic_period'];
+        $lineDataset[] = round($row['average_score'], 2);
+    }
+
+    echo json_encode([
+        'labels' => $labels,
+        'dataset' => $dataset,
+        'line_labels' => $lineLabels,
+        'line_dataset' => $lineDataset
+    ]);
 } else {
     echo json_encode(['error' => 'Missing parameters']);
 }
-?>
