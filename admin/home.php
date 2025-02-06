@@ -288,21 +288,21 @@ $headList = fetchHeadFacultyList($conn);
                         </div>
                     </div>
                 </div>
-                <div class="d-flex justify-content-center align-items-center mt-3">
+                <div class="d-flex justify-content-center align-items-center mt-2">
                     <div class="legend-item mx-2 text-center">
-                        <div class="legend-color" style="background-color: #4CAF50;"></div>
+                        <div class="legend-color"></div>
                         <small>4 - Strongly Agree</small>
                     </div>
                     <div class="legend-item mx-2 text-center">
-                        <div class="legend-color" style="background-color: #8BC34A;"></div>
+                        <div class="legend-color"></div>
                         <small>3 - Agree</small>
                     </div>
                     <div class="legend-item mx-2 text-center">
-                        <div class="legend-color" style="background-color: #FFC107;"></div>
+                        <div class="legend-color"></div>
                         <small>2 - Disagree</small>
                     </div>
                     <div class="legend-item mx-2 text-center">
-                        <div class="legend-color" style="background-color: #F44336;"></div>
+                        <div class="legend-color"></div>
                         <small>1 - Strongly Disagree</small>
                     </div>
                 </div>
@@ -571,19 +571,12 @@ $headList = fetchHeadFacultyList($conn);
                     border: 2px solid rgb(51, 128, 64);
                     background: rgba(51, 128, 64, 0.2);
                 }
-                .legend-item {
+                /* .legend-item {
                     display: flex;
                     flex-direction: column;
                     align-items: center;
                     font-size: 0.75rem;
-                }
-
-                .legend-color {
-                    width: 15px;
-                    height: 15px;
-                    border-radius: 3px;
-                    margin-bottom: 4px;
-                }
+                } */
             </style>
 
 
