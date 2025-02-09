@@ -327,149 +327,194 @@ $headList = fetchHeadFacultyList($conn);
                 const headList = <?php echo json_encode($headList); ?>;
 
                 document.addEventListener("DOMContentLoaded", function () {
-    let barChart;
-    let lineChart;
+                    let barChart;
+                    let lineChart;
 
-    const facultyButtons = document.querySelectorAll('[data-category]');
-    const facultySelect = document.getElementById('facultySelect');
-    const academicSelect = document.getElementById('academicSelect');
-    const feedbackElement = document.getElementById('performanceFeedback');
+                    const facultyButtons = document.querySelectorAll('[data-category]');
+                    const facultySelect = document.getElementById('facultySelect');
+                    const academicSelect = document.getElementById('academicSelect');
+                    const feedbackElement = document.getElementById('performanceFeedback');
 
-    function populateDropdown(category) {
-        facultySelect.innerHTML = '<option value="" selected disabled>Select Faculty</option>';
+                    let selectedCategory = null; // Track the active category
 
-        if (['faculty', 'self-faculty', 'faculty-to-faculty', 'head-to-faculty'].includes(category)) {
-            facultyList.forEach(faculty => {
-                const option = document.createElement('option');
-                option.value = faculty.faculty_id;
-                option.textContent = faculty.faculty_name;
-                facultySelect.appendChild(option);
-            });
-        } else if (['self-head-faculty', 'faculty-to-head'].includes(category)) {
-            headList.forEach(head => {
-                const option = document.createElement('option');
-                option.value = head.head_id;
-                option.textContent = head.head_name;
-                facultySelect.appendChild(option);
-            });
-        }
-    }
+                    function populateDropdown(category) {
+                        facultySelect.innerHTML = '<option value="" selected disabled>Select Faculty</option>';
 
-    facultyButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            facultyButtons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-            const category = this.getAttribute('data-category');
-            populateDropdown(category);
-
-            facultySelect.addEventListener('change', () => fetchData(category));
-            academicSelect.addEventListener('change', () => fetchData(category));
-        });
-    });
-
-    function fetchData(category) {
-        const facultyId = facultySelect.value;
-        const academicId = academicSelect.value;
-
-        if (facultyId && academicId) {
-            fetch(`fetch_faculty_data.php?faculty_id=${facultyId}&category=${category}&academic_id=${academicId}`)
-                .then(response => response.json())
-                .then(data => {
-                    updateBarChart(data.labels, data.dataset);
-                    updateLineChart(data.line_labels, data.line_dataset);
-                    updateFeedback(data.line_dataset, category);
-                })
-                .catch(error => console.error('Error fetching data:', error));
-        }
-    }
-
-    function updateBarChart(labels, dataset) {
-        const ctxBar = document.getElementById("facultyBarChart").getContext("2d");
-
-        if (barChart) {
-            barChart.destroy();
-        }
-
-        barChart = new Chart(ctxBar, {
-            type: "bar",
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: "Performance Score (%)",
-                    backgroundColor: "rgb(51, 128, 64)",
-                    data: dataset
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 100
+                        if (['faculty', 'self-faculty', 'faculty-to-faculty', 'head-to-faculty'].includes(category)) {
+                            facultyList.forEach(faculty => {
+                                const option = document.createElement('option');
+                                option.value = faculty.faculty_id;
+                                option.textContent = faculty.faculty_name;
+                                facultySelect.appendChild(option);
+                            });
+                        } else if (['self-head-faculty', 'faculty-to-head'].includes(category)) {
+                            headList.forEach(head => {
+                                const option = document.createElement('option');
+                                option.value = head.head_id;
+                                option.textContent = head.head_name;
+                                facultySelect.appendChild(option);
+                            });
+                        }
                     }
-                }
-            }
-        });
-    }
 
-    function updateLineChart(labels, dataset) {
-        const ctxLine = document.getElementById("facultyLineChart").getContext("2d");
+                    facultyButtons.forEach(button => {
+                        button.addEventListener('click', function () {
+                            facultyButtons.forEach(btn => btn.classList.remove('active'));
+                            this.classList.add('active');
 
-        if (lineChart) {
-            lineChart.destroy();
-        }
+                            selectedCategory = this.getAttribute('data-category'); // Store active category
+                            populateDropdown(selectedCategory);
+                            
+                            // Clear charts and feedback when category changes
+                            clearCharts();
+                            clearFeedback();
+                        });
+                    });
 
-        lineChart = new Chart(ctxLine, {
-            type: "line",
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: "Average Performance Score",
-                    borderColor: "rgb(51, 128, 64)",
-                    backgroundColor: "rgba(51, 128, 64, 0.2)",
-                    data: dataset,
-                    fill: true,
-                    tension: 0.3
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 100
+                    facultySelect.addEventListener('change', () => fetchData());
+                    academicSelect.addEventListener('change', () => fetchData());
+
+                    function fetchData() {
+                        if (!selectedCategory) {
+                            clearCharts();
+                            clearFeedback();
+                            return;
+                        }
+
+                        const facultyId = facultySelect.value;
+                        const academicId = academicSelect.value;
+
+                        if (facultyId && academicId) {
+                            fetch(`fetch_faculty_data.php?faculty_id=${facultyId}&category=${selectedCategory}&academic_id=${academicId}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    updateBarChart(data.labels, data.dataset, selectedCategory);
+                                    updateLineChart(data.line_labels, data.line_dataset, selectedCategory);
+                                    updateFeedback(data.line_dataset, selectedCategory);
+                                })
+                                .catch(error => console.error('Error fetching data:', error));
+                        } else {
+                            clearCharts();
+                            clearFeedback();
+                        }
                     }
-                }
-            }
-        });
-    }
 
-    function updateFeedback(dataset, category) {
-        if (dataset.length < 2) {
-            feedbackElement.textContent = "Not enough data to analyze performance.";
-            feedbackElement.className = "text-secondary";
-            return;
-        }
-        
-        const firstScore = dataset[0];
-        const lastScore = dataset[dataset.length - 1];
+                    function updateBarChart(labels, dataset, category) {
+                        const ctxBar = document.getElementById("facultyBarChart").getContext("2d");
 
-        if (lastScore > firstScore) {
-            feedbackElement.textContent = `Great job! Performance in ${category} has improved.`;
-            feedbackElement.className = "text-success";
-        } else if (lastScore < firstScore) {
-            feedbackElement.textContent = `Performance in ${category} has declined. Consider reviewing areas for improvement.`;
-            feedbackElement.className = "text-danger";
-        } else {
-            feedbackElement.textContent = `Performance in ${category} remains stable.`;
-            feedbackElement.className = "text-warning";
-        }
-    }
+                        if (!selectedCategory || selectedCategory !== category) {
+                            clearCharts();
+                            return;
+                        }
 
-    populateDropdown('faculty');
-});
+                        if (barChart) {
+                            barChart.destroy();
+                        }
+
+                        barChart = new Chart(ctxBar, {
+                            type: "bar",
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: "Performance Score (%)",
+                                    backgroundColor: "rgb(51, 128, 64)",
+                                    data: dataset
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        max: 100
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    function updateLineChart(labels, dataset, category) {
+                        const ctxLine = document.getElementById("facultyLineChart").getContext("2d");
+
+                        if (!selectedCategory || selectedCategory !== category) {
+                            clearCharts();
+                            return;
+                        }
+
+                        if (lineChart) {
+                            lineChart.destroy();
+                        }
+
+                        lineChart = new Chart(ctxLine, {
+                            type: "line",
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: "Average Performance Score",
+                                    borderColor: "rgb(51, 128, 64)",
+                                    backgroundColor: "rgba(51, 128, 64, 0.2)",
+                                    data: dataset,
+                                    fill: true,
+                                    tension: 0.3
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        max: 100
+                                    }
+                                }
+                            }
+                        });
+                    }
+
+                    function updateFeedback(dataset, category) {
+                        if (!selectedCategory || selectedCategory !== category) {
+                            clearFeedback();
+                            return;
+                        }
+
+                        if (dataset.length < 2) {
+                            feedbackElement.textContent = "Not enough data to analyze performance.";
+                            feedbackElement.className = "text-secondary";
+                            return;
+                        }
+
+                        const firstScore = dataset[0];
+                        const lastScore = dataset[dataset.length - 1];
+
+                        if (lastScore > firstScore) {
+                            feedbackElement.textContent = `Great job! Performance in ${category} has improved.`;
+                            feedbackElement.className = "text-success";
+                        } else if (lastScore < firstScore) {
+                            feedbackElement.textContent = `Performance in ${category} has declined. Consider reviewing areas for improvement.`;
+                            feedbackElement.className = "text-danger";
+                        } else {
+                            feedbackElement.textContent = `Performance in ${category} remains stable.`;
+                            feedbackElement.className = "text-warning";
+                        }
+                    }
+
+                    function clearCharts() {
+                        if (barChart) {
+                            barChart.destroy();
+                            barChart = null;
+                        }
+                        if (lineChart) {
+                            lineChart.destroy();
+                            lineChart = null;
+                        }
+                    }
+
+                    function clearFeedback() {
+                        feedbackElement.textContent = "";
+                        feedbackElement.className = "d-none"; // Hide feedback message
+                    }
+                });
             </script>
 
 

@@ -9,14 +9,14 @@
             <ul class="nav nav-pills nav-sidebar flex-column nav-flat" data-widget="treeview" role="menu"
                 data-accordion="false">
 
-                <li class="nav-item dropdown">
+                <!-- <li class="nav-item dropdown">
                     <a href="home.php"
                         class="nav-link nav-home <?php echo basename($_SERVER['PHP_SELF']) == 'home.php' ? 'active' : ''; ?>"
                         style="<?php echo basename($_SERVER['PHP_SELF']) == 'home.php' ? 'background-color: rgb(51, 128, 64); color: #fff; border: 1px solid #343a40;' : 'background-color: #343a40; color: #fff; border: 1px solid #343a40;'; ?>">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>Dashboard</p>
                     </a>
-                </li>
+                </li> -->
                 <?php
                 include '../database/connection.php';
 
