@@ -136,65 +136,108 @@ include "handlers/report_handler_faculty_faculty.php";
         overflow-y: auto;
         scroll-behavior: smooth;
     }
+    .mean-score-header {
+    white-space: nowrap; /* Keeps "Mean Score" on one line */
+    }
+
+    .total-mean-score-container {
+        display: flex;
+        align-items: center;
+        justify-content: center; /* Ensures the circle is properly aligned */
+    }
+
+    .circle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #f8f9fa;
+        border: 1px solid #ccc;
+        text-align: center;
+        font-weight: bold;
+    }
 </style>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        fetchRatings();
-        fetchTotalEvaluations();
-    });
+    fetchRatings();
+    fetchTotalEvaluations();
+});
 
-    function fetchRatings() {
-        fetch('get_faculty_ratings.php')
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    // Update faculty name
-                    document.getElementById('fname').innerText = data.faculty_name;
+function fetchRatings() {
+    fetch('get_faculty_ratings.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                document.getElementById('fname').innerText = data.faculty_name;
 
-                    const ratingsTable = document.getElementById('ratings-table-body');
-                    ratingsTable.innerHTML = ''; // Clear old data
+                const ratingsTable = document.getElementById('ratings-table-body');
+                ratingsTable.innerHTML = ''; // Clear old data
 
-                    // Iterate over criteria-based ratings
-                    Object.values(data.criteria_ratings).forEach(criteria => {
-                        // Append criteria row with rating headers
-                        const criteriaRow = document.createElement('tr');
-                        criteriaRow.innerHTML = `
+                let totalMean = 0;
+                let questionCount = 0;
+
+                Object.values(data.criteria_ratings).forEach(criteria => {
+                    const criteriaRow = document.createElement('tr');
+                    criteriaRow.innerHTML = `
                         <td class="font-weight-bold bg-light">${criteria.criteria}</td>
                         <th width="5%" class="text-center">1</th>
                         <th width="5%" class="text-center">2</th>
                         <th width="5%" class="text-center">3</th>
                         <th width="5%" class="text-center">4</th>
+                        <th width="10%" class="text-center mean-score-header"><b>Mean Score</b></th>
                     `;
-                        ratingsTable.appendChild(criteriaRow);
+                    ratingsTable.appendChild(criteriaRow);
 
-                        // Append question rows
-                        criteria.questions.forEach(row => {
-                            const tr = document.createElement('tr');
-                            tr.innerHTML = `
+                    criteria.questions.forEach(row => {
+                        const totalResponses = row.rate1 + row.rate2 + row.rate3 + row.rate4;
+                        const meanScore = totalResponses
+                            ? ((row.rate1 * 1 + row.rate2 * 2 + row.rate3 * 3 + row.rate4 * 4) / totalResponses).toFixed(2)
+                            : "0.00";
+
+                        totalMean += parseFloat(meanScore);
+                        questionCount++;
+
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
                             <td>${row.question}</td>
-                            <td class="text-center">${row.rate1}%</td>
-                            <td class="text-center">${row.rate2}%</td>
-                            <td class="text-center">${row.rate3}%</td>
-                            <td class="text-center">${row.rate4}%</td>
+                            <td class="text-center"><div class="circle">${row.rate1}%</div></td>
+                            <td class="text-center"><div class="circle">${row.rate2}%</div></td>
+                            <td class="text-center"><div class="circle">${row.rate3}%</div></td>
+                            <td class="text-center"><div class="circle">${row.rate4}%</div></td>
+                            <td class="text-center"><div class="circle mean-score">${meanScore}</div></td>
                         `;
-                            ratingsTable.appendChild(tr);
-                        });
+                        ratingsTable.appendChild(tr);
                     });
-                } else {
-                    console.error('Error:', data.message);
-                }
-            })
-            .catch(error => console.error('Error fetching ratings:', error));
-    }
+                });
 
-    function fetchTotalEvaluations() {
-        fetch('get_total_evaluated.php')
-            .then(response => response.text())
-            .then(data => {
-                document.getElementById('tse').innerText = data;
-            })
-            .catch(error => console.error('Error fetching total evaluations:', error));
-    }
+                const totalMeanScore = questionCount ? (totalMean / questionCount).toFixed(2) : "0.00";
+
+                // Append Total Mean Score Row
+                ratingsTable.innerHTML += `
+                    <tr class="bg-gradient-secondary total-mean-score-row">
+                        <td class="p-2 text-right align-middle" colspan="5"><strong>Total Mean Score:</strong></td>
+                        <td class="text-center p-2 align-middle">
+                            <div class="circle total-mean-score"><strong>${totalMeanScore}</strong></div>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                console.error('Error:', data.message);
+            }
+        })
+        .catch(error => console.error('Error fetching ratings:', error));
+}
+
+function fetchTotalEvaluations() {
+    fetch('get_total_evaluated.php')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('tse').innerText = data;
+        })
+        .catch(error => console.error('Error fetching total evaluations:', error));
+}
 </script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {

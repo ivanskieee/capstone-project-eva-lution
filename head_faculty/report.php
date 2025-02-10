@@ -321,25 +321,33 @@ $stmt->execute(['department' => $userDepartment]);
                 <th width="5%" class="text-center">2</th>
                 <th width="5%" class="text-center">3</th>
                 <th width="5%" class="text-center">4</th>
+                <th width="10%" class="text-center mean-score-header"><b>Mean Score</b></th>
             </tr>
         </thead>
     `;
 
     const tbody = document.createElement('tbody');
+    let totalMean = 0;
+    let questionCount = 0;
 
     Object.keys(data.data).forEach(criteria => {
-        // Add a criteria header row that aligns with questions
         tbody.innerHTML += `
             <tr class="bg-light">
-                <td class="p-2" colspan="5"><strong>${criteria}</strong></td>
+                <td class="p-2" colspan="6"><strong>${criteria}</strong></td>
             </tr>
         `;
 
-        // Add questions under the respective criteria
         data.data[criteria].forEach(row => {
+            const totalResponses = row.rate1 + row.rate2 + row.rate3 + row.rate4;
+            const meanScore = totalResponses ? 
+                ((row.rate1 * 1 + row.rate2 * 2 + row.rate3 * 3 + row.rate4 * 4) / totalResponses).toFixed(2) : "0.00";
+            
+            totalMean += parseFloat(meanScore);
+            questionCount++;
+
             tbody.innerHTML += row.question_type === 'text'
                 ? `<tr class="bg-white">
-                    <td colspan="5" class="p-2">
+                    <td colspan="6" class="p-2">
                         <strong>${row.question}</strong>
                         <div class="comment-display mt-2">${row.comments ? row.comments.join('<br>') : '<em>No comments provided.</em>'}</div>
                     </td>
@@ -350,9 +358,23 @@ $stmt->execute(['department' => $userDepartment]);
                     <td class="text-center p-2"><div class="circle">${row.rate2}%</div></td>
                     <td class="text-center p-2"><div class="circle">${row.rate3}%</div></td>
                     <td class="text-center p-2"><div class="circle">${row.rate4}%</div></td>
+                    <td class="text-center p-2">
+                        <div class="circle mean-score">${meanScore}</div>
+                    </td>
                 </tr>`;
         });
     });
+
+    // Calculate and display the total mean score
+    const totalMeanScore = questionCount ? (totalMean / questionCount).toFixed(2) : "0.00";
+    tbody.innerHTML += `
+    <tr class="bg-gradient-secondary total-mean-score-row">
+        <td class="p-2 text-right align-middle" colspan="5"><strong>Total Mean Score:</strong></td>
+        <td class="text-center p-2 align-middle">
+            <div class="circle total-mean-score"><strong>${totalMeanScore}</strong></div>
+        </td>
+    </tr>
+`;
 
     table.appendChild(tbody);
     container.appendChild(table);
@@ -506,6 +528,28 @@ function fetchAdditionalData(facultyId, selectedCategory, callback) {
         font-size: 1rem;
         font-style: italic;
         color: #4a4a4a;
+    }
+    .mean-score-header {
+    white-space: nowrap; /* Keeps "Mean Score" on one line */
+    }
+
+    .total-mean-score-container {
+        display: flex;
+        align-items: center;
+        justify-content: center; /* Ensures the circle is properly aligned */
+    }
+
+    .circle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #f8f9fa;
+        border: 1px solid #ccc;
+        text-align: center;
+        font-weight: bold;
     }
 </style>
 <script>

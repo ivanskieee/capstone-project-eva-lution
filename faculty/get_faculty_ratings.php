@@ -29,8 +29,8 @@ $facultyName = $facultyData['firstname'] . ' ' . $facultyData['lastname'];
 // Fetch criteria-wise ratings
 $stmt = $conn->prepare("
     SELECT 
-        q.criteria_id, -- Include criteria_id
-        c.criteria, -- Fetch criteria name
+        q.criteria_id, 
+        c.criteria, 
         q.question_id,
         q.question,
         q.question_type, 
@@ -42,8 +42,8 @@ $stmt = $conn->prepare("
     FROM question_list q
     LEFT JOIN evaluation_answers ea 
         ON q.question_id = ea.question_id AND ea.faculty_id = :faculty_id
-    LEFT JOIN criteria_list c ON q.criteria_id = c.criteria_id -- Join with criteria table
-    WHERE q.question_type = 'mcq' -- Only include MCQ questions
+    LEFT JOIN criteria_list c ON q.criteria_id = c.criteria_id 
+    WHERE q.question_type = 'mcq' 
     GROUP BY q.criteria_id, c.criteria, q.question_id, q.question, q.question_type
 ");
 $stmt->bindParam(':faculty_id', $facultyId, PDO::PARAM_INT);
@@ -64,6 +64,10 @@ foreach ($ratings as $row) {
     }
 
     $total = $row['total_responses'];
+    $meanScore = $total 
+        ? round(($row['rate1'] * 1 + $row['rate2'] * 2 + $row['rate3'] * 3 + $row['rate4'] * 4) / $total, 2) 
+        : 0;
+
     $criteriaRatings[$criteriaId]['questions'][] = [
         'question' => $row['question'],
         'question_type' => $row['question_type'],
@@ -71,6 +75,7 @@ foreach ($ratings as $row) {
         'rate2' => $total ? round(($row['rate2'] / $total) * 100, 2) : 0,
         'rate3' => $total ? round(($row['rate3'] / $total) * 100, 2) : 0,
         'rate4' => $total ? round(($row['rate4'] / $total) * 100, 2) : 0,
+        'mean_score' => $meanScore
     ];
 }
 

@@ -130,9 +130,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
                 // Send approval email
                 $emailBody = "
+                    Subject: Welcome! Your Student Evaluation Account is Active
                     Dear {$student['firstname']} {$student['lastname']},<br><br>
-                    Your account has been successfully approved and registered. You may now log in.<br><br>
-                    Thank you!
+                    We are pleased to inform you that your account for the student evaluation has been successfully approved and activated.<br>
+                    You can now access the system by clicking on the following link: http://localhost/Capstone-Eva-lution/<br>
+                    We encourage you to log in and familiarize yourself with the evaluation platform.<br>
+                    You can change your password and other credentials through your dashboard.<br><br>
+                    Thank you,<br><br>
+                    - San Pablo Colleges Admin/HR
                 ";
                 sendVerificationEmail($student['email'], 'Account Approved', $emailBody);
             }
