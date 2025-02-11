@@ -223,7 +223,7 @@ $end_page = min($current_segment * $segment_size, $total_pages);
     }
 
     .content .main-header {
-        max-height: 100vh;
+        max-height: 90vh;
         overflow-y: auto;
         scroll-behavior: smooth;
     }

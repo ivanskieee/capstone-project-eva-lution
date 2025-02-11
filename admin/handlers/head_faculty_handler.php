@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $cpass = $_POST['cpass'];
         $department = $_POST['department']; // New department field
         $avatar = isset($_FILES['img']['name']) ? $_FILES['img']['name'] : null;
-        $id = $_POST['head_id'] ?? null; 
+        $id = $_POST['head_id'] ?? null;
 
         // Validate passwords
         if (!empty($password) && $password !== $cpass) {
@@ -205,13 +205,42 @@ function sendEmail($toEmail, $plainPassword)
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
-        $mail->setFrom('your_email@gmail.com', 'SPC_EVAL');
+        $mail->setFrom('your_email@gmail.com', 'SPC Evaluation System');
         $mail->addAddress($toEmail);
 
         $mail->isHTML(true);
-        $mail->Subject = 'Account Created';
-        $mail->Body = "Dear Faculty,<br>Your account has been created successfully.<br><b>Email:</b> $toEmail<br><b>Password:</b> $plainPassword<br><br>Thank you!";
-        $mail->AltBody = "Dear Faculty,\nYour account has been created successfully.\nEmail: $toEmail\nPassword: $plainPassword\n\nThank you!";
+        $mail->Subject = 'Welcome! Your Evaluation Account is Active';
+        $mail->Body = "
+            <div style='text-align: justify; font-family: Arial, sans-serif; line-height: 1.5;'>
+                <p>
+                    Dear Academic Head,
+                </p>
+                <p>
+                    We are pleased to inform you that your account for the faculty evaluation system has been successfully created and activated.
+                </p>
+                <p>
+                    You can now access the system by clicking on the following link: 
+                    <a href='http://localhost/Capstone-Eva-lution/'>http://localhost/Capstone-Eva-lution/</a>.
+                </p>
+                <p>
+                    Below are your default login credentials:
+                </p>
+                <p>
+                    <b>Email:</b> $toEmail <br>
+                    <b>Password:</b> $plainPassword
+                </p>
+                <p>
+                    We encourage you to log in and familiarize yourself with the evaluation platform. 
+                    You can change your password and update your profile through your dashboard.
+                </p>
+                <p>
+                    Thank you,<br><br>
+                    San Pablo Colleges Admin
+                </p>
+            </div>
+        ";
+        $mail->AltBody = "Dear Academic Head,\n\nYour faculty evaluation account has been successfully created.\n\nLogin Details:\nEmail: $toEmail\nPassword: $plainPassword\n\nAccess the system here: http://localhost/Capstone-Eva-lution/\n\nThank you!\nSan Pablo Colleges Admin";
+
 
         $mail->send();
         echo 'Email has been sent';

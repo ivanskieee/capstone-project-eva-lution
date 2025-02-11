@@ -17,7 +17,7 @@ function sendVerificationEmail($recipientEmail, $subject, $body)
         $mail->Password = 'zjwz wnqx oyew nwst';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
-        $mail->setFrom('evaluationspc@gmail.com', 'SPC_EVAL');
+        $mail->setFrom('evaluationspc@gmail.com', 'SPC Evaluation System');
         $mail->addAddress($recipientEmail);
         $mail->isHTML(true);
         $mail->Subject = $subject;
@@ -77,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Check if the subject exists in college_faculty_list
             foreach ($students as $student) {
                 $subjects = explode(" ", $student['subject']); // Split the student's subject by space
-            
+
                 // Check for each subject from the student's list
                 $subject_valid = false;
                 foreach ($subjects as $subject) {
@@ -86,13 +86,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $stmt = $conn->prepare($subject_query);
                     $stmt->execute(['subject' => '%' . $subject . '%']);
                     $subject_check = $stmt->fetch(PDO::FETCH_ASSOC);
-            
+
                     if ($subject_check) {
                         $subject_valid = true; // Mark as valid if any subject matches
                         break; // Exit the loop once a match is found
                     }
                 }
-            
+
                 if (!$subject_valid) {
                     // If no subject matches, reject the student
                     echo "<script>
@@ -108,7 +108,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     exit(); // Exit the script to prevent further processing
                 }
             }
-            
+
             // If all subjects are valid, proceed with the student insertion
             foreach ($students as $student) {
                 // Insert into `student_list`
@@ -127,17 +127,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'section' => $student['section'],
                     'academic_id' => $academic_id
                 ]);
-            
+
                 // Send approval email
                 $emailBody = "
                     <div style='text-align: justify; font-family: Arial, sans-serif; line-height: 1.5;'>
-                        <p style='text-indent: 30px;'>
-                            <b>Welcome! Your Student Evaluation Account is Active</b>
-                        </p>
-                        <p style='text-indent: 30px;'>
+                        <p>
                             Dear {$student['firstname']} {$student['lastname']},
                         </p>
-                        <p style='text-indent: 30px;'>
+                        <p>
                             We are pleased to inform you that your account for the student evaluation has been successfully approved and activated.
                         </p>
                         <p>
@@ -150,23 +147,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </p>
                         <p>
                             Thank you,<br><br>
-                            San Pablo Colleges Admin/HR
+                            San Pablo Colleges Admin
                         </p>
                     </div>
                 ";
 
-                sendVerificationEmail($student['email'], 'Account Approved', $emailBody);
+                sendVerificationEmail($student['email'], 'Welcome! Your Student Evaluation Account is Active', $emailBody);
             }
-            
+
             // Remove approved students from pending list
             $delete_query = "DELETE FROM pending_students WHERE school_id IN ($placeholders)";
             $stmt = $conn->prepare($delete_query);
             $stmt->execute($student_ids);
-            
+
             $conn->commit(); // Commit the transaction
-            
+
             header('Location: verify_accounts.php?status=bulk_confirmed');
-            exit();            
+            exit();
         } catch (Exception $e) {
             $conn->rollBack(); // Rollback transaction if something fails
             error_log("Error processing bulk confirmation: " . $e->getMessage());
@@ -190,11 +187,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             foreach ($students as $student) {
                 // Send rejection email
                 $emailBody = "
-                    Dear {$student['firstname']} {$student['lastname']},<br><br>
-                    We regret to inform you that your account registration has been declined.<br><br>
-                    Thank you!
+                    <div style='text-align: justify; font-family: Arial, sans-serif; line-height: 1.5;'>
+                        <p>
+                            Dear {$student['firstname']} {$student['lastname']},
+                        </p>
+                        <p>
+                            We regret to inform you that your account registration has been declined. The subjects you selected during the registration process do not match the subjects in which you are currently enrolled.
+                        </p>
+                        <p>
+                            Please contact your professor or department secretary for clarification regarding your enrolled subjects.
+                        </p>
+                        <p>
+                            Thank you for your understanding.
+                        </p>
+                        <p>
+                            San Pablo Colleges Admin
+                        </p>
+                    </div>
                 ";
-                sendVerificationEmail($student['email'], 'Account Rejected', $emailBody);
+                sendVerificationEmail($student['email'], 'Account Registration Declined', $emailBody);
+
             }
 
             // Delete students from pending list

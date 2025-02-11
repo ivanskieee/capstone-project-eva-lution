@@ -92,62 +92,62 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $subjects_data = $subjects[0] ?? '';
         }
 
-        
-            if ($id) {
-                // Update query
-                $query = "UPDATE college_faculty_list 
+
+        if ($id) {
+            // Update query
+            $query = "UPDATE college_faculty_list 
                           SET school_id = :school_id, firstname = :firstname, lastname = :lastname, 
                               email = :email, subject = :subject, academic_id = :academic_id, department = :department";
 
-                if (!empty($password)) {
-                    $query .= ", password = :password";
-                }
-
-                if ($avatar) {
-                    $query .= ", avatar = :avatar";
-                }
-
-                $query .= " WHERE faculty_id = :faculty_id";
-                $stmt = $conn->prepare($query);
-
-                $stmt->bindParam(':school_id', $school_id);
-                $stmt->bindParam(':firstname', $firstname);
-                $stmt->bindParam(':lastname', $lastname);
-                $stmt->bindParam(':email', $email);
-                $stmt->bindParam(':subject', $subjects_data);
-                $stmt->bindParam(':academic_id', $academic_id);
-                $stmt->bindParam(':department', $department);
-
-                if (!empty($password)) {
-                    $stmt->bindParam(':password', $hashed_password);
-                }
-
-                if ($avatar) {
-                    $stmt->bindParam(':avatar', $avatar);
-                }
-
-                $stmt->bindParam(':faculty_id', $id, PDO::PARAM_INT);
-            } else {
-                // Insert query
-                $query = "INSERT INTO college_faculty_list (school_id, firstname, lastname, email, subject, password, academic_id, department) 
-                          VALUES (:school_id, :firstname, :lastname, :email, :subject, :password, :academic_id, :department)";
-                $stmt = $conn->prepare($query);
-
-                $stmt->bindParam(':school_id', $school_id);
-                $stmt->bindParam(':firstname', $firstname);
-                $stmt->bindParam(':lastname', $lastname);
-                $stmt->bindParam(':email', $email);
-                $stmt->bindParam(':subject', $subjects_data);
-                $stmt->bindParam(':password', $hashed_password);
-                // $stmt->bindParam(':avatar', $avatar);
-                $stmt->bindParam(':academic_id', $academic_id);
-                $stmt->bindParam(':department', $department);
+            if (!empty($password)) {
+                $query .= ", password = :password";
             }
 
+            if ($avatar) {
+                $query .= ", avatar = :avatar";
+            }
+
+            $query .= " WHERE faculty_id = :faculty_id";
+            $stmt = $conn->prepare($query);
+
+            $stmt->bindParam(':school_id', $school_id);
+            $stmt->bindParam(':firstname', $firstname);
+            $stmt->bindParam(':lastname', $lastname);
+            $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':subject', $subjects_data);
+            $stmt->bindParam(':academic_id', $academic_id);
+            $stmt->bindParam(':department', $department);
+
+            if (!empty($password)) {
+                $stmt->bindParam(':password', $hashed_password);
+            }
+
+            if ($avatar) {
+                $stmt->bindParam(':avatar', $avatar);
+            }
+
+            $stmt->bindParam(':faculty_id', $id, PDO::PARAM_INT);
+        } else {
+            // Insert query
+            $query = "INSERT INTO college_faculty_list (school_id, firstname, lastname, email, subject, password, academic_id, department) 
+                          VALUES (:school_id, :firstname, :lastname, :email, :subject, :password, :academic_id, :department)";
+            $stmt = $conn->prepare($query);
+
+            $stmt->bindParam(':school_id', $school_id);
+            $stmt->bindParam(':firstname', $firstname);
+            $stmt->bindParam(':lastname', $lastname);
+            $stmt->bindParam(':email', $email);
+            $stmt->bindParam(':subject', $subjects_data);
+            $stmt->bindParam(':password', $hashed_password);
+            // $stmt->bindParam(':avatar', $avatar);
+            $stmt->bindParam(':academic_id', $academic_id);
+            $stmt->bindParam(':department', $department);
+        }
+
         if ($stmt->execute()) {
-                // Optional: Send email with credentials
+            // Optional: Send email with credentials
             sendEmail($email, $password);
-    
+
 
             echo "<script>
                     Swal.fire({
@@ -207,13 +207,42 @@ function sendEmail($toEmail, $plainPassword)
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
-        $mail->setFrom('your_email@gmail.com', 'SPC_EVAL');
+        $mail->setFrom('your_email@gmail.com', 'SPC Evaluation System');
         $mail->addAddress($toEmail);
 
         $mail->isHTML(true);
-        $mail->Subject = 'Account Created';
-        $mail->Body = "Dear Faculty,<br>Your account has been created successfully.<br><b>Email:</b> $toEmail<br><b>Password:</b> $plainPassword<br><br>Thank you!";
-        $mail->AltBody = "Dear Faculty,\nYour account has been created successfully.\nEmail: $toEmail\nPassword: $plainPassword\n\nThank you!";
+        $mail->Subject = 'Welcome! Your Faculty Evaluation Account is Active';
+        $mail->Body = "
+            <div style='text-align: justify; font-family: Arial, sans-serif; line-height: 1.5;'>
+                <p>
+                    Dear Faculty Member,
+                </p>
+                <p>
+                    We are pleased to inform you that your account for the faculty evaluation system has been successfully created and activated.
+                </p>
+                <p>
+                    You can now access the system by clicking on the following link: 
+                    <a href='http://localhost/Capstone-Eva-lution/'>http://localhost/Capstone-Eva-lution/</a>.
+                </p>
+                <p>
+                    Below are your default login credentials:
+                </p>
+                <p>
+                    <b>Email:</b> $toEmail <br>
+                    <b>Password:</b> $plainPassword
+                </p>
+                <p>
+                    We encourage you to log in and familiarize yourself with the evaluation platform. 
+                    You can change your password and update your profile through your dashboard.
+                </p>
+                <p>
+                    Thank you,<br><br>
+                    San Pablo Colleges Admin
+                </p>
+            </div>
+        ";
+        $mail->AltBody = "Dear Faculty Member,\n\nYour faculty evaluation account has been successfully created.\n\nLogin Details:\nEmail: $toEmail\nPassword: $plainPassword\n\nAccess the system here: http://localhost/Capstone-Eva-lution/\n\nThank you!\nSan Pablo Colleges Admin";
+
 
         $mail->send();
         echo 'Email has been sent';
