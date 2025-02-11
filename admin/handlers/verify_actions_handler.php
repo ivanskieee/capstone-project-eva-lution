@@ -130,15 +130,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
                 // Send approval email
                 $emailBody = "
-                    Subject: Welcome! Your Student Evaluation Account is Active
-                    Dear {$student['firstname']} {$student['lastname']},<br><br>
-                    We are pleased to inform you that your account for the student evaluation has been successfully approved and activated.<br>
-                    You can now access the system by clicking on the following link: http://localhost/Capstone-Eva-lution/<br>
-                    We encourage you to log in and familiarize yourself with the evaluation platform.<br>
-                    You can change your password and other credentials through your dashboard.<br><br>
-                    Thank you,<br><br>
-                    - San Pablo Colleges Admin/HR
+                    <div style='text-align: justify; font-family: Arial, sans-serif; line-height: 1.5;'>
+                        <p style='text-indent: 30px;'>
+                            <b>Welcome! Your Student Evaluation Account is Active</b>
+                        </p>
+                        <p style='text-indent: 30px;'>
+                            Dear {$student['firstname']} {$student['lastname']},
+                        </p>
+                        <p style='text-indent: 30px;'>
+                            We are pleased to inform you that your account for the student evaluation has been successfully approved and activated.
+                        </p>
+                        <p>
+                            You can now access the system by clicking on the following link: 
+                            <a href='http://localhost/Capstone-Eva-lution/'>http://localhost/Capstone-Eva-lution/</a>.
+                        </p>
+                        <p>
+                            We encourage you to log in and familiarize yourself with the evaluation platform. 
+                            You can change your password and other credentials through your dashboard.
+                        </p>
+                        <p>
+                            Thank you,<br><br>
+                            San Pablo Colleges Admin/HR
+                        </p>
+                    </div>
                 ";
+
                 sendVerificationEmail($student['email'], 'Account Approved', $emailBody);
             }
             
