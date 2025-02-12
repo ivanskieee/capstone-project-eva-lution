@@ -19,7 +19,9 @@ $stmt_active_academic = $conn->prepare($query_active_academic);
 $stmt_active_academic->execute();
 $active_academic = $stmt_active_academic->fetch(PDO::FETCH_ASSOC);
 
-$academic_period = $active_academic ? htmlspecialchars($active_academic['year']) . ' - ' . htmlspecialchars($active_academic['semester']) : 'No Active Academic Period';
+$academic_period = $active_academic
+    ? htmlspecialchars($active_academic['year']) . ' - ' . htmlspecialchars($active_academic['semester']) . ' Semester'
+    : 'No Active Academic Period';
 ?>
 
 <div class="content">
@@ -88,7 +90,7 @@ $academic_period = $active_academic ? htmlspecialchars($active_academic['year'])
         <div class="col-12 mt-5">
             <div class="alert text-center ml-2">
                 <h4><b>EVALUATION OF FACULTY PERFORMANCE</b></h4>
-                <h5><?php echo 'CCS - ' . $academic_period; ?></h5><br>
+                <h5><?php echo 'A.Y. ' . $academic_period; ?></h5><br>
                 <p class="justify-text">
                     This is intended to secure your <b>HONEST, SINCERE, and OBJECTIVE ASSESSMENT</b> of your
                     teacher’s performance.It will assist the Department and the Administration in improving
