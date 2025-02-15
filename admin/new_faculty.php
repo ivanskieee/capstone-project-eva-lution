@@ -38,7 +38,7 @@ include "handlers/faculty_handler.php";
                                     <input type="email" class="form-control form-control-sm" name="email" required
                                         value="<?php echo isset($faculty['email']) ? $faculty['email'] : ''; ?>">
                                     <small id="msg" class="form-text text-muted">Please enter a valid email
-                                    address.</small>
+                                        address.</small>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -58,12 +58,17 @@ include "handlers/faculty_handler.php";
                                     <label for="department" class="control-label">Department</label>
                                     <select id="department" class="form-control form-control-sm" name="department"
                                         required>
-                                        <option value="" disabled selected>Select Department</option>
-                                        <option value="ccs">College of Computer Studies</option>
-                                        <option value="educ">College of Education</option>
-                                        <option value="cas">College of Arts & Sciences</option>
-                                        <option value="cba">College of Business Administration</option>
-                                        <option value="cas">College of Nursing</option>
+                                        <option value="" disabled>Select Department</option>
+                                        <option value="ccs" <?php echo (isset($faculty['department']) && $faculty['department'] == 'ccs') ? 'selected' : ''; ?>>College of Computer
+                                            Studies</option>
+                                        <option value="educ" <?php echo (isset($faculty['department']) && $faculty['department'] == 'educ') ? 'selected' : ''; ?>>College of Education
+                                        </option>
+                                        <option value="cas" <?php echo (isset($faculty['department']) && $faculty['department'] == 'cas') ? 'selected' : ''; ?>>College of Arts &
+                                            Sciences</option>
+                                        <option value="cba" <?php echo (isset($faculty['department']) && $faculty['department'] == 'cba') ? 'selected' : ''; ?>>College of Business
+                                            Administration</option>
+                                        <option value="nursing" <?php echo (isset($faculty['department']) && $faculty['department'] == 'nursing') ? 'selected' : ''; ?>>College of Nursing
+                                        </option>
                                     </select>
                                 </div>
 
@@ -80,8 +85,8 @@ include "handlers/faculty_handler.php";
 
                                 <div class="form-group">
                                     <label for="password" class="control-label">Password</label>
-                                    <input type="password" class="form-control form-control-sm" name="password" id="password"
-                                        minlength="8" <?php echo isset($faculty) ? '' : 'required'; ?>>
+                                    <input type="password" class="form-control form-control-sm" name="password"
+                                        id="password" minlength="8" <?php echo isset($faculty) ? '' : 'required'; ?>>
                                     <small><i><?php echo isset($faculty) ? 'Leave this blank if you do not want to change your password' : 'Choose a strong password.'; ?></i></small>
                                 </div>
                                 <div class="form-group">

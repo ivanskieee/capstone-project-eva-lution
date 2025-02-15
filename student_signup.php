@@ -259,6 +259,9 @@ include "submit_registration.php";
         bsba_ft: [
             { value: "ft101", text: "Financial Tech Innovations" }
         ],
+        beed: [
+            { value: "ed102", text: "asdasdas" }
+        ],
         act: [
             { value: "GEC1", text: "Purposive Communication" },
             { value: "GEC2", text: "Understanding the Self" },
