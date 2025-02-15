@@ -38,7 +38,7 @@ include "handlers/head_faculty_handler.php";
                                     <input type="email" class="form-control form-control-sm" name="email" required
                                         value="<?php echo isset($faculty['email']) ? $faculty['email'] : ''; ?>">
                                     <small id="msg" class="form-text text-muted">Please enter a valid email
-                                    address.</small>
+                                        address.</small>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -54,7 +54,7 @@ include "handlers/head_faculty_handler.php";
                                     <img src="<?php echo isset($faculty['avatar']) ? 'uploads/' . $faculty['avatar'] : ''; ?>"
                                         alt="Avatar" id="cimg" class="img-fluid img-thumbnail">
                                 </div> -->
-                                <div class="form-group">
+                                <!-- <div class="form-group">
                                     <label for="department" class="control-label">Department</label>
                                     <select id="department" class="form-control form-control-sm" name="department"
                                         required>
@@ -65,6 +65,32 @@ include "handlers/head_faculty_handler.php";
                                         <option value="cba">College of Business Administration</option>
                                         <option value="cas">College of Nursing</option>
                                     </select>
+                                </div> -->
+                                <div class="form-group">
+                                    <label for="department" class="control-label">Department</label>
+                                    <select id="department" class="form-control form-control-sm" name="department"
+                                        required>
+                                        <option value="" disabled selected>Select Department</option>
+                                        <?php
+                                        $stmt = $conn->query("SELECT * FROM departments ORDER BY department_name ASC");
+                                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                            $formatted_name = ucwords(strtolower($row['department_name'])); // Capitalize first letter of each word
+                                            $formatted_name = preg_replace('/\bOf\b/', 'of', $formatted_name); // Ensure "of" stays lowercase
+                                            echo "<option value='{$row['department_code']}'>" . $formatted_name . "</option>";
+                                        }
+                                        ?>
+                                        <option value="add_new">Add New Department</option>
+                                    </select>
+
+                                    <!-- Input fields for new department (Hidden by default) -->
+                                    <div id="new_department_container" style="display: none; margin-top: 5px;">
+                                        <input type="text" id="new_department_code" class="form-control mt-2"
+                                            placeholder="Enter Department Code">
+                                        <input type="text" id="new_department_name" class="form-control mt-2"
+                                            placeholder="Enter Department Name">
+                                        <button type="button" id="add_department"
+                                            class="btn btn-success btn-sm mt-2">Add</button>
+                                    </div>
                                 </div>
                                 <div class="error-message" id="password-error">Password must be at least 8 characters
                                     long,
@@ -124,6 +150,7 @@ include "handlers/head_faculty_handler.php";
         overflow-y: auto;
         scroll-behavior: smooth;
     }
+
     .error-message {
         color: red;
         font-size: 12px;
@@ -211,5 +238,58 @@ include "handlers/head_faculty_handler.php";
         } else {
             errorMessage.style.display = 'none'; // Hide error message if valid
         }
+    });
+</script>
+<script>
+    document.getElementById('department').addEventListener('change', function () {
+        let newDepartmentContainer = document.getElementById('new_department_container');
+
+        if (this.value === 'add_new') {
+            newDepartmentContainer.style.display = 'block';
+            document.getElementById('new_department_code').focus();
+        } else {
+            newDepartmentContainer.style.display = 'none';
+        }
+    });
+
+    document.getElementById('add_department').addEventListener('click', function () {
+        let departmentCodeInput = document.getElementById('new_department_code');
+        let departmentNameInput = document.getElementById('new_department_name');
+        let departmentDropdown = document.getElementById('department');
+
+        let departmentCode = departmentCodeInput.value.trim().toLowerCase(); // Convert to lowercase
+        let departmentName = departmentNameInput.value.trim().toLowerCase().replace(/\b\w/g, c => c.toUpperCase()); // Capitalize first letter of each word
+        departmentName = departmentName.replace(/\bOf\b/g, "of"); // Ensure "of" stays lowercase
+
+        if (departmentCode === '' || departmentName === '') {
+            alert('Please enter both Department Code and Department Name.');
+            return;
+        }
+
+        // AJAX request to save the department
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "add_department.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                let response = JSON.parse(xhr.responseText);
+                if (response.status === 'success') {
+                    let newOption = document.createElement('option');
+                    newOption.value = response.department_code;
+                    newOption.text = response.department_name;
+
+                    let addNewOption = departmentDropdown.querySelector("option[value='add_new']");
+                    departmentDropdown.insertBefore(newOption, addNewOption);
+
+                    departmentDropdown.value = response.department_code;
+                    departmentCodeInput.value = '';
+                    departmentNameInput.value = '';
+                    document.getElementById('new_department_container').style.display = 'none';
+                } else {
+                    alert(response.message);
+                }
+            }
+        };
+        xhr.send("department_code=" + encodeURIComponent(departmentCode) + "&department_name=" + encodeURIComponent(departmentName));
     });
 </script>
