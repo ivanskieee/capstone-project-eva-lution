@@ -70,13 +70,21 @@ include "handlers/head_faculty_handler.php";
                                     <label for="department" class="control-label">Department</label>
                                     <select id="department" class="form-control form-control-sm" name="department"
                                         required>
-                                        <option value="" disabled selected>Select Department</option>
+                                        <option value="" disabled>Select Department</option>
                                         <?php
+                                        // Get the faculty's assigned department (if editing)
+                                        $faculty_department = isset($faculty['department']) ? $faculty['department'] : '';
+
+                                        // Fetch all departments from the database
                                         $stmt = $conn->query("SELECT * FROM departments ORDER BY department_name ASC");
                                         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                             $formatted_name = ucwords(strtolower($row['department_name'])); // Capitalize first letter of each word
                                             $formatted_name = preg_replace('/\bOf\b/', 'of', $formatted_name); // Ensure "of" stays lowercase
-                                            echo "<option value='{$row['department_code']}'>" . $formatted_name . "</option>";
+                                        
+                                            // Check if the department matches the faculty's department
+                                            $selected = ($faculty_department == $row['department_code']) ? 'selected' : '';
+
+                                            echo "<option value='{$row['department_code']}' {$selected}>{$formatted_name}</option>";
                                         }
                                         ?>
                                         <option value="add_new">Add New Department</option>
