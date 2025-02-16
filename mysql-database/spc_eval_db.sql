@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 11, 2025 at 04:03 AM
+-- Generation Time: Feb 16, 2025 at 11:22 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 7.4.16
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -102,6 +102,33 @@ INSERT INTO `audit_log` (`id`, `action_type`, `table_name`, `academic_id`, `user
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `audit_logs`
+--
+
+CREATE TABLE `audit_logs` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `action` varchar(255) NOT NULL,
+  `details` text DEFAULT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `audit_logs`
+--
+
+INSERT INTO `audit_logs` (`id`, `user_id`, `action`, `details`, `timestamp`) VALUES
+(2, 49, 'Generated Registration Link', 'Token: 13bce0f7f6e96f1db77587b905ea9106, Expires: 2025-02-17 10:53:45', '2025-02-16 09:53:45'),
+(3, 49, 'Generated Registration Link', 'Token: c598093bb6fc63b980ed1a08b5b24079, Expires: 2025-02-17 10:54:17', '2025-02-16 09:54:17'),
+(4, 49, 'Generated Registration Link', 'Token: d317b48ab0586609cd1a86b891f1acfd, Expires: 2025-02-17 10:57:21', '2025-02-16 09:57:21'),
+(5, 55, 'Generated Registration Link', 'Token: dd03a95f517ecfb09bf5fc2843d86c9d, Expires: 2025-02-17 10:58:27', '2025-02-16 09:58:27'),
+(6, 55, 'Generated Registration Link', 'Token: f0b0013256ccd25ddddd3992d093ae77, Expires: 2025-02-17 10:59:07', '2025-02-16 09:59:07'),
+(7, 55, 'Generated Registration Link', 'Token: 734310fdf1469bfddbb2c5aa16e90106, Expires: 2025-02-17 11:06:58', '2025-02-16 10:06:58'),
+(8, 49, 'Generated Registration Link', 'Token: 12643644f952250204edc59de972a0c4, Expires: 2025-02-17 11:20:45', '2025-02-16 10:20:45');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `class`
 --
 
@@ -156,7 +183,65 @@ INSERT INTO `college_faculty_list` (`faculty_id`, `school_id`, `firstname`, `las
 (70, '1004', 'aaron', 'lagaya', 'cc105', 'ccs', 'aaron@lagaya.com', '$2y$10$f593oA6tlVDsbFL3t6Tyj.D2Gs7bbwQ44KIqb1X5dCJxbPOE4ykta', '', 22, 0, '2025-01-29 21:51:54'),
 (72, '12233', 'Juan', 'Dela Cruz', 'gec7', 'cas', '10equips@gmail.com', '$2y$10$VPPIyU2S06aYZR4VKxAVme2grPZbZIMfb08zFhJi/TOckGrDDGvcm', '', 22, 0, '2025-01-30 17:33:33'),
 (74, '0006', 'klein', 'ligs', 'ES104, IT PROF EL5', 'ccs', 'klein@darelleligs.com', '$2y$10$KghmfL9S0AlorjNP7XwG.uBj3KmIDD98ulV3UMIP6MSIqdDvUIqhu', '', 22, 0, '2025-02-01 12:42:14'),
-(75, '23232', 'gab', 'darelle', 'ES104, IT PROF EL5', 'ccs', 'gab@darelle.com', '$2y$10$y7iUlRxoCK5zS.GPGxa.c.ebyMvCiIsqL.9xIg1ZsCoLHUL4t0iuG', '', 22, 0, '2025-02-02 02:39:00');
+(75, '23232', 'gab', 'darelle', 'ES104, IT PROF EL5', 'ccs', 'gab@darelle.com', '$2y$10$y7iUlRxoCK5zS.GPGxa.c.ebyMvCiIsqL.9xIg1ZsCoLHUL4t0iuG', '', 22, 0, '2025-02-02 02:39:00'),
+(77, '34873784832', 'beia', 'biancs', 'GEC3, GEC4, NSTP2', 'ccs', 'bancabeia@gmail.com', '$2y$10$P9tcQpifP1wJ0X6zWUGWhOPX88d53t92d1JKJS2T9l4Ej36gX056m', '', 22, 0, '2025-02-11 13:11:13'),
+(80, '45454', 'van', 'asd', 'ED101', 'educ', 'vanss@van.com', '$2y$10$TgfY6xoy14i/EvW8I..5Bu14/5gRyPFGUElKVUzSKEQgt7/cUrThi', '', 22, 0, '2025-02-15 19:06:10'),
+(81, '3453454', 'hehe', 'hehez', 'ES104', 'ccs', 'hehe@123.com', '$2y$10$9.OnVQyX9LwgE9nAVfIuNu8i/qrLMD0RZ2Pz3VpaxjQDHFEPu7kiS', '', 22, 0, '2025-02-15 19:24:43'),
+(82, '43433', 'yuyu', 'oweowo', 'cc111, es108', 'ccs', 'bano@bano.com', '$2y$10$WG6Pl/.69scWCkQOm84Zou5Yp30wpe2p5BfG5hvauo86U0xPHhiPG', '', 22, 0, '2025-02-16 08:37:32'),
+(83, '89889', 'dgfgfg', 'fgf', 'cc111', 'ccs', 'asdwe@1.com', '$2y$10$pz.EKX95/cKagL.JjL1yEedXxlQ2i4aSPzkq6R4VUaqJQWBK9bsEm', '', 22, 0, '2025-02-16 08:41:45'),
+(84, '48594895489', 'asdasas', 'awewew', 'IM101', 'ccs', 'ertertr@1.com', '$2y$10$HKQNrgeyKSmfndsAioJAwu.Vhuhu.Vnjjs.R49a5Shkqfg8HNy9NS', '', 22, 0, '2025-02-16 09:19:13');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `courses`
+--
+
+CREATE TABLE `courses` (
+  `id` int(11) NOT NULL,
+  `course_code` varchar(50) NOT NULL,
+  `course_name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `courses`
+--
+
+INSERT INTO `courses` (`id`, `course_code`, `course_name`) VALUES
+(3, 'ba_comm', 'BA Communication'),
+(4, 'abel', 'BA English Language'),
+(5, 'ab_polsci', 'BA Political Science'),
+(6, 'bs_math', 'BS Mathematics'),
+(7, 'bsba_hrm', 'BSBA - Human Resource Management'),
+(8, 'bsba_mm', 'BSBA - Marketing Management'),
+(9, 'bsba_ft', 'BSBA - Financial Technology'),
+(10, 'bs_entrep', 'BS Entrepreneurship'),
+(11, 'bs_pubad', 'BS Public Administration'),
+(12, 'bsrem', 'BS Real Estate Management'),
+(13, 'beed', 'BEEd - Generalist'),
+(14, 'bsed_eng', 'BSEd - English'),
+(15, 'bsed_filipino', 'BSEd - Filipino'),
+(16, 'bsed_science', 'BSEd - Science'),
+(17, 'bsed_math', 'BSEd - Mathematics'),
+(18, 'bsed_ss', 'BSEd - Social Studies'),
+(19, 'bsed_ve', 'BSEd - Values Education'),
+(20, 'btle_he', 'BTLE - Home Economics'),
+(21, 'btle_ict', 'BTLE - Information & Communication Technology'),
+(22, 'bped', 'BPED - Physical Education'),
+(23, 'bsned', 'BSNED - Special Needs Education'),
+(24, 'bs_psych', 'BS Psychology'),
+(25, 'bsa', 'BS Accountancy'),
+(26, 'beced', 'BECEd - Early Childhood Education'),
+(27, 'bsn', 'BS Nursing'),
+(28, 'bscs', 'BS Computer Science'),
+(29, 'bsit', 'BS Information Technology'),
+(30, 'bspt', 'BS Physical Therapy'),
+(31, 'bsrt', 'BS Radiologic Technology'),
+(32, 'bshm', 'BS Hospitality Management'),
+(33, 'aradtech', 'Associate in Radiologic Technology'),
+(34, 'act', 'Associate in Computer Technology'),
+(35, 'ctp_mapeh', 'Certificate in Teaching Program - MAPEH'),
+(36, 'ctp_pe', 'Certificate in Teaching Program - PE');
 
 -- --------------------------------------------------------
 
@@ -178,6 +263,29 @@ INSERT INTO `criteria_list` (`criteria_id`, `criteria`, `faculty_order_by`) VALU
 (164, 'A. Personal Traits', 0),
 (169, 'B. Professional Traits', 0),
 (170, 'Comments', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `departments`
+--
+
+CREATE TABLE `departments` (
+  `id` int(11) NOT NULL,
+  `department_code` varchar(50) NOT NULL,
+  `department_name` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `departments`
+--
+
+INSERT INTO `departments` (`id`, `department_code`, `department_name`) VALUES
+(1, 'ccs', 'College of Computer Studies'),
+(2, 'educ', 'College of Education'),
+(3, 'cas', 'College of Arts & Sciences'),
+(4, 'cba', 'College of Business Administration'),
+(5, 'con', 'College of Nursing');
 
 -- --------------------------------------------------------
 
@@ -414,7 +522,8 @@ CREATE TABLE `head_faculty_list` (
 --
 
 INSERT INTO `head_faculty_list` (`head_id`, `school_id`, `firstname`, `lastname`, `email`, `department`, `password`, `avatar`, `academic_id`, `account_status`, `date_created`) VALUES
-(20, '1001', 'jorge', 'resurreccion', 'jorge@resurreccion.com', 'ccs', '$2y$10$U7UtO60TT/Z4.Y0KUKhMTe9C6KmruMhXC9l40kgkoGyZ2r42DM0Yy', '', 22, 0, '2025-01-29 21:44:10');
+(20, '1001', 'jorge', 'resurreccion', 'jorge@resurreccion.com', 'ccs', '$2y$10$U7UtO60TT/Z4.Y0KUKhMTe9C6KmruMhXC9l40kgkoGyZ2r42DM0Yy', '', 22, 0, '2025-01-29 21:44:10'),
+(30, '62622662', 'hatdog', 'tender', 'hatdog@123.com', 'cdn', '$2y$10$sO3w36/Z4S1Q.ObhvNBGXeB7GLYMA6N3pohjALZGKZrOucoTYwhhC', '', 22, 0, '2025-02-15 19:22:47');
 
 -- --------------------------------------------------------
 
@@ -450,7 +559,26 @@ INSERT INTO `password_resets` (`id`, `email`, `token`, `expires_at`, `created_at
 (305, '', 'd8969b2746a67e71fb46c1da078de4a3', '2025-02-11 15:09:41', '2025-02-10 14:09:41'),
 (306, '', '17365d5c7f3173dba393934683fda604', '2025-02-11 15:15:11', '2025-02-10 14:15:11'),
 (307, '', '752379962de5c31dd187d1d496c0168c', '2025-02-11 15:18:43', '2025-02-10 14:18:43'),
-(308, '', 'e98dd6ca9afff9bc5f1a49cedf737d40', '2025-02-12 01:45:21', '2025-02-11 00:45:21');
+(308, '', 'e98dd6ca9afff9bc5f1a49cedf737d40', '2025-02-12 01:45:21', '2025-02-11 00:45:21'),
+(309, '', '049df4ef33f675e965d5f5178a8acf8a', '2025-02-12 06:09:42', '2025-02-11 05:09:42'),
+(310, '', '2e7415be0c3899ab7e8798d7b1eef02e', '2025-02-12 06:53:27', '2025-02-11 05:53:27'),
+(311, '', '0c19b51096883d982e1fa46f5e1be37f', '2025-02-12 07:14:34', '2025-02-11 06:14:34'),
+(312, '', '846d2ab27892d32ad565739e876aad9b', '2025-02-12 07:19:51', '2025-02-11 06:19:51'),
+(313, '', '28ecd623c9b9f228efb00ab6240958c8', '2025-02-12 07:28:19', '2025-02-11 06:28:19'),
+(314, '', 'ae69d2a8106b8b2ebb64f89b96d9b010', '2025-02-12 07:34:31', '2025-02-11 06:34:31'),
+(315, '', '6670255220ecd68ed839401302e8555b', '2025-02-16 12:07:06', '2025-02-15 11:07:06'),
+(316, '', 'db46582a178cb50d5ffe015ede2aa753', '2025-02-17 05:10:51', '2025-02-16 04:10:51'),
+(317, '', 'bea4b3da400b34c1a33f439e89ee9550', '2025-02-17 10:48:32', '2025-02-16 09:48:32'),
+(318, '', 'e13e78c4c217a6a9d4e096f9a3940bbb', '2025-02-17 10:49:09', '2025-02-16 09:49:09'),
+(319, '', 'bb0db55d393aed086559004b42ca2eb9', '2025-02-17 10:50:11', '2025-02-16 09:50:11'),
+(320, '', '92006ca0f63b417e32612488d2dcff76', '2025-02-17 10:51:54', '2025-02-16 09:51:54'),
+(321, '', '13bce0f7f6e96f1db77587b905ea9106', '2025-02-17 10:53:45', '2025-02-16 09:53:45'),
+(322, '', 'c598093bb6fc63b980ed1a08b5b24079', '2025-02-17 10:54:17', '2025-02-16 09:54:17'),
+(323, '', 'd317b48ab0586609cd1a86b891f1acfd', '2025-02-17 10:57:21', '2025-02-16 09:57:21'),
+(324, '', 'dd03a95f517ecfb09bf5fc2843d86c9d', '2025-02-17 10:58:27', '2025-02-16 09:58:27'),
+(325, '', 'f0b0013256ccd25ddddd3992d093ae77', '2025-02-17 10:59:07', '2025-02-16 09:59:07'),
+(326, '', '734310fdf1469bfddbb2c5aa16e90106', '2025-02-17 11:06:58', '2025-02-16 10:06:58'),
+(327, '', '12643644f952250204edc59de972a0c4', '2025-02-17 11:20:45', '2025-02-16 10:20:45');
 
 -- --------------------------------------------------------
 
@@ -678,10 +806,236 @@ CREATE TABLE `student_list` (
 INSERT INTO `student_list` (`student_id`, `school_id`, `firstname`, `lastname`, `email`, `password`, `subject`, `section`, `avatar`, `academic_id`, `date_created`, `account_status`) VALUES
 (120, '2312321', 'aaa', 'aaaa', 'aaa@aa.com', '$2y$10$Ws1zvVbSOkW1ugSJ7HJAoeE691/7vUKKNrJTXHBfvQStl6R/OaYg6', 'ES104', 'A', '', 22, '2025-02-06 21:42:06', 1),
 (121, '2147483647', 'asdfadsf', 'asdfasdf', 'sadfdsafdsaf@ga.com', '$2y$10$8mcd/33kFmdWlrWhlsVu/Oud9RZB.9C5zcr11ADL72xHMxK1Poft2', 'IT PROF EL5', 'A', '', 22, '2025-02-06 21:42:11', 1),
-(122, '10002', 'beia', 'bianca', 'bancabeia@gmail.com', '$2y$10$fIzh1GUA52T9qtcgzmXlCuF3cX7p2X02COw6K.E6PWhVdyt1XEjXm', 'ES104', 'A', '', 22, '2025-02-10 11:48:00', 1),
 (123, '10003', 'kevin', 'balocos', 'kevinbalocos03@gmail.com', '$2y$10$W9.UYNQ5vzFreTW018HJ3OWUCr8SQfj8H/qwcW7FqwMnDXvhyQQva', 'ES104', 'A', '', 22, '2025-02-10 11:48:08', 1),
 (126, '23423', 'Ivan', 'Brilata', 'brilataivan86@gmail.com', '$2y$10$fQGKVrA2CuAdEcH/kdJfkuMd6QWl43eatdmOQdGNugaYKeFAp4aai', 'ES104', 'A', '', 22, '2025-02-10 22:19:35', 1),
-(127, '232131312', 'klein', 'darelle', 'kleindarelle@gmail.com', '$2y$10$gDYL6dd/RQF3LdR36jDYUOV3XM4l28RofLJ/J6BOMansswXa6.ngW', 'ES104', 'A', '', 22, '2025-02-11 08:47:25', 1);
+(131, '324', 'van', 'asd', 'vanss@vanss.com', '$2y$10$pXSXg9t4Zuv5DC9OFYHtNOYOb1o6KtB.9blSd4tkVjBNT3Qjxfw3O', 'ed102', 'A', '', 22, '2025-02-15 19:12:40', 1),
+(132, '343242323', 'para', 'salahat', 'para@salahat.com', '$2y$10$FPmG4onlVFi7Ntw3qVK8NuLKSkevP1b1Wj2/L4816mdVnGja5KSxK', 'IM101', 'A', '', 22, '2025-02-16 13:19:57', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `subjects`
+--
+
+CREATE TABLE `subjects` (
+  `id` int(11) NOT NULL,
+  `subject_code` varchar(50) NOT NULL,
+  `subject_name` varchar(255) NOT NULL,
+  `department_code` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `subjects`
+--
+
+INSERT INTO `subjects` (`id`, `subject_code`, `subject_name`, `department_code`) VALUES
+(3, 'GEC1', 'Purposive Communication', 'CCS'),
+(4, 'GEC2', 'Understanding the Self', 'CCS'),
+(5, 'GEC3', 'Reading in Philippine History', 'CCS'),
+(6, 'GEC4', 'Mathematics in the Modern World', 'CCS'),
+(7, 'CC101', 'Introduction to Computing', 'CCS'),
+(8, 'CC102', 'Fundamentals of Programming', 'CCS'),
+(9, 'PATH-FIT', 'Movement Competency Training', 'CCS'),
+(10, 'NSTP', 'ROTC11/CWTS11', 'CCS'),
+(11, 'GEC5', 'Art Appreciation', 'CCS'),
+(12, 'GEC6', 'The Contemporary World', 'CCS'),
+(13, 'GEC7', 'Science, Technology & Society', 'CCS'),
+(14, 'GEC8', 'Ethics', 'CCS'),
+(15, 'CC103', 'Intermediate Programming', 'CCS'),
+(16, 'HCI101', 'Introduction to Human-Computer', 'CCS'),
+(17, 'DS101', 'Discrete Structures 1', 'CCS'),
+(18, 'PATH-FIT2', 'Exercise-Based Fitness Activities', 'CCS'),
+(19, 'NSTP2', 'ROTC12/CWTS12', 'CCS'),
+(20, 'CC104', 'Data Structure and Algorithms', 'CCS'),
+(21, 'AC101', 'Advance Calculus', 'CCS'),
+(22, 'OOP101', 'Object-Oriented Programming', 'CCS'),
+(23, 'CC105', 'Information Management', 'CCS'),
+(24, 'CS ELEC1', 'CS Elective 1', 'CCS'),
+(25, 'FILI1', 'Kontekstwalidong Komunikasyon sa Filipino', 'CCS'),
+(26, 'LITT1', 'Sosyedad at Literatura/Panitikang Panlipunan', 'CCS'),
+(27, 'PATH-FIT3', 'Popular Dance and Other Dance Forms', 'CCS'),
+(28, 'RIZAL', 'Life and Works of Rizal', 'CCS'),
+(29, 'FILI2', 'Filipino sa Iba\'t-Ibang Disiplina', 'CCS'),
+(30, 'PL101', 'Programming Languages', 'CCS'),
+(31, 'AL101', 'Algorithms and Complexity', 'CCS'),
+(32, 'CC106', 'Applications Development and Emerging Technologies', 'CCS'),
+(33, 'CS PROF EL1', 'CS Professional Elective 1', 'CCS'),
+(34, 'DS102', 'Discrete Structure 2', 'CCS'),
+(35, 'PATH-FIT4', 'Team Sport (Volleyball)', 'CCS'),
+(36, 'AL102', 'Automata Theory and Formal Languages', 'CCS'),
+(37, 'AR101', 'Architecture and Organization', 'CCS'),
+(38, 'SP101', 'Social Issues and Professional Practices', 'CCS'),
+(39, 'CS ELEC2', 'CS Elective 2', 'CCS'),
+(40, 'OS101', 'Operating System', 'CCS'),
+(41, 'NC101', 'Network and Communications', 'CCS'),
+(42, 'SE101', 'Software Engineering', 'CCS'),
+(43, 'CS ELEC3', 'CS Elective 3', 'CCS'),
+(44, 'CS PROF EL2', 'CS Professional Elective 2', 'CCS'),
+(45, 'TH101', 'Thesis Writing 1', 'CCS'),
+(46, 'CS PROF EL3', 'CS Professional Elective 3', 'CCS'),
+(47, 'THS102', 'Thesis Writing 2', 'CCS'),
+(48, 'CS PROF EL4', 'CS Professional Elective 4', 'CCS'),
+(49, 'CS PROF EL5', 'CS Professional Elective 5', 'CCS'),
+(50, 'PRAC101', 'Practicum (250-486 Hours)', 'CCS'),
+(51, 'IAS101', 'Information Assurance & Security 1', 'CCS'),
+(52, 'CS PROF EL6', 'CS Professional Elective 6', 'CCS'),
+(53, 'IT ELEC1', 'IT Elective 1', 'CCS'),
+(54, 'IT ELEC2', 'IT Elective 2', 'CCS'),
+(55, 'IT PROF EL1', 'IT Professional Elective 1', 'CCS'),
+(56, 'MS101', 'Quantitative Methods (Including Modeling and Simulation)', 'CCS'),
+(57, 'NET101', 'Networking 1', 'CCS'),
+(58, 'IPT101', 'Integrative Programming & Technologies', 'CCS'),
+(59, 'IM101', 'Advance Database System', 'CCS'),
+(60, 'NE102', 'Networking 2', 'CCS'),
+(61, 'SIA101', 'Systems Integration and Architecture 1', 'CCS'),
+(62, 'IT PROF EL2', 'IT Professional Elective 2', 'CCS'),
+(63, 'IAS102', 'Information Assurance and Security 2', 'CCS'),
+(64, 'CAP101', 'Capstone Project and Research 1', 'CCS'),
+(65, 'IT PROF EL3', 'IT Professional Elective 3', 'CCS'),
+(66, 'SAM101', 'System Administration and Maintenance', 'CCS'),
+(67, 'IT ELEC3', 'IT Elective 3', 'CCS'),
+(68, 'CAP102', 'Capstone Project and Research 2', 'CCS'),
+(69, 'IT PROF EL4', 'IT Professional Elective 4', 'CCS'),
+(70, 'ES104', 'Elective 4', 'CCS'),
+(71, 'IT PROF EL5', 'IT Professional Elective 5', 'CCS'),
+(72, 'IT PROF EL6', 'IT Professional Elective 6', 'CCS'),
+(73, 'SOCSI ELECT1', 'General Psychology', 'CCS'),
+(74, 'ES101', 'Elective 1', 'CCS'),
+(75, 'ES102', 'Elective 2', 'CCS'),
+(76, 'FE101', 'Free Elective 1', 'CCS'),
+(77, 'ED101', 'Foundations of Education', 'EDUC'),
+(78, 'ED102', 'Educational Psychology', 'EDUC'),
+(79, 'ED103', 'Curriculum Development', 'EDUC'),
+(80, 'ED104', 'Teaching Strategies', 'EDUC'),
+(81, 'CAS101', 'Introduction to Humanities', 'CAS'),
+(82, 'CAS102', 'Philippine Literature', 'CAS'),
+(83, 'CAS103', 'World History', 'CAS'),
+(84, 'CAS104', 'Ethics and Logic', 'CAS'),
+(85, 'BA101', 'Principles of Marketing', 'CBA'),
+(86, 'BA102', 'Financial Management', 'CBA'),
+(87, 'BA103', 'Business Law', 'CBA'),
+(88, 'BA104', 'Entrepreneurship', 'CBA');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `subjects_course`
+--
+
+CREATE TABLE `subjects_course` (
+  `id` int(11) NOT NULL,
+  `subject_code` varchar(255) NOT NULL,
+  `subject_name` varchar(255) NOT NULL,
+  `course_code` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `subjects_course`
+--
+
+INSERT INTO `subjects_course` (`id`, `subject_code`, `subject_name`, `course_code`) VALUES
+(4, 'GEC1', 'Purposive Communication', 'act'),
+(5, 'GEC2', 'Understanding the Self', 'act'),
+(6, 'GEC3', 'Reading in Philippine History', 'act'),
+(7, 'GEC4', 'Mathematics in the Modern World', 'act'),
+(8, 'CC101', 'Introduction to Computing', 'act'),
+(9, 'CC102', 'Fundamentals of Programming', 'act'),
+(10, 'SOCSI ELECT1', 'General Psychology', 'act'),
+(11, 'PATH-FIT', 'Movement Competency Training', 'act'),
+(12, 'NSTP', 'ROTC11/CWTS11', 'act'),
+(13, 'GEC5', 'Art Appreciation', 'act'),
+(14, 'GEC6', 'The Contemporary World', 'act'),
+(15, 'GEC7', 'Science, Technology & Society', 'act'),
+(16, 'GEC8', 'Ethics', 'act'),
+(17, 'CC103', 'Intermediate Programming', 'act'),
+(18, 'HCI101', 'Introduction to Human-Computer', 'act'),
+(19, 'PATH-FIT2', 'Exercise-Based Fitness Activities', 'act'),
+(20, 'NSTP 2', 'ROTC12/CWTS12', 'act'),
+(21, 'CC104', 'Data Structure and Algorithms', 'act'),
+(22, 'ES101', 'Elective 1', 'act'),
+(23, 'ES102', 'Elective 2', 'act'),
+(24, 'CC105', 'Information Management', 'act'),
+(25, 'LITT1', 'Sosyedad at Literatura/Panitikang Panlipunan', 'act'),
+(26, 'PATH-FIT3', 'Popular Dance and Other Dance Forms', 'act'),
+(27, 'RIZAL', 'Life and Works of Rizal', 'act'),
+(28, 'MS101', 'Quantitative Methods (Including Modeling and Simulation)', 'act'),
+(29, 'NET101', 'Networking 1', 'act'),
+(30, 'FE101', 'Free Elective 1', 'act'),
+(31, 'IPT101', 'Integrative Programming & Technologies', 'act'),
+(32, 'PATH-FIT4', 'Team Sport (Volleyball)', 'act'),
+(33, 'GEC1', 'Purposive Communication', 'bsit'),
+(34, 'GEC2', 'Understanding The Self', 'bsit'),
+(35, 'GEC3', 'Reading in Philippine History', 'bsit'),
+(36, 'GEC4', 'Mathematics in the Modern World', 'bsit'),
+(37, 'CC101', 'Introduction to Computing', 'bsit'),
+(38, 'CC102', 'Fundamentals of Programming', 'bsit'),
+(39, 'PATH-FIT', 'Movement Competency Training', 'bsit'),
+(40, 'NSTP', 'ROTC11/CWTS11', 'bsit'),
+(41, 'GEC5', 'Art Appreciation', 'bsit'),
+(42, 'GEC6', 'The Contemporary World', 'bsit'),
+(43, 'GEC7', 'Science, Technology & Society', 'bsit'),
+(44, 'GEC8', 'Ethics', 'bsit'),
+(45, 'CC103', 'Intermediate Programming', 'bsit'),
+(46, 'HCI101', 'Introduction to Human Computer', 'bsit'),
+(47, 'DS101', 'Discrete Structures 1', 'bsit'),
+(48, 'PATH-FIT2', 'Exercise-Based Fitness Activities', 'bsit'),
+(49, 'NSTP2', 'ROTC12/CWTS12', 'bsit'),
+(50, 'CC104', 'Data Structure and Algorithms', 'bsit'),
+(51, 'IT ELEC1', 'IT Elective 1', 'bsit'),
+(52, 'IT ELEC2', 'IT Elective 2', 'bsit'),
+(53, 'CC105', 'Information Management', 'bsit'),
+(54, 'CS ELEC1', 'CS Elective 1', 'bsit'),
+(55, 'FILI1', 'Kontekstuwalisadong Komunikasyon sa Filipino', 'bsit'),
+(56, 'LITT1', 'Sosyedad at Literatura/Panitikang Panlipunan', 'bsit'),
+(57, 'PATH-FIT3', 'Popular Dance and Other Dance Forms', 'bsit'),
+(58, 'RIZAL', 'Life and Works of Rizal', 'bsit'),
+(59, 'FILI2', 'Filipino sa Ibat-Ibang Disiplina', 'bsit'),
+(60, 'MS101', 'Quantitative Methods (Including Modeling and Simulation)', 'bsit'),
+(61, 'NET101', 'Networking 1', 'bsit'),
+(62, 'IT PROF EL1', 'IT Professional Elective 1', 'bsit'),
+(63, 'IPT101', 'Integrative Prog. & Technologies', 'bsit'),
+(64, 'PATH-FIT4', 'Team Sport (Volleyball)', 'bsit'),
+(65, 'IM101', 'Advance Database System', 'bsit'),
+(66, 'NE102', 'Networking 2', 'bsit'),
+(67, 'SIA101', 'Systems Integration and Architecture 1', 'bsit'),
+(68, 'SP101', 'Social and Professional Practices', 'bsit'),
+(69, 'IT PROF EL2', 'IT Professional Elective 2', 'bsit'),
+(70, 'IAS101', 'Information Assurance & Security 1', 'bsit'),
+(71, 'CC106', 'Application Development and Emerging Technologies', 'bsit'),
+(72, 'IT PROF EL3', 'IT Professional Elective 3', 'bsit'),
+(73, 'SAM101', 'System Administration and Maintenance', 'bsit'),
+(74, 'IT ELEC3', 'IT Elective 3', 'bsit'),
+(75, 'IAS102', 'Information Assurance and Security 2', 'bsit'),
+(76, 'CAP101', 'Capstone Project and Research 1', 'bsit'),
+(77, 'IT PROF EL4', 'IT Professional Elective 4', 'bsit'),
+(78, 'ES104', 'Elective 4', 'bsit'),
+(79, 'CAP102', 'Capstone Project and Research 2', 'bsit'),
+(80, 'IT PROF EL5', 'IT Professional Elective 5', 'bsit'),
+(81, 'IT PROF EL6', 'IT Professional Elective 6', 'bsit'),
+(82, 'PRAC101', 'Practicum (486 Hours)', 'bsit'),
+(83, 'hrm101', 'Human Resource Fundamentals', 'bsba_hrm'),
+(84, 'mm101', 'Marketing Principles', 'bsba_mm'),
+(85, 'ft101', 'Financial Tech Innovations', 'bsba_ft'),
+(86, 'ed102', 'asdasdas', 'beed'),
+(87, 'math101', 'Mathematical Analysis', 'bs_math'),
+(88, 'math102', 'Statistics and Probability', 'bs_math'),
+(89, 'GEC1', 'Purposive Communication', 'bscs'),
+(90, 'GEC2', 'Understanding the Self', 'bscs'),
+(91, 'GEC3', 'Reading in Philippine History', 'bscs'),
+(92, 'GEC4', 'Mathematics in the Modern World', 'bscs'),
+(93, 'CC101', 'Introduction to Computing', 'bscs'),
+(94, 'CC102', 'Fundamentals of Programming', 'bscs'),
+(95, 'PATH-FIT', 'Movement Competency Training', 'bscs'),
+(96, 'NSTP', 'ROTC11/CWTS11', 'bscs'),
+(97, 'GEC5', 'Art Appreciation', 'bscs'),
+(98, 'GEC6', 'The Contemporary World', 'bscs'),
+(99, 'GEC7', 'Science, Technology & Society', 'bscs'),
+(100, 'GEC8', 'Ethics', 'bscs'),
+(101, 'CC103', 'Intermediate Programming', 'bscs'),
+(102, 'HCI101', 'Introduction to Human Computer', 'bscs'),
+(103, 'DS101', 'Discrete Structures 1', 'bscs'),
+(104, 'PATH-FIT2', 'Exercise-Based Fitness Activities', 'bscs'),
+(105, 'NSTP2', 'ROTC12/CWTS12', 'bscs');
 
 -- --------------------------------------------------------
 
@@ -718,7 +1072,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `firstname`, `lastname`, `email`, `password`, `avatar`, `academic_id`, `date_created`) VALUES
-(49, 'SPC', 'admin', 'spc@admin.com', '$2y$10$wmwcFX8dInqYbb.1clkxNOKDGFYBsvWpKPasHVfSepAy5/Li7pwi.', '', 22, '2025-01-29 21:02:56');
+(49, 'SPC', 'admin', 'spc@admin.com', '$2y$10$wmwcFX8dInqYbb.1clkxNOKDGFYBsvWpKPasHVfSepAy5/Li7pwi.', '', 22, '2025-01-29 21:02:56'),
+(55, 'SPC', 'co-admin', 'spc@coadmin.com', '$2y$10$isYMw2Rl2vcovgTWzs1O5.Ln0xnJotkAWuVV/mvxnjOI0IZd39zcS', '', 22, '2025-02-16 13:34:43');
 
 --
 -- Indexes for dumped tables
@@ -743,6 +1098,13 @@ ALTER TABLE `audit_log`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `audit_logs`
+--
+ALTER TABLE `audit_logs`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
 -- Indexes for table `class`
 --
 ALTER TABLE `class`
@@ -761,10 +1123,22 @@ ALTER TABLE `college_faculty_list`
   ADD PRIMARY KEY (`faculty_id`);
 
 --
+-- Indexes for table `courses`
+--
+ALTER TABLE `courses`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `criteria_list`
 --
 ALTER TABLE `criteria_list`
   ADD PRIMARY KEY (`criteria_id`);
+
+--
+-- Indexes for table `departments`
+--
+ALTER TABLE `departments`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `evaluation_answers`
@@ -863,6 +1237,18 @@ ALTER TABLE `student_list`
   ADD PRIMARY KEY (`student_id`);
 
 --
+-- Indexes for table `subjects`
+--
+ALTER TABLE `subjects`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `subjects_course`
+--
+ALTER TABLE `subjects_course`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `subject_list`
 --
 ALTER TABLE `subject_list`
@@ -897,6 +1283,12 @@ ALTER TABLE `audit_log`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
+-- AUTO_INCREMENT for table `audit_logs`
+--
+ALTER TABLE `audit_logs`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
 -- AUTO_INCREMENT for table `class`
 --
 ALTER TABLE `class`
@@ -912,13 +1304,25 @@ ALTER TABLE `class_list`
 -- AUTO_INCREMENT for table `college_faculty_list`
 --
 ALTER TABLE `college_faculty_list`
-  MODIFY `faculty_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=76;
+  MODIFY `faculty_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
+
+--
+-- AUTO_INCREMENT for table `courses`
+--
+ALTER TABLE `courses`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `criteria_list`
 --
 ALTER TABLE `criteria_list`
   MODIFY `criteria_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=171;
+
+--
+-- AUTO_INCREMENT for table `departments`
+--
+ALTER TABLE `departments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `evaluation_answers`
@@ -954,13 +1358,13 @@ ALTER TABLE `evaluation_list`
 -- AUTO_INCREMENT for table `head_faculty_list`
 --
 ALTER TABLE `head_faculty_list`
-  MODIFY `head_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `head_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `password_resets`
 --
 ALTER TABLE `password_resets`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=309;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=328;
 
 --
 -- AUTO_INCREMENT for table `pending_students`
@@ -1014,7 +1418,19 @@ ALTER TABLE `self_head_eval`
 -- AUTO_INCREMENT for table `student_list`
 --
 ALTER TABLE `student_list`
-  MODIFY `student_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=128;
+  MODIFY `student_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=134;
+
+--
+-- AUTO_INCREMENT for table `subjects`
+--
+ALTER TABLE `subjects`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
+
+--
+-- AUTO_INCREMENT for table `subjects_course`
+--
+ALTER TABLE `subjects_course`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=106;
 
 --
 -- AUTO_INCREMENT for table `subject_list`
@@ -1026,7 +1442,17 @@ ALTER TABLE `subject_list`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(15) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=55;
+  MODIFY `id` int(15) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `audit_logs`
+--
+ALTER TABLE `audit_logs`
+  ADD CONSTRAINT `audit_logs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -29,7 +29,7 @@
           <a href="verify_accounts.php"
             class="nav-link nav-verify_accounts <?php echo in_array(basename($_SERVER['PHP_SELF']), ['verify_accounts.php']) ? 'active' : ''; ?>"
             style="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['verify_accounts.php']) ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
-            <i class="nav-icon fas fa-th-list"></i>
+            <i class="nav-icon fas fa-user-clock"></i> <!-- Updated icon -->
             <p>Pending Accounts</p>
           </a>
         </li>
@@ -168,12 +168,20 @@
             </li>
           </ul>
         </li>
+        <li class="nav-item dropdown">
+          <a href="audit_logs.php"
+            class="nav-link nav-report <?php echo in_array(basename($_SERVER['PHP_SELF']), ['audit_logs.php']) ? 'active' : ''; ?>"
+            style="<?php echo in_array(basename($_SERVER['PHP_SELF']), ['audit_logs.php']) ? 'background-color: rgb(51, 128, 64); color: #fff;' : ''; ?>">
+            <i class="nav-icon fas fa-clipboard-list"></i> <!-- Alternative icon -->
+            <p>Audit Logs</p>
+          </a>
+        </li>
       </ul>
     </nav>
   </div>
 </aside>
 <script>
-  $(document).ready(function() {
+  $(document).ready(function () {
     var page = '<?php echo isset($_GET['page']) ? $_GET['page'] : 'home' ?>';
     var s = '<?php echo isset($_GET['s']) ? $_GET['s'] : '' ?>';
     if (s != '')
@@ -192,7 +200,7 @@
 
   })
 
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', function () {
     const navLinks = document.querySelectorAll('.nav-link');
 
     navLinks.forEach(link => {

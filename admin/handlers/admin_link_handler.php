@@ -16,6 +16,7 @@ include 'header.php';
 include 'sidebar.php';
 include 'footer.php';
 include '../database/connection.php';
+include 'audit_log.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $token = bin2hex(random_bytes(16)); 
@@ -25,6 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $stmt = $conn->prepare("INSERT INTO password_resets (token, expires_at) VALUES (?, ?)");
     $stmt->execute([$token, $expiry]);
+
+    $user_id = $_SESSION['user']['id'];
+
+    log_action($conn, $user_id, "Generated Registration Link", "Token: $token, Expires: $expiry");
 
     header('Location: admin_generate_link.php');
     exit;
