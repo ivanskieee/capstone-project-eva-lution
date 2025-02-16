@@ -5,6 +5,9 @@ use PHPMailer\PHPMailer\Exception;
 
 require '../vendor/autoload.php';
 include '../database/connection.php';
+include 'audit_log.php';
+
+$user_id = $_SESSION['user']['id'] ?? null;
 
 function sendVerificationEmail($recipientEmail, $subject, $body)
 {
@@ -153,6 +156,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ";
 
                 sendVerificationEmail($student['email'], 'Welcome! Your Student Evaluation Account is Active', $emailBody);
+
+                $log_query = "INSERT INTO audit_logs (user_id, action, details) VALUES (?, 'Approved Student', ?)";
+                $log_stmt = $conn->prepare($log_query);
+                $log_stmt->execute([$user_id, "Approved student: {$student['firstname']} {$student['lastname']} (ID: {$student['school_id']})"]);
             }
 
             // Remove approved students from pending list
@@ -206,6 +213,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 ";
                 sendVerificationEmail($student['email'], 'Account Registration Declined', $emailBody);
+
+                $log_query = "INSERT INTO audit_logs (user_id, action, details) VALUES (?, 'Rejected Student', ?)";
+                $log_stmt = $conn->prepare($log_query);
+                $log_stmt->execute([$user_id, "Rejected student: {$student['firstname']} {$student['lastname']} (ID: {$student['school_id']})"]);
 
             }
 
