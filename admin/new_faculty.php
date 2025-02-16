@@ -59,25 +59,52 @@ include "handlers/faculty_handler.php";
                                     <select id="department" class="form-control form-control-sm" name="department"
                                         required>
                                         <option value="" disabled>Select Department</option>
-                                        <option value="ccs" <?php echo (isset($faculty['department']) && $faculty['department'] == 'ccs') ? 'selected' : ''; ?>>College of Computer
-                                            Studies</option>
-                                        <option value="educ" <?php echo (isset($faculty['department']) && $faculty['department'] == 'educ') ? 'selected' : ''; ?>>College of Education
-                                        </option>
-                                        <option value="cas" <?php echo (isset($faculty['department']) && $faculty['department'] == 'cas') ? 'selected' : ''; ?>>College of Arts &
-                                            Sciences</option>
-                                        <option value="cba" <?php echo (isset($faculty['department']) && $faculty['department'] == 'cba') ? 'selected' : ''; ?>>College of Business
-                                            Administration</option>
-                                        <option value="nursing" <?php echo (isset($faculty['department']) && $faculty['department'] == 'nursing') ? 'selected' : ''; ?>>College of Nursing
-                                        </option>
+                                        <?php
+                                        // Get the faculty's assigned department (if editing)
+                                        $faculty_department = isset($faculty['department']) ? $faculty['department'] : '';
+
+                                        // Fetch all departments from the database
+                                        $stmt = $conn->query("SELECT * FROM departments ORDER BY department_name ASC");
+                                        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                            $formatted_name = ucwords(strtolower($row['department_name'])); // Capitalize first letter of each word
+                                            $formatted_name = preg_replace('/\bOf\b/', 'of', $formatted_name); // Ensure "of" stays lowercase
+                                        
+                                            // Check if the department matches the faculty's department
+                                            $selected = ($faculty_department == $row['department_code']) ? 'selected' : '';
+
+                                            echo "<option value='{$row['department_code']}' {$selected}>{$formatted_name}</option>";
+                                        }
+                                        ?>
+                                        <option value="add_new">Add New Department</option>
                                     </select>
+
+                                    <!-- Input fields for new department (Hidden by default) -->
+                                    <div id="new_department_container" style="display: none; margin-top: 5px;">
+                                        <input type="text" id="new_department_code" class="form-control mt-2"
+                                            placeholder="Enter Department Code">
+                                        <input type="text" id="new_department_name" class="form-control mt-2"
+                                            placeholder="Enter Department Name">
+                                        <button type="button" id="add_department"
+                                            class="btn btn-success btn-sm mt-2">Add</button>
+                                    </div>
                                 </div>
 
-                                <div class="input-group mb-4">
+                                <div class="form-group">
                                     <label for="subjects" class="control-label">Subjects</label>
-                                    <select class="form-control subject-dropdown" name="subjects[]" multiple required>
+                                    <select id="subjects" class="form-control subject-dropdown" name="subjects[]"
+                                        multiple required>
                                         <option value="" disabled>Select Subjects</option>
                                     </select>
+                                    <div id="new_subject_container" style="display: none; margin-top: 10px;">
+                                        <input type="text" id="new_subject_code" class="form-control mt-2"
+                                            placeholder="Enter Subject Code">
+                                        <input type="text" id="new_subject_name" class="form-control mt-2"
+                                            placeholder="Enter Subject Name">
+                                        <button type="button" id="add_subject"
+                                            class="btn btn-success btn-sm mt-2">Add</button>
+                                    </div>
                                 </div>
+
 
                                 <div class="error-message" id="password-error">Password must be at least 8 characters
                                     long,
@@ -148,6 +175,20 @@ include "handlers/faculty_handler.php";
         font-size: 12px;
         margin-bottom: 5px;
         display: none;
+    }
+
+    .select2-selection__choice {
+        color: black !important;
+        font-weight: bold;
+        background-color: #f8f9fa;
+        /* Light gray for visibility */
+        border: 1px solid #ced4da;
+    }
+
+    /* Style dropdown options */
+    .select2-results__option {
+        text-transform: uppercase;
+        /* Ensure dropdown items are uppercase */
     }
 </style>
 <script>
@@ -248,136 +289,82 @@ include "handlers/faculty_handler.php";
     });
 </script>
 <script>
-    const subjectsByDepartment = {
-        ccs: [
-            { "value": "GEC1", "text": "Purposive Communication" },
-            { "value": "GEC2", "text": "Understanding the Self" },
-            { "value": "GEC3", "text": "Reading in Philippine History" },
-            { "value": "GEC4", "text": "Mathematics in the Modern World" },
-            { "value": "CC101", "text": "Introduction to Computing" },
-            { "value": "CC102", "text": "Fundamentals of Programming" },
-            { "value": "PATH-FIT", "text": "Movement Competency Training" },
-            { "value": "NSTP", "text": "ROTC11/CWTS11" },
-            { "value": "GEC5", "text": "Art Appreciation" },
-            { "value": "GEC6", "text": "The Contemporary World" },
-            { "value": "GEC7", "text": "Science, Technology & Society" },
-            { "value": "GEC8", "text": "Ethics" },
-            { "value": "CC103", "text": "Intermediate Programming" },
-            { "value": "HCI101", "text": "Introduction to Human-Computer" },
-            { "value": "DS101", "text": "Discrete Structures 1" },
-            { "value": "PATH-FIT2", "text": "Exercise-Based Fitness Activities" },
-            { "value": "NSTP2", "text": "ROTC12/CWTS12" },
-            { "value": "CC104", "text": "Data Structure and Algorithms" },
-            { "value": "AC101", "text": "Advance Calculus" },
-            { "value": "OOP101", "text": "Object-Oriented Programming" },
-            { "value": "CC105", "text": "Information Management" },
-            { "value": "CS ELEC1", "text": "CS Elective 1" },
-            { "value": "FILI1", "text": "Kontekstwalidong Komunikasyon sa Filipino" },
-            { "value": "LITT1", "text": "Sosyedad at Literatura/Panitikang Panlipunan" },
-            { "value": "PATH-FIT3", "text": "Popular Dance and Other Dance Forms" },
-            { "value": "RIZAL", "text": "Life and Works of Rizal" },
-            { "value": "FILI2", "text": "Filipino sa Iba't-Ibang Disiplina" },
-            { "value": "PL101", "text": "Programming Languages" },
-            { "value": "AL101", "text": "Algorithms and Complexity" },
-            { "value": "CC106", "text": "Applications Development and Emerging Technologies" },
-            { "value": "CS PROF EL1", "text": "CS Professional Elective 1" },
-            { "value": "DS102", "text": "Discrete Structure 2" },
-            { "value": "PATH-FIT4", "text": "Team Sport (Volleyball)" },
-            { "value": "AL102", "text": "Automata Theory and Formal Languages" },
-            { "value": "AR101", "text": "Architecture and Organization" },
-            { "value": "SP101", "text": "Social Issues and Professional Practices" },
-            { "value": "CS ELEC2", "text": "CS Elective 2" },
-            { "value": "OS101", "text": "Operating System" },
-            { "value": "NC101", "text": "Network and Communications" },
-            { "value": "SE101", "text": "Software Engineering" },
-            { "value": "CS ELEC3", "text": "CS Elective 3" },
-            { "value": "CS PROF EL2", "text": "CS Professional Elective 2" },
-            { "value": "TH101", "text": "Thesis Writing 1" },
-            { "value": "CS PROF EL3", "text": "CS Professional Elective 3" },
-            { "value": "THS102", "text": "Thesis Writing 2" },
-            { "value": "CS PROF EL4", "text": "CS Professional Elective 4" },
-            { "value": "CS PROF EL5", "text": "CS Professional Elective 5" },
-            { "value": "PRAC101", "text": "Practicum (250-486 Hours)" },
-            { "value": "IAS101", "text": "Information Assurance & Security 1" },
-            { "value": "CS PROF EL6", "text": "CS Professional Elective 6" },
-            { "value": "IT ELEC1", "text": "IT Elective 1" },
-            { "value": "IT ELEC2", "text": "IT Elective 2" },
-            { "value": "IT PROF EL1", "text": "IT Professional Elective 1" },
-            { "value": "MS101", "text": "Quantitative Methods (Including Modeling and Simulation)" },
-            { "value": "NET101", "text": "Networking 1" },
-            { "value": "IPT101", "text": "Integrative Programming & Technologies" },
-            { "value": "IM101", "text": "Advance Database System" },
-            { "value": "NE102", "text": "Networking 2" },
-            { "value": "SIA101", "text": "Systems Integration and Architecture 1" },
-            { "value": "IT PROF EL2", "text": "IT Professional Elective 2" },
-            { "value": "IAS102", "text": "Information Assurance and Security 2" },
-            { "value": "CAP101", "text": "Capstone Project and Research 1" },
-            { "value": "IT PROF EL3", "text": "IT Professional Elective 3" },
-            { "value": "SAM101", "text": "System Administration and Maintenance" },
-            { "value": "IT ELEC3", "text": "IT Elective 3" },
-            { "value": "CAP102", "text": "Capstone Project and Research 2" },
-            { "value": "IT PROF EL4", "text": "IT Professional Elective 4" },
-            { "value": "ES104", "text": "Elective 4" },
-            { "value": "IT PROF EL5", "text": "IT Professional Elective 5" },
-            { "value": "IT PROF EL6", "text": "IT Professional Elective 6" },
-            { "value": "SOCSI ELECT1", "text": "General Psychology" },
-            { "value": "ES101", "text": "Elective 1" },
-            { "value": "ES102", "text": "Elective 2" },
-            { "value": "FE101", "text": "Free Elective 1" }
-        ],
-        educ: [
-            { value: "ED101", text: "Foundations of Education" },
-            { value: "ED102", text: "Educational Psychology" },
-            { value: "ED103", text: "Curriculum Development" },
-            { value: "ED104", text: "Teaching Strategies" }
-        ],
-        cas: [
-            { value: "CAS101", text: "Introduction to Humanities" },
-            { value: "CAS102", text: "Philippine Literature" },
-            { value: "CAS103", text: "World History" },
-            { value: "CAS104", text: "Ethics and Logic" }
-        ],
-        cba: [
-            { value: "BA101", text: "Principles of Marketing" },
-            { value: "BA102", text: "Financial Management" },
-            { value: "BA103", text: "Business Law" },
-            { value: "BA104", text: "Entrepreneurship" }
-        ]
-    };
-
-    const departmentSelect = document.getElementById("department");
-    const subjectDropdown = document.querySelector(".subject-dropdown");
-
-    function updateSubjects() {
-        const selectedDepartment = departmentSelect.value;
-        subjectDropdown.innerHTML = '<option value="" disabled>Select Subjects</option>';
-
-        if (subjectsByDepartment[selectedDepartment]) {
-            subjectsByDepartment[selectedDepartment].forEach(subject => {
-                let option = document.createElement("option");
-                option.value = subject.value;
-                option.textContent = `${subject.value} - ${subject.text}`;
-                subjectDropdown.appendChild(option);
-            });
+$(document).ready(function () {
+    // Initialize Select2
+    $("#subjects").select2({
+        placeholder: "Select Subjects",
+        allowClear: true,
+        width: "100%",
+        templateSelection: function (data) {
+            // Show only the subject code when selected
+            return data.id ? data.id.toUpperCase() : data.text;
         }
-    }
-
-    departmentSelect.addEventListener("change", updateSubjects);
-</script>
-
-<script>
-    $(document).ready(function () {
-        $('.subject-dropdown').select2({
-            placeholder: "Select Subjects",
-            width: "100%", // Ensures full width
-            templateSelection: function (data) {
-                // Apply a custom class to the selected item
-                return $('<span>')
-                    .text(data.text)
-                    .addClass('custom-selection');
-            }
-        });
     });
+
+    const departmentSelect = $("#department");
+    const subjectDropdown = $("#subjects");
+    const newSubjectContainer = $("#new_subject_container");
+    const newSubjectCode = $("#new_subject_code");
+    const newSubjectName = $("#new_subject_name");
+    const addSubjectBtn = $("#add_subject");
+
+    // Fetch subjects when department changes
+    departmentSelect.change(function () {
+        let departmentCode = $(this).val();
+        
+        subjectDropdown.empty().append('<option value="" disabled>Select Subjects</option>'); // Clear previous options
+
+        if (!departmentCode) return;
+
+        $.post("get_subjects.php", { department_code: departmentCode }, function (data) {
+            data.forEach(subject => {
+                let subjectCode = subject.subject_code.toUpperCase();
+                let subjectName = subject.subject_name;
+                let displayText = `${subjectCode} - ${subjectName}`;
+                subjectDropdown.append(new Option(displayText, subjectCode, false, false));
+            });
+            subjectDropdown.append(new Option("ADD NEW SUBJECT", "add_new", false, false));
+        }, "json");
+    });
+
+    // Handle subject selection
+    subjectDropdown.on("select2:select", function (e) {
+        if (e.params.data.id === "add_new") {
+            newSubjectContainer.show();
+            subjectDropdown.val([]).trigger("change"); // Remove "Add New Subject" from selection
+        } else {
+            newSubjectContainer.hide();
+        }
+    });
+
+    // Add new subject
+    addSubjectBtn.click(function () {
+        let departmentCode = departmentSelect.val();
+        let subjectCode = newSubjectCode.val().trim().toUpperCase();
+        let subjectName = newSubjectName.val().trim();
+
+        if (!departmentCode) return alert("Please select a department first.");
+        if (!subjectCode || !subjectName) return alert("Please enter both Subject Code and Subject Name.");
+
+        $.post("add_subject.php", { subject_code: subjectCode, subject_name: subjectName, department_code: departmentCode }, function (data) {
+            if (data.status === "success") {
+                alert("Subject added successfully!");
+                newSubjectContainer.hide();
+
+                // Add the new subject to the dropdown
+                let displayText = `${subjectCode} - ${subjectName}`;
+                let newOption = new Option(displayText, subjectCode, true, true);
+                subjectDropdown.append(newOption).trigger("change");
+
+                // Clear input fields
+                newSubjectCode.val("");
+                newSubjectName.val("");
+            } else {
+                alert(data.status === "exists" ? "Subject already exists!" : "Error adding subject.");
+            }
+        }, "json");
+    });
+});
 </script>
 
 <script>
@@ -395,5 +382,59 @@ include "handlers/faculty_handler.php";
         } else {
             errorMessage.style.display = 'none'; // Hide error message if valid
         }
+    });
+</script>
+
+<script>
+    document.getElementById('department').addEventListener('change', function () {
+        let newDepartmentContainer = document.getElementById('new_department_container');
+
+        if (this.value === 'add_new') {
+            newDepartmentContainer.style.display = 'block';
+            document.getElementById('new_department_code').focus();
+        } else {
+            newDepartmentContainer.style.display = 'none';
+        }
+    });
+
+    document.getElementById('add_department').addEventListener('click', function () {
+        let departmentCodeInput = document.getElementById('new_department_code');
+        let departmentNameInput = document.getElementById('new_department_name');
+        let departmentDropdown = document.getElementById('department');
+
+        let departmentCode = departmentCodeInput.value.trim().toLowerCase(); // Convert to lowercase
+        let departmentName = departmentNameInput.value.trim().toLowerCase().replace(/\b\w/g, c => c.toUpperCase()); // Capitalize first letter of each word
+        departmentName = departmentName.replace(/\bOf\b/g, "of"); // Ensure "of" stays lowercase
+
+        if (departmentCode === '' || departmentName === '') {
+            alert('Please enter both Department Code and Department Name.');
+            return;
+        }
+
+        // AJAX request to save the department
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "add_department.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                let response = JSON.parse(xhr.responseText);
+                if (response.status === 'success') {
+                    let newOption = document.createElement('option');
+                    newOption.value = response.department_code;
+                    newOption.text = response.department_name;
+
+                    let addNewOption = departmentDropdown.querySelector("option[value='add_new']");
+                    departmentDropdown.insertBefore(newOption, addNewOption);
+
+                    departmentDropdown.value = response.department_code;
+                    departmentCodeInput.value = '';
+                    departmentNameInput.value = '';
+                    document.getElementById('new_department_container').style.display = 'none';
+                } else {
+                    alert(response.message);
+                }
+            }
+        };
+        xhr.send("department_code=" + encodeURIComponent(departmentCode) + "&department_name=" + encodeURIComponent(departmentName));
     });
 </script>
