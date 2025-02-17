@@ -473,6 +473,9 @@ document.getElementById('print-btn').addEventListener('click', function () {
     } else {
         console.error('Unable to open the print window. It may have been blocked by the browser.');
     }
+
+    // Log the action in the audit log
+    logAuditAction('Print Report');
 });
 
 // Export to CSV
@@ -522,6 +525,9 @@ document.getElementById('export-csv-btn').addEventListener('click', function () 
         link.click();
         document.body.removeChild(link);
     });
+
+    // Log the action in the audit log
+    logAuditAction('Export CSV');
 });
 
 // Function to fetch additional data
@@ -556,6 +562,15 @@ function fetchAdditionalData(facultyId, selectedCategory, callback) {
         .catch(() => {
             callback('Error fetching additional data.\n');
         });
+}
+
+// Function to log the audit action
+function logAuditAction(action) {
+    const userId = <?php echo $_SESSION['user']['id']; ?>; // This pulls the user_id from the PHP session
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', 'log_audit_action.php', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send(`user_id=${userId}&action=${action}`);
 }
 </script>
 <style>

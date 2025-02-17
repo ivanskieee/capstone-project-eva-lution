@@ -14,6 +14,7 @@ include 'header.php';
 include 'sidebar.php';
 include 'footer.php';
 include '../database/connection.php';
+include 'audit_log.php'; // Include audit log function
 
 $id = isset($_GET['question_id']) ? $_GET['question_id'] : null;
 $academic_id = isset($_GET['academic_id']) ? $_GET['academic_id'] : null;
@@ -21,8 +22,8 @@ $questionToEdit = null;
 
 $stmt = $conn->prepare("
     SELECT a.*, 
-           COALESCE(q.total_questions, 0) AS total_questions,  -- Total questions from the combined tables
-           COALESCE(ea.total_answers, 0) AS total_answers      -- Distinct faculty_id from all evaluation tables
+           COALESCE(q.total_questions, 0) AS total_questions, 
+           COALESCE(ea.total_answers, 0) AS total_answers      
     FROM academic_list a
     LEFT JOIN (
         SELECT academic_id, COUNT(*) AS total_questions
@@ -83,6 +84,7 @@ if ($id) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $user_id = $_SESSION['user']['id']; // Get logged-in user ID for logging
     $academic_id = $_POST['academic_id'];
     $sector = $_POST['sector'] ?? 'student_faculty'; // Default sector
 
@@ -104,6 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
 
         if ($stmt->execute()) {
+            log_action($conn, $user_id, 'Deleted Question', "Deleted question ID: $delete_id from $table");
             $_SESSION['message'] = 'Question deleted successfully.';
         } else {
             $_SESSION['error'] = 'Error deleting question. Please try again.';
@@ -125,12 +128,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $query = "UPDATE $table SET criteria_id = ?, question = ?, question_type = ?, academic_id = ? WHERE question_id = ?";
                 $stmt = $conn->prepare($query);
                 $stmt->execute([$criteria_id, $question, $question_type, $academic_id, $id]);
+
+                log_action($conn, $user_id, 'Updated Question', "Updated question ID: $id in $table");
                 $_SESSION['message'] = 'Question updated successfully.';
             } else {
                 // Insert new question
                 $query = "INSERT INTO $table (criteria_id, question, question_type, academic_id) VALUES (?, ?, ?, ?)";
                 $stmt = $conn->prepare($query);
                 $stmt->execute([$criteria_id, $question, $question_type, $academic_id]);
+
+                $newQuestionId = $conn->lastInsertId(); // Get the last inserted ID for logging
+                log_action($conn, $user_id, 'Added Question', "Added new question ID: $newQuestionId in $table");
                 $_SESSION['message'] = 'Question added successfully.';
             }
 
@@ -141,7 +149,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
-
 
 // Fetch question data for editing
 if (isset($_GET['question_id'])) {
@@ -158,5 +165,4 @@ if (isset($_GET['question_id'])) {
 }
 
 $conn = null;
-
 ?>

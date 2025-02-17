@@ -19,6 +19,7 @@ include 'header.php';
 include 'sidebar.php';
 include 'footer.php';
 include '../database/connection.php';
+include 'audit_log.php';
 
 $id = isset($_GET['head_id']) ? $_GET['head_id'] : null;
 
@@ -36,6 +37,8 @@ if ($id) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $admin_id = $_SESSION['user']['id'];
+
     if (!isset($_POST['delete_id'])) {
         // Retrieve form inputs
         $school_id = $_POST['school_id'];
@@ -142,6 +145,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Execute the query and handle the result
         if ($stmt->execute()) {
+            // Log action
+            $action = $id ? "Updated Head Faculty" : "Added Head Faculty";
+            $details = "Head Faculty: $firstname $lastname ($email)";
+            log_action($conn, $admin_id, $action, $details);
             // Optional: Send email with credentials
             sendEmail($email, $password);
 
@@ -175,19 +182,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Delete logic
     if (isset($_POST['delete_id'])) {
         $delete_id = $_POST['delete_id'];
-
-        $stmt = $conn->prepare('DELETE FROM head_faculty_list WHERE head_id = :id');
+    
+        // Fetch the faculty details before deleting
+        $stmt = $conn->prepare('SELECT firstname, lastname, email FROM head_faculty_list WHERE head_id = :id');
         $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
-
-        if ($stmt->execute()) {
-            $_SESSION['message'] = 'Head Faculty deleted successfully.';
+        $stmt->execute();
+        $faculty = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        if ($faculty) { // Ensure the record exists before deletion
+            // Prepare and execute the delete statement
+            $stmt = $conn->prepare('DELETE FROM head_faculty_list WHERE head_id = :id');
+            $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
+    
+            if ($stmt->execute()) {
+                // Log delete action with fetched faculty details
+                log_action($conn, $admin_id, "Deleted Head Faculty", "Deleted Head Faculty: {$faculty['firstname']} {$faculty['lastname']} ({$faculty['email']})");
+                
+                $_SESSION['message'] = 'Head Faculty deleted successfully.';
+            } else {
+                error_log('Error deleting head faculty');
+                $_SESSION['error'] = 'Error deleting head faculty. Please try again.';
+            }
         } else {
-            error_log('Error deleting head faculty');
-            $_SESSION['error'] = 'Error deleting head faculty. Please try again.';
+            $_SESSION['error'] = 'Faculty not found or already deleted.';
         }
-
+    
         echo "<script>window.location.replace('head_faculty_list.php');</script>";
-    }
+    }    
 }
 
 

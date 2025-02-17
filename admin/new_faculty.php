@@ -1,6 +1,5 @@
 <?php
 include "handlers/faculty_handler.php";
-
 ?>
 
 <div class="content">
@@ -94,7 +93,18 @@ include "handlers/faculty_handler.php";
                                     <select id="subjects" class="form-control subject-dropdown" name="subjects[]"
                                         multiple required>
                                         <option value="" disabled>Select Subjects</option>
+                                        <?php foreach ($department_subjects as $subject): ?>
+                                            <?php
+                                            // Check if the subject is selected
+                                            $is_selected = in_array(trim($subject['subject_code']), $selected_subjects) ? 'selected' : '';
+                                            ?>
+                                            <option value="<?= htmlspecialchars($subject['subject_code']) ?>"
+                                                <?= $is_selected ?>>
+                                                <?= htmlspecialchars($subject['subject_code'] . ' - ' . $subject['subject_name']) ?>
+                                            </option>
+                                        <?php endforeach; ?>
                                     </select>
+
                                     <div id="new_subject_container" style="display: none; margin-top: 10px;">
                                         <input type="text" id="new_subject_code" class="form-control mt-2"
                                             placeholder="Enter Subject Code">
@@ -104,7 +114,6 @@ include "handlers/faculty_handler.php";
                                             class="btn btn-success btn-sm mt-2">Add</button>
                                     </div>
                                 </div>
-
 
                                 <div class="error-message" id="password-error">Password must be at least 8 characters
                                     long,
@@ -289,82 +298,82 @@ include "handlers/faculty_handler.php";
     });
 </script>
 <script>
-$(document).ready(function () {
-    // Initialize Select2
-    $("#subjects").select2({
-        placeholder: "Select Subjects",
-        allowClear: true,
-        width: "100%",
-        templateSelection: function (data) {
-            // Show only the subject code when selected
-            return data.id ? data.id.toUpperCase() : data.text;
-        }
-    });
-
-    const departmentSelect = $("#department");
-    const subjectDropdown = $("#subjects");
-    const newSubjectContainer = $("#new_subject_container");
-    const newSubjectCode = $("#new_subject_code");
-    const newSubjectName = $("#new_subject_name");
-    const addSubjectBtn = $("#add_subject");
-
-    // Fetch subjects when department changes
-    departmentSelect.change(function () {
-        let departmentCode = $(this).val();
-        
-        subjectDropdown.empty().append('<option value="" disabled>Select Subjects</option>'); // Clear previous options
-
-        if (!departmentCode) return;
-
-        $.post("get_subjects.php", { department_code: departmentCode }, function (data) {
-            data.forEach(subject => {
-                let subjectCode = subject.subject_code.toUpperCase();
-                let subjectName = subject.subject_name;
-                let displayText = `${subjectCode} - ${subjectName}`;
-                subjectDropdown.append(new Option(displayText, subjectCode, false, false));
-            });
-            subjectDropdown.append(new Option("ADD NEW SUBJECT", "add_new", false, false));
-        }, "json");
-    });
-
-    // Handle subject selection
-    subjectDropdown.on("select2:select", function (e) {
-        if (e.params.data.id === "add_new") {
-            newSubjectContainer.show();
-            subjectDropdown.val([]).trigger("change"); // Remove "Add New Subject" from selection
-        } else {
-            newSubjectContainer.hide();
-        }
-    });
-
-    // Add new subject
-    addSubjectBtn.click(function () {
-        let departmentCode = departmentSelect.val();
-        let subjectCode = newSubjectCode.val().trim().toUpperCase();
-        let subjectName = newSubjectName.val().trim();
-
-        if (!departmentCode) return alert("Please select a department first.");
-        if (!subjectCode || !subjectName) return alert("Please enter both Subject Code and Subject Name.");
-
-        $.post("add_subject.php", { subject_code: subjectCode, subject_name: subjectName, department_code: departmentCode }, function (data) {
-            if (data.status === "success") {
-                alert("Subject added successfully!");
-                newSubjectContainer.hide();
-
-                // Add the new subject to the dropdown
-                let displayText = `${subjectCode} - ${subjectName}`;
-                let newOption = new Option(displayText, subjectCode, true, true);
-                subjectDropdown.append(newOption).trigger("change");
-
-                // Clear input fields
-                newSubjectCode.val("");
-                newSubjectName.val("");
-            } else {
-                alert(data.status === "exists" ? "Subject already exists!" : "Error adding subject.");
+    $(document).ready(function () {
+        // Initialize Select2
+        $("#subjects").select2({
+            placeholder: "Select Subjects",
+            allowClear: true,
+            width: "100%",
+            templateSelection: function (data) {
+                // Show only the subject code when selected
+                return data.id ? data.id.toUpperCase() : data.text;
             }
-        }, "json");
+        });
+
+        const departmentSelect = $("#department");
+        const subjectDropdown = $("#subjects");
+        const newSubjectContainer = $("#new_subject_container");
+        const newSubjectCode = $("#new_subject_code");
+        const newSubjectName = $("#new_subject_name");
+        const addSubjectBtn = $("#add_subject");
+
+        // Fetch subjects when department changes
+        departmentSelect.change(function () {
+            let departmentCode = $(this).val();
+
+            subjectDropdown.empty().append('<option value="" disabled>Select Subjects</option>'); // Clear previous options
+
+            if (!departmentCode) return;
+
+            $.post("get_subjects.php", { department_code: departmentCode }, function (data) {
+                data.forEach(subject => {
+                    let subjectCode = subject.subject_code.toUpperCase();
+                    let subjectName = subject.subject_name;
+                    let displayText = `${subjectCode} - ${subjectName}`;
+                    subjectDropdown.append(new Option(displayText, subjectCode, false, false));
+                });
+                subjectDropdown.append(new Option("ADD NEW SUBJECT", "add_new", false, false));
+            }, "json");
+        });
+
+        // Handle subject selection
+        subjectDropdown.on("select2:select", function (e) {
+            if (e.params.data.id === "add_new") {
+                newSubjectContainer.show();
+                subjectDropdown.val([]).trigger("change"); // Remove "Add New Subject" from selection
+            } else {
+                newSubjectContainer.hide();
+            }
+        });
+
+        // Add new subject
+        addSubjectBtn.click(function () {
+            let departmentCode = departmentSelect.val();
+            let subjectCode = newSubjectCode.val().trim().toUpperCase();
+            let subjectName = newSubjectName.val().trim();
+
+            if (!departmentCode) return alert("Please select a department first.");
+            if (!subjectCode || !subjectName) return alert("Please enter both Subject Code and Subject Name.");
+
+            $.post("add_subject.php", { subject_code: subjectCode, subject_name: subjectName, department_code: departmentCode }, function (data) {
+                if (data.status === "success") {
+                    alert("Subject added successfully!");
+                    newSubjectContainer.hide();
+
+                    // Add the new subject to the dropdown
+                    let displayText = `${subjectCode} - ${subjectName}`;
+                    let newOption = new Option(displayText, subjectCode, true, true);
+                    subjectDropdown.append(newOption).trigger("change");
+
+                    // Clear input fields
+                    newSubjectCode.val("");
+                    newSubjectName.val("");
+                } else {
+                    alert(data.status === "exists" ? "Subject already exists!" : "Error adding subject.");
+                }
+            }, "json");
+        });
     });
-});
 </script>
 
 <script>

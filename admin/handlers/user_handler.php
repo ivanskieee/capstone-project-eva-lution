@@ -19,6 +19,7 @@ include 'header.php';
 include 'sidebar.php';
 include 'footer.php';
 include '../database/connection.php';
+include 'audit_log.php'; // Include the audit log functions
 
 $id = isset($_GET['id']) ? $_GET['id'] : null;
 
@@ -34,6 +35,8 @@ if ($id) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $admin_id = $_SESSION['user']['id'];  // Get the current admin's user ID
+
     if (!isset($_POST['delete_id'])) {
         $firstname = $_POST['firstname'];
         $lastname = $_POST['lastname'];
@@ -59,13 +62,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (!empty($password)) {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
         }
-
-        // // Upload avatar if provided
-        // if ($avatar) {
-        //     $target_dir = "assets/uploads/";
-        //     $target_file = $target_dir . basename($_FILES["img"]["name"]);
-        //     move_uploaded_file($_FILES["img"]["tmp_name"], $target_file);
-        // }
 
         // Fetch the current active academic_id
         $query = 'SELECT academic_id FROM academic_list WHERE status = 1 AND start_date <= CURDATE() AND end_date >= CURDATE()';
@@ -94,10 +90,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $query .= ", password = :password";
             }
 
-            // if ($avatar) {
-            //     $query .= ", avatar = :avatar";
-            // }
-
             $query .= " WHERE id = :id";
             $stmt = $conn->prepare($query);
 
@@ -110,11 +102,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $stmt->bindParam(':password', $hashed_password);
             }
 
-            // if ($avatar) {
-            //     $stmt->bindParam(':avatar', $avatar);
-            // }
-
             $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+            if ($stmt->execute()) {
+                // Log the update action
+                log_action($conn, $admin_id, "Updated User", "Updated: $firstname $lastname ($email)");
+            }
         } else {
             $query = "INSERT INTO users (firstname, lastname, email, password, academic_id) 
                       VALUES (:firstname, :lastname, :email, :password, :academic_id)";
@@ -124,45 +117,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stmt->bindParam(':lastname', $lastname);
             $stmt->bindParam(':email', $email);
             $stmt->bindParam(':password', $hashed_password);
-            // $stmt->bindParam(':avatar', $avatar);
             $stmt->bindParam(':academic_id', $academic_id);
+
+            if ($stmt->execute()) {
+                // Log the insert action
+                log_action($conn, $admin_id, "Added User", "Added: $firstname $lastname ($email)");
+
+                sendEmail($email, $password); // Optional: send email to the user
+            }
         }
 
-        // Execute and send feedback
-        if ($stmt->execute()) {
-            sendEmail($email, $password); // Optional: send email to the user
-
-            echo "<script>
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success!',
-                        text: 'User information saved successfully.',
-                        showConfirmButton: false,
-                        timer: 2000
-                    }).then(() => {
-                        window.location.replace('user_list.php');
-                    });
-                  </script>";
-        } else {
-            echo "<script>
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Error saving data. Please try again.',
-                    });
-                  </script>";
-        }
-
-        $conn = null;
+        // Success or error feedback
+        echo "<script>
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Success!',
+                    text: 'User information saved successfully.',
+                    showConfirmButton: false,
+                    timer: 2000
+                }).then(() => {
+                    window.location.replace('user_list.php');
+                });
+              </script>";
     }
 
     if (isset($_POST['delete_id'])) {
         $delete_id = $_POST['delete_id'];
 
-        $stmt = $conn->prepare('DELETE FROM users WHERE id = :id');
+        $stmt = $conn->prepare('SELECT firstname, lastname, email FROM users WHERE id = :id');
         $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($stmt->execute()) {
+        if ($user) {
+            $stmt = $conn->prepare('DELETE FROM users WHERE id = :id');
+            $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
+            $stmt->execute();
+
+            // Log the delete action
+            log_action($conn, $admin_id, "Deleted User", "Deleted: {$user['firstname']} {$user['lastname']} ({$user['email']})");
+
             echo "<script>
                     Swal.fire({
                         icon: 'success',
@@ -174,18 +168,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         window.location.replace('user_list.php');
                     });
                   </script>";
-        } else {
-            echo "<script>
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Error deleting user. Please try again.',
-                    });
-                  </script>";
         }
     }
 }
-
 
 $conn = null;
 
