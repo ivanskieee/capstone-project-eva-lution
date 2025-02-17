@@ -59,8 +59,8 @@ include 'handlers/criteria_handler.php';
                                                         <i class="fa fa-ellipsis-v"></i>
                                                     </span>
                                                     <div class="dropdown-menu">
-                                                        <a class="dropdown-item"
-                                                            href="criteria_list.php?criteria_id=<?php echo $row['criteria_id']; ?>">Edit</a>
+                                                        <button class="dropdown-item"
+                                                            onclick="window.location.href='criteria_list.php?criteria_id=<?php echo $row['criteria_id']; ?>'">Edit</button>
                                                         <form method="POST" action="criteria_list.php" class="delete-form">
                                                             <input type="hidden" name="delete_id"
                                                                 value="<?php echo $row['criteria_id']; ?>">
@@ -96,7 +96,7 @@ include 'handlers/criteria_handler.php';
     }
 
     .content .main-header {
-        max-height: 95vh;
+        max-height: 90vh;
         overflow-y: auto;
         scroll-behavior: smooth;
     }

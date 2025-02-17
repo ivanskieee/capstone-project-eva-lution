@@ -18,8 +18,8 @@ include 'includes/footer.php';
 }
 </style>
 
-<div class="container d-flex justify-content-center align-items-center vh-100">
-        <div class="text-center p-5 shadow rounded bg-light">
+<div class="container d-flex justify-content-center align-items-center mt-5">
+        <div class="text-center p-5 shadow rounded bg-light mt-5">
             <h1 class="display-6 text-success">Registration Pending</h1>
             <h2 class="display-6 text-success">Please Wait!</h2>
             <p class="mt-3">Your registration is pending approval. Stay tuned and wait for the message in your email.</p>

@@ -53,29 +53,34 @@ $generated_link = isset($_SESSION['generated_token']) ? "http://localhost/Capsto
         copyText.select();
         copyText.setSelectionRange(0, 99999); // For mobile devices
         document.execCommand("copy");
-        alert("Link copied to clipboard!");
-    }
-</script>
 
-
-<script>
-    function copyLink() {
-        var copyText = document.getElementById("generated-link");
-        copyText.select();
-        copyText.setSelectionRange(0, 99999); // For mobile devices
-        document.execCommand("copy");
-        alert("Link copied to clipboard!");
+        // Show SweetAlert2 success message
+        Swal.fire({
+            icon: "success",
+            title: "Copied!",
+            text: "The link has been copied to your clipboard.",
+            showConfirmButton: false,
+            timer: 1500
+        });
 
         // After copying, clear the link from session storage
         fetch('clear_link.php')
             .then(response => response.json())
             .then(data => {
                 if (data.status === 'success') {
-                    document.getElementById("generated-link").value = ''; // Clear the input field
-                    document.getElementById('link-container').style.display = 'none'; // Hide the link container
+                    document.getElementById("generated-link").value = ''; // Clear input field
+                    document.getElementById('link-container').style.display = 'none'; // Hide container
                 }
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error!",
+                    text: "Failed to clear the link.",
+                    showConfirmButton: true
+                });
+                console.error('Error:', error);
+            });
     }
 </script>
 <style>

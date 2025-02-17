@@ -420,15 +420,15 @@ document.getElementById('print-btn').addEventListener('click', function () {
     const printableContent = document.getElementById('printable').cloneNode(true);
 
     printableContent.querySelectorAll('td.text-left').forEach(td => {
-        td.style.textAlign = 'left'; // Ensure left alignment for all question cells
+        td.style.textAlign = 'left';
     });
 
     printableContent.querySelectorAll('input, textarea').forEach(el => {
-            const value = el.value || el.innerHTML;
-            const parent = el.parentElement;
-            const span = document.createElement('span');
-            span.textContent = value;
-            parent.replaceChild(span, el);
+        const value = el.value || el.innerHTML;
+        const parent = el.parentElement;
+        const span = document.createElement('span');
+        span.textContent = value;
+        parent.replaceChild(span, el);
     });
 
     const printWindow = window.open('', '', 'width=800,height=600');
@@ -474,14 +474,14 @@ document.getElementById('print-btn').addEventListener('click', function () {
         console.error('Unable to open the print window. It may have been blocked by the browser.');
     }
 
-    // Log the action in the audit log
-    logAuditAction('Print Report');
+    // Log action
+    logAuditAction('Print Report', 'Printed as PDF');
 });
 
 // Export to CSV
 document.getElementById('export-csv-btn').addEventListener('click', function () {
-    const facultyId = document.getElementById('faculty_id').value;
-    const selectedCategory = document.getElementById('category').value;
+    const facultyId = document.getElementById('faculty_id')?.value;
+    const selectedCategory = document.getElementById('category')?.value;
 
     if (!facultyId) {
         alert('Please select a faculty to export data.');
@@ -489,88 +489,91 @@ document.getElementById('export-csv-btn').addEventListener('click', function () 
     }
 
     const table = document.querySelector('#printable table');
+    if (!table) {
+        alert('No table data available.');
+        return;
+    }
 
-    // Start CSV content with headers for metadata
-    let csvContent = `Faculty Name:,${document.getElementById('fname').textContent}\n`;
-    csvContent += `Academic Year:,${document.getElementById('ay').textContent}\n`;
-    csvContent += `Total Evaluated:,${document.getElementById('tse').textContent}\n\n`;
-
-    // Add a separator before table data
+    let csvContent = `Faculty Name:,${document.getElementById('fname')?.textContent || 'N/A'}\n`;
+    csvContent += `Academic Year:,${document.getElementById('ay')?.textContent || 'N/A'}\n`;
+    csvContent += `Total Evaluated:,${document.getElementById('tse')?.textContent || 'N/A'}\n\n`;
     csvContent += '--- Table Data ---\n';
 
-    // Fetch additional data and include it in the export
     fetchAdditionalData(facultyId, selectedCategory, (additionalData) => {
         if (additionalData.trim() !== '') {
             csvContent += `\nAdditional Data:\n${additionalData}`;
         }
 
-        // Extract table headers
         const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.innerText);
         csvContent += headers.join(',') + '\n';
 
-        // Extract table rows
         const rows = table.querySelectorAll('tbody tr');
         rows.forEach(row => {
-            const cells = Array.from(row.querySelectorAll('td')).map(cell => cell.innerText.trim());
+            const cells = Array.from(row.querySelectorAll('td')).map(cell => `"${cell.innerText.trim()}"`);
             csvContent += cells.join(',') + '\n';
         });
 
-        // Create a downloadable CSV file
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
         link.setAttribute('download', 'evaluation_report.csv');
         document.body.appendChild(link);
-        link.click();
+
+        setTimeout(() => {
+            link.click();
+        }, 100);
+
         document.body.removeChild(link);
     });
 
-    // Log the action in the audit log
-    logAuditAction('Export CSV');
+    logAuditAction('Export CSV', 'Exported as CSV');
 });
 
 // Function to fetch additional data
 function fetchAdditionalData(facultyId, selectedCategory, callback) {
-    let urls = [];
+    let url = '';
     if (selectedCategory === 'self') {
-        urls.push(`get_self_eval.php?faculty_id=${facultyId}`);
+        url = `get_self_eval.php?faculty_id=${facultyId}`;
     } else if (selectedCategory === 'dean_self') {
-        urls.push(`get_dean_self_eval.php?faculty_id=${facultyId}`);
+        url = `get_dean_self_eval.php?faculty_id=${facultyId}`;
     } else {
-        urls.push(`get_faculty_ratings.php?faculty_id=${facultyId}&category=${selectedCategory}`);
+        url = `get_faculty_ratings.php?faculty_id=${facultyId}&category=${selectedCategory}`;
     }
 
-    // Fetch all URLs and collect data
-    Promise.all(urls.map(url => fetch(url).then(res => res.json())))
-        .then(responses => {
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
             let additionalData = '';
-            responses.forEach(response => {
-                if (response.status === 'success') {
-                    response.data.forEach(item => {
-                        const formattedRow = Object.entries(item)
-                            .map(([key, value]) => `${key}: ${value}`)
-                            .join(', ');
-                        additionalData += formattedRow + '\n';
-                    });
-                } else {
-                    additionalData += 'No additional data available.\n';
-                }
-            });
+            if (data.status === 'success') {
+                additionalData = data.data.map(item =>
+                    Object.entries(item).map(([key, value]) => `${key}: ${value}`).join(', ')
+                ).join('\n');
+            } else {
+                additionalData = 'No additional data available.';
+            }
             callback(additionalData);
         })
-        .catch(() => {
-            callback('Error fetching additional data.\n');
+        .catch(error => {
+            console.error('Error fetching additional data:', error);
+            callback('Error fetching additional data.');
         });
 }
 
-// Function to log the audit action
-function logAuditAction(action) {
-    const userId = <?php echo $_SESSION['user']['id']; ?>; // This pulls the user_id from the PHP session
+// Function to log audit actions with specific details
+function logAuditAction(action, details) {
+    const userId = <?php echo $_SESSION['user']['id']; ?>; // Get user ID from session
     const xhr = new XMLHttpRequest();
     xhr.open('POST', 'log_audit_action.php', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.send(`user_id=${userId}&action=${action}`);
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status !== 200) {
+            console.error('Audit log failed:', xhr.responseText);
+        }
+    };
+
+    xhr.send(`user_id=${userId}&action=${action}&details=${details}`);
 }
 </script>
 <style>

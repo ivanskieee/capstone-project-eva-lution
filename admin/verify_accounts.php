@@ -83,27 +83,27 @@ include "handlers/verify_actions_handler.php";
 </div>
 
 <script>
-    window.onload = function () {
-        // Add the 'select all' checkbox event listener
-        document.getElementById('select-all').addEventListener('change', function () {
-            const checkboxes = document.querySelectorAll('input[name="student_ids[]"]');
-            checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+    document.addEventListener("DOMContentLoaded", function () {
+    // Add the 'select all' checkbox event listener
+    document.getElementById('select-all')?.addEventListener('change', function () {
+        document.querySelectorAll('input[name="student_ids[]"]').forEach(checkbox => {
+            checkbox.checked = this.checked;
         });
+    });
 
-        // Fade-out alert after a delay
-        var alertElement = document.querySelector('.fade-alert');
-        if (alertElement) {
-            // Delay before starting the fade-out effect (3 seconds in this case)
+    // Fade-out alert after a delay
+    var alertElement = document.querySelector('.fade-alert');
+    if (alertElement) {
+        setTimeout(function () {
+            alertElement.classList.add('fade-out');
+
+            // Remove the alert from the DOM after fade-out completes
             setTimeout(function () {
-                alertElement.classList.add('fade-out');
-
-                // After the fade-out effect completes (5 seconds), redirect to verify_accounts.php
-                setTimeout(function () {
-                    window.location.href = 'verify_accounts.php'; // Redirect to verify_accounts.php
-                }, 1000); // 5000 ms (5 seconds) to match the fade duration
-            }, 1000); // Initial delay before fade-out (3 seconds)
-        }
-    };
+                alertElement.remove();
+            }, 1000); // 1 second after fade-out
+        }, 1000); // Initial delay before fade-out
+    }
+});
 </script>
 <style>
     .content .main-header {

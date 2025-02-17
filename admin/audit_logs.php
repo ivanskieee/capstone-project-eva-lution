@@ -74,7 +74,8 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <!-- Previous Button -->
                                 <?php if ($page > 1): ?>
                                     <li class="page-item">
-                                        <a class="page-link btn btn-success" href="?page=<?= $page - 1 ?>" aria-label="Previous">
+                                        <a class="page-link btn btn-success" href="?page=<?= $page - 1 ?>"
+                                            aria-label="Previous">
                                             <span aria-hidden="true">&laquo; Previous</span>
                                         </a>
                                     </li>
@@ -84,7 +85,7 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <?php for ($p = 1; $p <= $total_pages; $p++): ?>
                                     <li class="page-item <?= ($p == $page) ? 'active' : ''; ?>">
                                         <a class="page-link btn btn-success <?= ($p == $page) ? 'active' : ''; ?>"
-                                           href="?page=<?= $p; ?>">
+                                            href="?page=<?= $p; ?>">
                                             <?= $p; ?>
                                         </a>
                                     </li>
@@ -93,7 +94,8 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <!-- Next Button -->
                                 <?php if ($page < $total_pages): ?>
                                     <li class="page-item">
-                                        <a class="page-link btn btn-success" href="?page=<?= $page + 1 ?>" aria-label="Next">
+                                        <a class="page-link btn btn-success" href="?page=<?= $page + 1 ?>"
+                                            aria-label="Next">
                                             <span aria-hidden="true">Next &raquo;</span>
                                         </a>
                                     </li>
@@ -113,5 +115,34 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
         max-height: 90vh;
         overflow-y: auto;
         scroll-behavior: smooth;
+    }
+
+    .pagination {
+        display: flex;
+        flex-wrap: wrap;
+        /* Allows pagination buttons to wrap */
+        justify-content: center;
+        /* Centers the pagination */
+        padding: 10px;
+        gap: 5px;
+        /* Adds spacing between buttons */
+    }
+
+    .pagination a {
+        padding: 8px 12px;
+        text-decoration: none;
+        border: 1px solid #ddd;
+        background: white;
+        color: black;
+        border-radius: 5px;
+    }
+
+    .pagination a.active {
+        background: green;
+        color: white;
+    }
+
+    .pagination a:hover {
+        background: #8fd19e;
     }
 </style>
