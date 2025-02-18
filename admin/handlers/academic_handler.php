@@ -18,9 +18,33 @@ include 'audit_log.php';
 
 $id = isset($_GET['academic_id']) ? $_GET['academic_id'] : null;
 
-$stmt = $conn->prepare('SELECT * FROM academic_list');
+$query = "SELECT COUNT(*) as total FROM academic_list"; 
+$stmt = $conn->prepare($query);
+$stmt->execute();
+$total_records = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+$records_per_page = 5; // Adjust per preference
+$total_pages = ceil($total_records / $records_per_page);
+
+// Determine current page
+$page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
+$page = max(1, min($page, $total_pages));
+
+$offset = ($page - 1) * $records_per_page;
+
+// Fetch academic records with pagination
+$query = "SELECT * FROM academic_list ORDER BY academic_id ASC LIMIT :limit OFFSET :offset"; 
+$stmt = $conn->prepare($query);
+$stmt->bindValue(':limit', $records_per_page, PDO::PARAM_INT);
+$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->execute();
 $academics = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Segment pagination settings
+$segment_size = 5;
+$current_segment = ceil($page / $segment_size);
+$start_page = ($current_segment - 1) * $segment_size + 1;
+$end_page = min($current_segment * $segment_size, $total_pages);
 
 if ($id) {
     $stmt = $conn->prepare("SELECT * FROM academic_list WHERE academic_id = ?");

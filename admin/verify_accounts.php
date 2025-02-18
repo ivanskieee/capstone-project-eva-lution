@@ -107,7 +107,7 @@ include "handlers/verify_actions_handler.php";
 </script>
 <style>
     .content .main-header {
-        max-height: 100vh;
+        max-height: 90vh;
         overflow-y: auto;
         scroll-behavior: smooth;
     }

@@ -352,24 +352,74 @@ include "handlers/faculty_handler.php";
             let subjectCode = newSubjectCode.val().trim().toUpperCase();
             let subjectName = newSubjectName.val().trim();
 
-            if (!departmentCode) return alert("Please select a department first.");
-            if (!subjectCode || !subjectName) return alert("Please enter both Subject Code and Subject Name.");
+            if (!departmentCode) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Missing Department",
+                    text: "Please select a department first.",
+                    timer: 1000,  // Auto-close after 1 second
+                    showConfirmButton: false,
+                    timerProgressBar: true, // Smooth fade effect
+                    didOpen: (toast) => {
+                        toast.style.transition = "opacity 0.5s ease"; // Smooth fade-out
+                    }
+                });
+                return;
+            }
+
+            if (!subjectCode || !subjectName) {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Incomplete Fields",
+                    text: "Please enter both Subject Code and Subject Name.",
+                    timer: 1000,
+                    showConfirmButton: false,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.style.transition = "opacity 0.5s ease";
+                    }
+                });
+                return;
+            }
 
             $.post("add_subject.php", { subject_code: subjectCode, subject_name: subjectName, department_code: departmentCode }, function (data) {
                 if (data.status === "success") {
-                    alert("Subject added successfully!");
-                    newSubjectContainer.hide();
+                    Swal.fire({
+                        icon: "success",
+                        title: "Success!",
+                        text: "Subject added successfully!",
+                        timer: 1000,
+                        showConfirmButton: false,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.style.transition = "opacity 0.5s ease";
+                        }
+                    });
 
-                    // Add the new subject to the dropdown
-                    let displayText = `${subjectCode} - ${subjectName}`;
-                    let newOption = new Option(displayText, subjectCode, true, true);
-                    subjectDropdown.append(newOption).trigger("change");
+                    setTimeout(() => {
+                        newSubjectContainer.hide();
 
-                    // Clear input fields
-                    newSubjectCode.val("");
-                    newSubjectName.val("");
+                        // Add the new subject to the dropdown
+                        let displayText = `${subjectCode} - ${subjectName}`;
+                        let newOption = new Option(displayText, subjectCode, true, true);
+                        subjectDropdown.append(newOption).trigger("change");
+
+                        // Clear input fields
+                        newSubjectCode.val("");
+                        newSubjectName.val("");
+                    }, 1000);  // Ensures the success message is displayed before updating UI
                 } else {
-                    alert(data.status === "exists" ? "Subject already exists!" : "Error adding subject.");
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: data.status === "exists" ? "Subject already exists!" : "Error adding subject.",
+                        timer: 1000,
+                        showConfirmButton: false,
+                        timerProgressBar: true,
+                        didOpen: (toast) => {
+                            toast.style.transition = "opacity 0.5s ease";
+                        }
+                    });
                 }
             }, "json");
         });

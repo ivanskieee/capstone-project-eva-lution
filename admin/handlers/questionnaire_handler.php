@@ -20,7 +20,22 @@ $id = isset($_GET['question_id']) ? $_GET['question_id'] : null;
 $academic_id = isset($_GET['academic_id']) ? $_GET['academic_id'] : null;
 $questionToEdit = null;
 
-$stmt = $conn->prepare("
+$query = "SELECT COUNT(*) as total FROM academic_list";
+$stmt = $conn->prepare($query);
+$stmt->execute();
+$total_records = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
+
+$records_per_page = 5; // Adjust as needed
+$total_pages = ceil($total_records / $records_per_page);
+
+// Get current page
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$page = max(1, min($page, $total_pages));
+
+$offset = ($page - 1) * $records_per_page;
+
+// Fetch academic records with pagination
+$query = "
     SELECT a.*, 
            COALESCE(q.total_questions, 0) AS total_questions, 
            COALESCE(ea.total_answers, 0) AS total_answers      
@@ -55,16 +70,29 @@ $stmt = $conn->prepare("
         ) AS combined_evaluation_answers
         GROUP BY academic_id
     ) ea ON a.academic_id = ea.academic_id
-");
+    ORDER BY a.academic_id ASC
+    LIMIT :limit OFFSET :offset
+";
+$stmt = $conn->prepare($query);
+$stmt->bindValue(':limit', $records_per_page, PDO::PARAM_INT);
+$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->execute();
 $questionnaires = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Pagination segment settings
+$segment_size = 5;
+$current_segment = ceil($page / $segment_size);
+$start_page = ($current_segment - 1) * $segment_size + 1;
+$end_page = min($current_segment * $segment_size, $total_pages);
+
+// Fetch criteria list
 $stmt = $conn->prepare('SELECT * FROM criteria_list');
 $stmt->execute();
 $criteriaList = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 $sector = isset($_GET['sector']) ? $_GET['sector'] : 'student_faculty';
 
+// Fetch questions based on selected sector
 if ($sector === 'student_faculty') {
     $stmt = $conn->prepare('SELECT * FROM question_list WHERE academic_id = ?');
 } elseif ($sector === 'faculty_faculty') {
@@ -77,6 +105,7 @@ if ($sector === 'student_faculty') {
 $stmt->execute([$academic_id]);
 $questions = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Fetch question data for editing
 if ($id) {
     $stmt = $conn->prepare('SELECT * FROM question_list WHERE question_id = ?');
     $stmt->execute([$id]);

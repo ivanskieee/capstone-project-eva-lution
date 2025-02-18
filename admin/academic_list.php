@@ -7,22 +7,21 @@ include 'handlers/academic_handler.php';
     <nav class="main-header">
         <div class="col-lg-12 mt-3">
             <div class="col-12 mb-3">
-                <h2 class="text-start"
-                    style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
-                    Academic Year and Semester</h2>
+                <h2 class="text-start" style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
+                    Academic Year and Semester
+                </h2>
             </div>
             <div class="card card-outline card-success">
                 <div class="card-header">
                     <div class="card-tools">
-                        <a class="btn btn-block btn-sm btn-default btn-flat border-success new_academic"
-                            href="manage_academic.php"><i class="fa fa-plus"></i> Add New</a>
+                        <a class="btn btn-block btn-sm btn-default btn-flat border-success new_academic" href="manage_academic.php">
+                            <i class="fa fa-plus"></i> Add New
+                        </a>
                     </div>
                 </div>
                 <div class="row mb-3">
-                    
                     <div class="col-8 col-md-4 ms-auto mt-3 mr-3">
-                        <input type="text" id="searchInput" class="form-control form-control-sm"
-                            placeholder="Search Academic Year">
+                        <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Search Academic Year">
                     </div>
                 </div>
                 <div class="card-body">
@@ -47,63 +46,17 @@ include 'handlers/academic_handler.php';
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php
-                                $i = 1;
-                                foreach ($academics as $row):
-                                ?>
-                                    <tr>
-                                        <th class="text-center"><?php echo $i++ ?></th>
-                                        <td><b><?php echo $row['year'] ?></b></td>
-                                        <td><b><?php echo $row['semester'] ?></b></td>
-                                        <td class="text-center">
-                                            <?php if ($row['is_default'] == 0): ?>
-                                                <button type="button"
-                                                    class="btn btn-secondary bg-gradient-secondary col-sm-4 btn-flat btn-sm px-1 py-0 make_default"
-                                                    data-id="<?php echo isset($row['id']) ?>">No</button>
-                                            <?php else: ?>
-                                                <button type="button"
-                                                    class="btn btn-success bg-gradient-success col-sm-4 btn-flat btn-sm px-1 py-0">Yes</button>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td class="text-center">
-                                            <?php if ($row['status'] == 0): ?>
-                                                <button class="btn btn-secondary update_status"
-                                                    data-id="<?php echo $row['academic_id']; ?>" data-status="1">Start</button>
-                                            <?php elseif ($row['status'] == 1): ?>
-                                                <span class="badge badge-success">Active (Ends:
-                                                    <?php echo $row['end_date']; ?>)</span>
-                                                <button class="btn btn-success update_status"
-                                                    data-id="<?php echo $row['academic_id']; ?>" data-status="2">Close</button>
-                                            <?php elseif ($row['status'] == 2): ?>
-                                                <span class="badge badge-success">Closed</span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td class="text-center">
-                                            <div class="btn-group">
-                                                <a href="manage_academic.php?academic_id=<?php echo $row['academic_id']; ?>"
-                                                    class="btn btn-success btn-flat manage_academic">
-                                                    <i class="fas fa-edit"></i>
-                                                </a>
-                                                <form method="post" action="academic_list.php" style="display: inline;"
-                                                    class="delete-form">
-                                                    <input type="hidden" name="delete_id"
-                                                        value="<?php echo isset($row['academic_id']) ? $row['academic_id'] : ''; ?>">
-                                                    <button type="submit"
-                                                        class="btn btn-secondary btn-flat delete_academic">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
+                                <!-- Table rows will be populated by the search and pagination AJAX -->
                             </tbody>
                         </table>
-                        <p id="noRecordsMessage" style="display:none; color: black;" class="ml-1">No academic year
-                            found.
-                        </p>
+                        <p id="noRecordsMessage" style="display:none; color: black;" class="ml-1">No academic year found.</p>
                     </div>
                 </div>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center" id="pagination-links">
+                        <!-- Pagination links will be generated by the AJAX response -->
+                    </ul>
+                </nav>
             </div>
         </div>
     </nav>
@@ -155,36 +108,37 @@ include 'handlers/academic_handler.php';
     });
 </script>
 <script>
-    document.getElementById('searchInput').addEventListener('keyup', function() {
-        var searchValue = this.value.toLowerCase();
-        var rows = document.querySelectorAll('#list tbody tr');
-        var noRecordsMessage = document.getElementById('noRecordsMessage');
-        var matchesFound = false;
-
-        rows.forEach(function(row) {
-            var cells = row.querySelectorAll('td');
-            var matches = false;
-
-            cells.forEach(function(cell) {
-                if (cell.textContent.toLowerCase().includes(searchValue)) {
-                    matches = true;
-                }
-            });
-
-            if (matches) {
-                row.style.display = '';
-                matchesFound = true;
-            } else {
-                row.style.display = 'none';
+   $(document).ready(function() {
+    function updateTable(page = 1, search = '') {
+        $.ajax({
+            url: 'search_academic.php',
+            method: 'POST',
+            data: {
+                search: search,
+                page: page
+            },
+            success: function(response) {
+                var result = response.split('<!--pagination-->'); 
+                $('#list tbody').html(result[0]);  
+                $('#pagination-links').html(result[1]); 
+            },
+            error: function() {
+                console.error('Failed to fetch search results.');
             }
         });
+    }
 
-        if (matchesFound) {
-            noRecordsMessage.style.display = 'none';
-        } else {
-            noRecordsMessage.style.display = '';
-        }
+    $('#searchInput').on('keyup', function() {
+        updateTable(1, $(this).val());
     });
+
+    $(document).on('click', '.pagination a', function(e) {
+        e.preventDefault();
+        updateTable($(this).data('page'), $('#searchInput').val());
+    });
+
+    updateTable(1);
+});
 </script>
 <style>
     .list-group-item:hover {
@@ -193,9 +147,12 @@ include 'handlers/academic_handler.php';
     }
 
     .content .main-header {
-        max-height: 100vh;
+        max-height: 90vh;
         overflow-y: auto;
         scroll-behavior: smooth;
+    }
+    .pagination a {
+        cursor: pointer;
     }
 </style>
 <script>
