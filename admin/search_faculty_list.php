@@ -8,11 +8,11 @@ if (isset($_POST['search'])) {
     $offset = ($page - 1) * $records_per_page;
 
     // Count total records based on search criteria
-    $query = "SELECT COUNT(*) as total FROM head_faculty_list 
+    $query = "SELECT COUNT(*) as total FROM college_faculty_list 
               WHERE school_id LIKE :search 
               OR firstname LIKE :search 
               OR lastname LIKE :search";
-    
+
     $stmt = $conn->prepare($query);
     $searchTerm = "%$search%";
     $stmt->bindValue(':search', $searchTerm, PDO::PARAM_STR);
@@ -21,13 +21,13 @@ if (isset($_POST['search'])) {
     $total_pages = ceil($total_records / $records_per_page);
     $stmt->closeCursor();
 
-    // Fetch filtered head faculty records
+    // Fetch filtered faculty records
     $query = "
-        SELECT * FROM head_faculty_list
+        SELECT * FROM college_faculty_list
         WHERE school_id LIKE :search 
         OR firstname LIKE :search 
         OR lastname LIKE :search
-        ORDER BY head_id ASC
+        ORDER BY faculty_id ASC
         LIMIT :limit OFFSET :offset
     ";
 
@@ -40,7 +40,7 @@ if (isset($_POST['search'])) {
 
     // Prepare table rows
     $tableData = "";
-    $counter = ($page - 1) * $records_per_page + 1; // Start from the correct number
+    $counter = ($page - 1) * $records_per_page + 1;
     if ($result) {
         foreach ($result as $row) {
             $tableData .= "<tr>
@@ -53,15 +53,15 @@ if (isset($_POST['search'])) {
                             Action
                         </button>
                         <div class='dropdown-menu'>
-                            <a class='dropdown-item' href='new_head_faculty.php?head_id={$row['head_id']}'>Edit</a>
-                            <form method='post' action='head_faculty_list.php' style='display: inline;' class='delete-form'>
-                                <input type='hidden' name='delete_id' value='{$row['head_id']}'>
+                            <a class='dropdown-item' href='new_faculty.php?faculty_id={$row['faculty_id']}'>Edit</a>
+                            <form method='post' action='faculty_list.php' style='display: inline;' class='delete-form'>
+                                <input type='hidden' name='delete_id' value='{$row['faculty_id']}'>
                                 <button type='submit' class='dropdown-item' onclick='confirmDeletion()'>Delete</button>
                             </form>
                         </div>
                     </td>
                 </tr>";
-            $counter++; // Increment the counter
+            $counter++;
         }
     } else {
         $tableData = "<tr><td colspan='5' class='text-center'>No results found.</td></tr>";
@@ -71,20 +71,17 @@ if (isset($_POST['search'])) {
     $pagination = "<nav aria-label='Page navigation'>
         <ul class='pagination justify-content-center'>";
 
-    $range = 5; // Number of visible pages
+    $range = 5;
     $start_page = max(1, $page - floor($range / 2));
     $end_page = min($total_pages, $start_page + $range - 1);
 
     if ($page > 1) {
-        $pagination .= "<li class='page-item'>
-        <a class='page-link btn btn-outline-success text-black' href='#' data-page='" . ($page - 1) . "'>&laquo; Previous</a>
-    </li>";
+        $pagination .= "<li class='page-item'><a class='page-link btn btn-outline-success text-black' href='#' data-page='" . ($page - 1) . "'>&laquo; Previous</a></li>";
     }
 
     if ($start_page > 1) {
         $pagination .= "<li class='page-item'><a class='page-link btn btn-outline-success text-black' href='#' data-page='1'>1</a></li>";
-        if ($start_page > 2)
-            $pagination .= "<li class='page-item disabled'><span class='page-link'>...</span></li>";
+        if ($start_page > 2) $pagination .= "<li class='page-item disabled'><span class='page-link'>...</span></li>";
     }
 
     for ($page_num = $start_page; $page_num <= $end_page; $page_num++) {
@@ -92,21 +89,12 @@ if (isset($_POST['search'])) {
         $pagination .= "<li class='page-item'><a class='page-link text-black $active_class' href='#' data-page='$page_num'>$page_num</a></li>";
     }
 
-    if ($end_page < $total_pages) {
-        if ($end_page < $total_pages - 1)
-            $pagination .= "<li class='page-item disabled'><span class='page-link text-black'>...</span></li>";
-        $pagination .= "<li class='page-item'><a class='page-link btn btn-outline-success text-black' href='#' data-page='$total_pages'>$total_pages</a></li>";
-    }
-
     if ($page < $total_pages) {
-        $pagination .= "<li class='page-item'>
-        <a class='page-link btn btn-outline-success text-black' href='#' data-page='" . ($page + 1) . "'>Next &raquo;</a>
-    </li>";
+        $pagination .= "<li class='page-item'><a class='page-link btn btn-outline-success text-black' href='#' data-page='" . ($page + 1) . "'>Next &raquo;</a></li>";
     }
 
     $pagination .= "</ul></nav>";
 
-    // Send JSON response
     echo json_encode(['tableData' => $tableData, 'pagination' => $pagination]);
     exit;
 }
