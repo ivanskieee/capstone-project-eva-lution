@@ -214,12 +214,10 @@ include "handlers/report_handler.php";
     </style>
 </noscript>
 <script>
-    // Add listener for category change
     document.getElementById('category').addEventListener('change', function () {
         const selectedCategory = this.value;
         const facultyDropdown = document.getElementById('faculty_id');
 
-        // Reset faculty dropdown and related fields
         facultyDropdown.innerHTML = '<option value="">Select Faculty</option>';
         document.getElementById('fname').textContent = '';
         document.getElementById('ay').textContent = 'Select faculty to view year and semester.';
@@ -227,7 +225,6 @@ include "handlers/report_handler.php";
         const ratingsTable = document.querySelector('#printable .table-responsive');
         ratingsTable.innerHTML = `<br><p class="text-center text-muted">Select faculty to view evaluation ratings.</p>`;
 
-        // Fetch filtered faculty list based on the selected category
         fetch(`fetch_faculty_list.php?category=${selectedCategory}`)
             .then(response => response.json())
             .then(data => {
@@ -236,7 +233,7 @@ include "handlers/report_handler.php";
                         const option = document.createElement('option');
                         option.value = faculty.faculty_id;
                         option.textContent = faculty.fullname;
-                        option.setAttribute('data-name', faculty.fullname); // Match 'data-name' used in faculty_id change
+                        option.setAttribute('data-name', faculty.fullname); 
                         facultyDropdown.appendChild(option);
                     });
                 } else {
@@ -248,7 +245,6 @@ include "handlers/report_handler.php";
             });
     });
 
-    // Existing listener for faculty change
     document.getElementById('faculty_id').addEventListener('change', function () {
         const facultyId = this.value;
         const facultyName = this.options[this.selectedIndex].getAttribute('data-name') || '';
@@ -259,13 +255,11 @@ include "handlers/report_handler.php";
         const ratingsTable = document.querySelector('#printable .table-responsive');
         const tse = document.getElementById('tse');
 
-        // Reset content
         ratingsTable.innerHTML = `<br><p class="text-center text-muted">Select faculty to view evaluation ratings.</p>`;
         academicYearDisplay.innerHTML = 'Select faculty to view year and semester.';
         tse.textContent = 0;
 
         if (facultyId) {
-            // Fetch academic year
             fetch(`get_academic_info.php?faculty_id=${facultyId}&category=${selectedCategory}`)
                 .then(response => response.json())
                 .then(data => {
@@ -275,7 +269,6 @@ include "handlers/report_handler.php";
                     academicYearDisplay.innerHTML = 'Error fetching academic information.';
                 });
 
-            // Fetch total evaluated
             fetch(`get_total_evaluated.php?faculty_id=${facultyId}&category=${selectedCategory}`)
                 .then(response => response.text())
                 .then(response => {
@@ -285,7 +278,6 @@ include "handlers/report_handler.php";
                     tse.textContent = 0;
                 });
 
-            // Fetch category-specific data
             if (selectedCategory === 'self') {
                 fetch(`get_self_eval.php?faculty_id=${facultyId}`)
                     .then(response => response.json())
@@ -321,7 +313,6 @@ include "handlers/report_handler.php";
         }
     });
 
-    // Render functions (unchanged)
     function renderSelfEval(data, container) {
         if (data.status === 'success') {
             container.innerHTML = `
@@ -343,7 +334,7 @@ include "handlers/report_handler.php";
     }
 
     function renderFacultyEval(data, container) {
-    container.innerHTML = ''; // Clear previous data
+    container.innerHTML = ''; 
     const table = document.createElement('table');
     table.className = 'table table-condensed wborder';
 
@@ -400,7 +391,6 @@ include "handlers/report_handler.php";
         });
     });
 
-    // Calculate and display the total mean score
     const totalMeanScore = questionCount ? (totalMean / questionCount).toFixed(2) : "0.00";
     tbody.innerHTML += `
     <tr class="bg-gradient-secondary total-mean-score-row">
@@ -474,12 +464,10 @@ document.getElementById('print-btn').addEventListener('click', function () {
         console.error('Unable to open the print window. It may have been blocked by the browser.');
     }
 
-    // Log action
     logAuditAction('Print Report', 'Printed as PDF');
 });
 
-// Export to CSV
-document.getElementById('export-csv-btn').addEventListener('click', function () {
+document.getElementById('export-csv-btn').addEventListener('click', async function () {
     const facultyId = document.getElementById('faculty_id')?.value;
     const selectedCategory = document.getElementById('category')?.value;
 
@@ -494,75 +482,82 @@ document.getElementById('export-csv-btn').addEventListener('click', function () 
         return;
     }
 
-    let csvContent = `Faculty Name:,${document.getElementById('fname')?.textContent || 'N/A'}\n`;
-    csvContent += `Academic Year:,${document.getElementById('ay')?.textContent || 'N/A'}\n`;
-    csvContent += `Total Evaluated:,${document.getElementById('tse')?.textContent || 'N/A'}\n\n`;
-    csvContent += '--- Table Data ---\n';
+    let csvContent = `"Faculty Name","${document.getElementById('fname')?.textContent.trim() || 'N/A'}"\n`;
+    csvContent += `"Academic Year","${document.getElementById('ay')?.textContent.trim() || 'N/A'}"\n`;
+    csvContent += `"Total Evaluated","${document.getElementById('tse')?.textContent.trim() || 'N/A'}"\n\n`;
+    csvContent += `"--- Table Data ---"\n\n`;
 
-    fetchAdditionalData(facultyId, selectedCategory, (additionalData) => {
-        if (additionalData.trim() !== '') {
-            csvContent += `\nAdditional Data:\n${additionalData}`;
-        }
+    try {
+        // Fetch additional data and append it
+        const additionalData = await fetchAdditionalData(facultyId, selectedCategory);
+        csvContent += `"Additional Data"\n${additionalData.trim() !== '' ? additionalData : '"No additional data available."'}\n\n`;
 
-        const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.innerText);
-        csvContent += headers.join(',') + '\n';
+        // Extract table headers
+        const headers = Array.from(table.querySelectorAll('thead th')).map(th => `"${th.innerText.trim()}"`);
+        const rows = Array.from(table.querySelectorAll('tbody tr')).map(row =>
+            Array.from(row.querySelectorAll('td')).map(cell => `"${cell.innerText.trim()}"`).join(',')
+        );
 
-        const rows = table.querySelectorAll('tbody tr');
-        rows.forEach(row => {
-            const cells = Array.from(row.querySelectorAll('td')).map(cell => `"${cell.innerText.trim()}"`);
-            csvContent += cells.join(',') + '\n';
-        });
+        csvContent += headers.join(',') + '\n' + rows.join('\n');
 
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'evaluation_report.csv');
-        document.body.appendChild(link);
+        // Download CSV
+        downloadCSV(csvContent);
 
-        setTimeout(() => {
-            link.click();
-        }, 100);
+        // Log the audit action
+        logAuditAction('Excel Report', 'Exported as CSV');
 
-        document.body.removeChild(link);
-    });
-
-    logAuditAction('Export CSV', 'Exported as CSV');
+    } catch (error) {
+        console.error('Error exporting:', error);
+        alert('Error exporting data. Please try again.');
+    }
 });
 
-// Function to fetch additional data
-function fetchAdditionalData(facultyId, selectedCategory, callback) {
-    let url = '';
-    if (selectedCategory === 'self') {
-        url = `get_self_eval.php?faculty_id=${facultyId}`;
-    } else if (selectedCategory === 'dean_self') {
-        url = `get_dean_self_eval.php?faculty_id=${facultyId}`;
-    } else {
-        url = `get_faculty_ratings.php?faculty_id=${facultyId}&category=${selectedCategory}`;
-    }
-
-    fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            let additionalData = '';
-            if (data.status === 'success') {
-                additionalData = data.data.map(item =>
-                    Object.entries(item).map(([key, value]) => `${key}: ${value}`).join(', ')
-                ).join('\n');
-            } else {
-                additionalData = 'No additional data available.';
-            }
-            callback(additionalData);
-        })
-        .catch(error => {
-            console.error('Error fetching additional data:', error);
-            callback('Error fetching additional data.');
-        });
+// Function to download CSV
+function downloadCSV(content) {
+    const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'evaluation_report.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
 }
 
-// Function to log audit actions with specific details
+// Function to fetch additional data
+async function fetchAdditionalData(facultyId, selectedCategory) {
+    let url = selectedCategory === 'self'
+        ? `get_self_eval.php?faculty_id=${facultyId}`
+        : selectedCategory === 'dean_self'
+            ? `get_dean_self_eval.php?faculty_id=${facultyId}`
+            : `get_faculty_ratings.php?faculty_id=${facultyId}&category=${selectedCategory}`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.status !== 'success' || !data.data) {
+            return '"No additional data available."\n';
+        }
+
+        let additionalData = `"Criteria","Question","Type","Rate 1 (%)","Rate 2 (%)","Rate 3 (%)","Rate 4 (%)","Comments"\n`;
+        Object.entries(data.data).forEach(([criteria, questions]) => {
+            questions.forEach(q => {
+                let cleanedComments = q.comments.map(c => c.trim()).filter(c => c).join('; ');
+                additionalData += `"${criteria}","${q.question.trim()}","${q.question_type}","${q.rate1}","${q.rate2}","${q.rate3}","${q.rate4}","${cleanedComments}"\n`;
+            });
+        });
+
+        return additionalData;
+    } catch (error) {
+        console.error('Error fetching additional data:', error);
+        return '"Error fetching additional data."\n';
+    }
+}
+
 function logAuditAction(action, details) {
-    const userId = <?php echo $_SESSION['user']['id']; ?>; // Get user ID from session
+    const userId = <?php echo $_SESSION['user']['id']; ?>; 
     const xhr = new XMLHttpRequest();
     xhr.open('POST', 'log_audit_action.php', true);
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -583,13 +578,13 @@ function logAuditAction(action, details) {
         color: #4a4a4a;
     }
     .mean-score-header {
-    white-space: nowrap; /* Keeps "Mean Score" on one line */
+    white-space: nowrap; 
     }
 
     .total-mean-score-container {
         display: flex;
         align-items: center;
-        justify-content: center; /* Ensures the circle is properly aligned */
+        justify-content: center; 
     }
 
     .circle {
@@ -606,7 +601,6 @@ function logAuditAction(action, details) {
     }
 </style>
 <script>
-    // Check if the criteria contains any 'text' type questions
     document.addEventListener('DOMContentLoaded', function() {
         const tables = document.querySelectorAll('table');
         
@@ -614,7 +608,6 @@ function logAuditAction(action, details) {
             const rows = table.querySelectorAll('tbody tr');
             let hasTextQuestion = false;
 
-            // Check if there's a text-type question in the current table
             rows.forEach(row => {
                 if (row.querySelector('textarea')) {
                     hasTextQuestion = true;
@@ -622,11 +615,10 @@ function logAuditAction(action, details) {
             });
 
             if (hasTextQuestion) {
-                // Hide the rating columns (1 to 4)
                 const headerCells = table.querySelectorAll('thead th');
                 headerCells.forEach((cell, index) => {
                     if (index > 0) {
-                        cell.style.display = 'none'; // Hide columns 1 to 4
+                        cell.style.display = 'none'; 
                     }
                 });
             }

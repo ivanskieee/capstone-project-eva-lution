@@ -28,83 +28,51 @@ $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->bindValue(':limit', $records_per_page, PDO::PARAM_INT);
 $stmt->execute();
 $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Pagination range
+$range = 5;
+$start_page = max(1, $page - floor($range / 2));
+$end_page = min($total_pages, $start_page + $range - 1);
 ?>
 
 <div class="content">
     <nav class="main-header">
         <div class="col-lg-12 mt-3">
-            <div class="container mt-3">
-                <div class="col-12 mb-5">
-                    <h2 class="text-start"
-                        style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
-                        Audit Logs</h2>
-                </div>
-                <div class="card">
-                    <div class="card-body">
-                        <h2 class="text-center">System Activity Log</h2>
-                        <p class="text-center">Below is the list of actions performed by admins:</p>
-
-                        <div class="table-responsive mt-4">
-                            <table class="table table-bordered table-striped">
-                                <thead class="table-success">
-                                    <tr>
-                                        <th>Admin</th>
-                                        <th>Action</th>
-                                        <th>Details</th>
-                                        <th>Timestamp</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach ($logs as $log): ?>
-                                        <tr>
-                                            <td><?= htmlspecialchars($log['firstname'] . ' ' . $log['lastname']) ?>
-                                                (<?= htmlspecialchars($log['email']) ?>)</td>
-                                            <td><?= htmlspecialchars($log['action']) ?></td>
-                                            <td><?= htmlspecialchars($log['details']) ?></td>
-                                            <td><?= htmlspecialchars($log['timestamp']) ?></td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <!-- Pagination -->
-                        <nav aria-label="Page navigation example">
-                            <ul class="pagination justify-content-center">
-                                <!-- Previous Button -->
-                                <?php if ($page > 1): ?>
-                                    <li class="page-item">
-                                        <a class="page-link btn btn-success" href="?page=<?= $page - 1 ?>"
-                                            aria-label="Previous">
-                                            <span aria-hidden="true">&laquo; Previous</span>
-                                        </a>
-                                    </li>
-                                <?php endif; ?>
-
-                                <!-- Page Numbers -->
-                                <?php for ($p = 1; $p <= $total_pages; $p++): ?>
-                                    <li class="page-item <?= ($p == $page) ? 'active' : ''; ?>">
-                                        <a class="page-link btn btn-success <?= ($p == $page) ? 'active' : ''; ?>"
-                                            href="?page=<?= $p; ?>">
-                                            <?= $p; ?>
-                                        </a>
-                                    </li>
-                                <?php endfor; ?>
-
-                                <!-- Next Button -->
-                                <?php if ($page < $total_pages): ?>
-                                    <li class="page-item">
-                                        <a class="page-link btn btn-success" href="?page=<?= $page + 1 ?>"
-                                            aria-label="Next">
-                                            <span aria-hidden="true">Next &raquo;</span>
-                                        </a>
-                                    </li>
-                                <?php endif; ?>
-                            </ul>
-                        </nav>
-
+            <div class="col-12 mb-3">
+                <h2 class="text-start"
+                    style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
+                    Audit Logs</h2>
+            </div>
+            <div class="card card-outline card-success">
+                <div class="row mb-3">
+                    <div class="col-8 col-md-4 ms-auto mt-3 mr-3">
+                        <input type="text" id="searchAudit" class="form-control form-control-sm"
+                            placeholder="Search Logs">
                     </div>
                 </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-bordered" id="audit_table">
+                            <thead>
+                                <tr>
+                                    <th>Admin</th>
+                                    <th>Action</th>
+                                    <th>Details</th>
+                                    <th>Timestamp</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Data loaded via AJAX -->
+                            </tbody>
+                        </table>
+                        <p id="noAuditMessage" style="display:none; color: black;" class="ml-1">No logs found.</p>
+                    </div>
+                </div>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center" id="audit-pagination">
+                        <!-- Pagination links will be generated dynamically -->
+                    </ul>
+                </nav>
             </div>
         </div>
     </nav>
@@ -120,12 +88,9 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
     .pagination {
         display: flex;
         flex-wrap: wrap;
-        /* Allows pagination buttons to wrap */
         justify-content: center;
-        /* Centers the pagination */
         padding: 10px;
         gap: 5px;
-        /* Adds spacing between buttons */
     }
 
     .pagination a {
@@ -145,4 +110,64 @@ $logs = $stmt->fetchAll(PDO::FETCH_ASSOC);
     .pagination a:hover {
         background: #8fd19e;
     }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .text-break {
+        word-break: break-word;
+        white-space: normal;
+    }
+    .pagination .page-link {
+        color: black; /* Standard text color */
+        background-color: white; /* White background */
+        border: 1px solid #ddd; /* Light gray border */
+        padding: 6px 12px; /* Adjust spacing */
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #f8f9fa; /* Light gray for active page */
+        color: black; /* Text remains black */
+        border-color: #ddd; /* Match border */
+    }
+
+    .pagination .page-link:hover {
+        background-color: #f1f1f1; /* Slight hover effect */
+        color: black;
+    }
 </style>
+
+<script>
+    $(document).ready(function () {
+        function updateAuditTable(page = 1, search = '') {
+            $.ajax({
+                url: 'search_audit_logs.php',
+                method: 'POST',
+                data: {
+                    search: search,
+                    page: page
+                },
+                dataType: 'json',
+                success: function (response) {
+                    $('#audit_table tbody').html(response.tableData); // Update logs
+                    $('#audit-pagination').html(response.pagination); // Update pagination
+                },
+                error: function () {
+                    console.error('Failed to fetch logs.');
+                }
+            });
+        }
+
+        $('#searchAudit').on('keyup', function () {
+            updateAuditTable(1, $(this).val());
+        });
+
+        $(document).on('click', '.pagination a', function (e) {
+            e.preventDefault();
+            updateAuditTable($(this).data('page'), $('#searchAudit').val());
+        });
+
+        updateAuditTable(1);
+    });
+</script>

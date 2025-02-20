@@ -440,10 +440,9 @@ document.getElementById('print-btn').addEventListener('click', function () {
     }
 });
 
-// Export to CSV
-document.getElementById('export-csv-btn').addEventListener('click', function () {
-    const facultyId = document.getElementById('faculty_id').value;
-    const selectedCategory = document.getElementById('category').value;
+document.getElementById('export-csv-btn').addEventListener('click', async function () {
+    const facultyId = document.getElementById('faculty_id')?.value;
+    const selectedCategory = document.getElementById('category')?.value;
 
     if (!facultyId) {
         alert('Please select a faculty to export data.');
@@ -451,76 +450,80 @@ document.getElementById('export-csv-btn').addEventListener('click', function () 
     }
 
     const table = document.querySelector('#printable table');
-
-    // Start CSV content with headers for metadata
-    let csvContent = `Faculty Name:,${document.getElementById('fname').textContent}\n`;
-    csvContent += `Academic Year:,${document.getElementById('ay').textContent}\n`;
-    csvContent += `Total Evaluated:,${document.getElementById('tse').textContent}\n\n`;
-
-    // Add a separator before table data
-    csvContent += '--- Table Data ---\n';
-
-    // Fetch additional data and include it in the export
-    fetchAdditionalData(facultyId, selectedCategory, (additionalData) => {
-        if (additionalData.trim() !== '') {
-            csvContent += `\nAdditional Data:\n${additionalData}`;
-        }
-
-        // Extract table headers
-        const headers = Array.from(table.querySelectorAll('thead th')).map(th => th.innerText);
-        csvContent += headers.join(',') + '\n';
-
-        // Extract table rows
-        const rows = table.querySelectorAll('tbody tr');
-        rows.forEach(row => {
-            const cells = Array.from(row.querySelectorAll('td')).map(cell => cell.innerText.trim());
-            csvContent += cells.join(',') + '\n';
-        });
-
-        // Create a downloadable CSV file
-        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.setAttribute('download', 'evaluation_report.csv');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    });
-});
-
-// Function to fetch additional data
-function fetchAdditionalData(facultyId, selectedCategory, callback) {
-    let urls = [];
-    if (selectedCategory === 'self') {
-        urls.push(`get_self_eval.php?faculty_id=${facultyId}`);
-    } else if (selectedCategory === 'dean_self') {
-        urls.push(`get_dean_self_eval.php?faculty_id=${facultyId}`);
-    } else {
-        urls.push(`get_faculty_ratings.php?faculty_id=${facultyId}&category=${selectedCategory}`);
+    if (!table) {
+        alert('No table data available.');
+        return;
     }
 
-    // Fetch all URLs and collect data
-    Promise.all(urls.map(url => fetch(url).then(res => res.json())))
-        .then(responses => {
-            let additionalData = '';
-            responses.forEach(response => {
-                if (response.status === 'success') {
-                    response.data.forEach(item => {
-                        const formattedRow = Object.entries(item)
-                            .map(([key, value]) => `${key}: ${value}`)
-                            .join(', ');
-                        additionalData += formattedRow + '\n';
-                    });
-                } else {
-                    additionalData += 'No additional data available.\n';
-                }
+    let csvContent = `"Faculty Name","${document.getElementById('fname')?.textContent.trim() || 'N/A'}"\n`;
+    csvContent += `"Academic Year","${document.getElementById('ay')?.textContent.trim() || 'N/A'}"\n`;
+    csvContent += `"Total Evaluated","${document.getElementById('tse')?.textContent.trim() || 'N/A'}"\n\n`;
+    csvContent += `"--- Table Data ---"\n\n`;
+
+    try {
+        // Fetch additional data and append it
+        const additionalData = await fetchAdditionalData(facultyId, selectedCategory);
+        csvContent += `"Additional Data"\n${additionalData.trim() !== '' ? additionalData : '"No additional data available."'}\n\n`;
+
+        // Extract table headers
+        const headers = Array.from(table.querySelectorAll('thead th')).map(th => `"${th.innerText.trim()}"`);
+        const rows = Array.from(table.querySelectorAll('tbody tr')).map(row =>
+            Array.from(row.querySelectorAll('td')).map(cell => `"${cell.innerText.trim()}"`).join(',')
+        );
+
+        csvContent += headers.join(',') + '\n' + rows.join('\n');
+
+        // Download CSV
+        downloadCSV(csvContent);
+
+    } catch (error) {
+        console.error('Error exporting:', error);
+        alert('Error exporting data. Please try again.');
+    }
+});
+
+// Function to download CSV
+function downloadCSV(content) {
+    const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'evaluation_report.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+
+// Function to fetch additional data
+async function fetchAdditionalData(facultyId, selectedCategory) {
+    let url = selectedCategory === 'self'
+        ? `get_self_eval.php?faculty_id=${facultyId}`
+        : selectedCategory === 'dean_self'
+            ? `get_dean_self_eval.php?faculty_id=${facultyId}`
+            : `get_faculty_ratings.php?faculty_id=${facultyId}&category=${selectedCategory}`;
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.status !== 'success' || !data.data) {
+            return '"No additional data available."\n';
+        }
+
+        let additionalData = `"Criteria","Question","Type","Rate 1 (%)","Rate 2 (%)","Rate 3 (%)","Rate 4 (%)","Comments"\n`;
+        Object.entries(data.data).forEach(([criteria, questions]) => {
+            questions.forEach(q => {
+                let cleanedComments = q.comments.map(c => c.trim()).filter(c => c).join('; ');
+                additionalData += `"${criteria}","${q.question.trim()}","${q.question_type}","${q.rate1}","${q.rate2}","${q.rate3}","${q.rate4}","${cleanedComments}"\n`;
             });
-            callback(additionalData);
-        })
-        .catch(() => {
-            callback('Error fetching additional data.\n');
         });
+
+        return additionalData;
+    } catch (error) {
+        console.error('Error fetching additional data:', error);
+        return '"Error fetching additional data."\n';
+    }
 }
 </script>
 <style>

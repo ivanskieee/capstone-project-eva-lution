@@ -69,33 +69,7 @@ $end_page = min($current_segment * $segment_size, $total_pages);
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php
-                                $i = $offset + 1;
-                                foreach ($users_data as $row): ?>
-                                    <tr>
-                                        <th class="text-center"><?php echo $i++; ?></th>
-                                        <td><b><?php echo htmlspecialchars(ucwords($row['firstname'] . ' ' . $row['lastname'])); ?></b>
-                                        </td>
-                                        <td><b><?php echo htmlspecialchars($row['email']); ?></b></td>
-                                        <td class="text-center">
-                                            <button type="button"
-                                                class="btn btn-default btn-sm btn-flat border-info wave-effect text-info dropdown-toggle"
-                                                data-toggle="dropdown" aria-expanded="true">
-                                                Action
-                                            </button>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item"
-                                                    href="new_users.php?id=<?php echo $row['id']; ?>">Edit</a>
-                                                <div class="dropdown-divider"></div>
-                                                <form method="post" action="user_list.php" style="display: inline;"
-                                                    class="delete-form">
-                                                    <input type="hidden" name="delete_id" value="<?php echo $row['id']; ?>">
-                                                    <button type="submit" class="dropdown-item">Delete</button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
+                                <!-- Data will be dynamically loaded here -->
                             </tbody>
                         </table>
                         <p id="noRecordsMessage" style="display:none; color: black;" class="ml-1">No user found.</p>
@@ -103,40 +77,47 @@ $end_page = min($current_segment * $segment_size, $total_pages);
                 </div>
 
                 <!-- Pagination -->
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-center">
-                        <?php if ($current_segment > 1): ?>
-                            <li class="page-item">
-                                <a class="page-link btn btn-success" href="?page=<?php echo ($start_page - 1); ?>"
-                                    aria-label="Previous">
-                                    <span aria-hidden="true">&laquo; Previous Segment</span>
-                                </a>
-                            </li>
-                        <?php endif; ?>
-
-                        <?php for ($p = $start_page; $p <= $end_page; $p++): ?>
-                            <li class="page-item <?php echo ($p == $page) ? 'active' : ''; ?>">
-                                <a class="page-link btn btn-success <?php echo ($p == $page) ? 'active' : ''; ?>"
-                                    href="?page=<?php echo $p; ?>">
-                                    <?php echo $p; ?>
-                                </a>
-                            </li>
-                        <?php endfor; ?>
-
-                        <?php if ($end_page < $total_pages): ?>
-                            <li class="page-item">
-                                <a class="page-link btn btn-success" href="?page=<?php echo $end_page + 1; ?>"
-                                    aria-label="Next">
-                                    <span aria-hidden="true">Next Segment &raquo;</span>
-                                </a>
-                            </li>
-                        <?php endif; ?>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center" id="pagination-links">
+                        <!-- Pagination links will be dynamically generated -->
                     </ul>
                 </nav>
             </div>
         </div>
     </nav>
 </div>
+
+<script>
+    $(document).ready(function () {
+        function loadUsers(page = 1, search = '') {
+            $.ajax({
+                url: 'fetch_users.php',
+                method: 'POST',
+                data: { search: search, page: page },
+                dataType: 'json',
+                success: function (response) {
+                    $('#users_list tbody').html(response.tableData);
+                    $('#pagination-links').html(response.pagination);
+                },
+                error: function () {
+                    console.error('Failed to fetch user data.');
+                }
+            });
+        }
+
+        $('#searchInput').on('keyup', function () {
+            loadUsers(1, $(this).val());
+        });
+
+        $(document).on('click', '.pagination a', function (e) {
+            e.preventDefault();
+            loadUsers($(this).data('page'), $('#searchInput').val());
+        });
+
+        loadUsers(1);
+    });
+</script>
+
 
 <script>
     $(document).ready(function () {
@@ -184,36 +165,32 @@ $end_page = min($current_segment * $segment_size, $total_pages);
 </script>
 <script>
     $(document).ready(function () {
-        $('#searchInput').on('keyup', function () {
-            var searchValue = this.value.toLowerCase();
-            var rows = document.querySelectorAll('#student_list tbody tr');
-            var noRecordsMessage = document.getElementById('noRecordsMessage');
-            var matchesFound = false;
-
-            rows.forEach(function (row) {
-                var cells = row.querySelectorAll('td');
-                var matches = false;
-
-                cells.forEach(function (cell) {
-                    if (cell.textContent.toLowerCase().includes(searchValue)) {
-                        matches = true;
-                    }
-                });
-
-                if (matches) {
-                    row.style.display = '';
-                    matchesFound = true;
-                } else {
-                    row.style.display = 'none';
+        function loadUsers(page = 1, search = '') {
+            $.ajax({
+                url: 'search_users.php',
+                method: 'POST',
+                data: { search: search, page: page },
+                dataType: 'json',
+                success: function (response) {
+                    $('#users_list tbody').html(response.tableData);
+                    $('#pagination-links').html(response.pagination);
+                },
+                error: function () {
+                    console.error('Failed to fetch user data.');
                 }
             });
+        }
 
-            if (matchesFound) {
-                noRecordsMessage.style.display = 'none';
-            } else {
-                noRecordsMessage.style.display = '';
-            }
+        $('#searchInput').on('keyup', function () {
+            loadUsers(1, $(this).val());
         });
+
+        $(document).on('click', '.pagination a', function (e) {
+            e.preventDefault();
+            loadUsers($(this).data('page'), $('#searchInput').val());
+        });
+
+        loadUsers(1);
     });
 </script>
 <style>
