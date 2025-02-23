@@ -29,12 +29,11 @@ $academic_period = $active_academic
         <div class="col-12 mt-4">
             <div class="card">
                 <div class="card-body">
-                    Welcome <?php echo $_SESSION['login_name'] ?>!
+                    <h5>Welcome, <?php echo htmlspecialchars($_SESSION['login_name']); ?>!</h5>
                     <br>
                     <div class="col-md-5">
                         <?php
-                        // Fetch the user's academic_id from the `users` table (assuming the user is logged in)
-                        $student_id = $_SESSION['user']['student_id'];  // Adjust this to your session variable
+                        $student_id = $_SESSION['user']['student_id'];  
                         $query_user = 'SELECT academic_id FROM student_list WHERE student_id = :student_id';
                         $stmt_user = $conn->prepare($query_user);
                         $stmt_user->bindParam(':student_id', $student_id, PDO::PARAM_INT);
@@ -43,8 +42,6 @@ $academic_period = $active_academic
 
                         if ($user && $user['academic_id']) {
                             $academic_id = $user['academic_id'];
-
-                            // Fetch the academic year, semester, and status from the `academic_list` table
                             $query_academic = 'SELECT year, semester, status FROM academic_list WHERE academic_id = :academic_id';
                             $stmt_academic = $conn->prepare($query_academic);
                             $stmt_academic->bindParam(':academic_id', $academic_id, PDO::PARAM_INT);
@@ -52,51 +49,48 @@ $academic_period = $active_academic
                             $academic = $stmt_academic->fetch(PDO::FETCH_ASSOC);
 
                             if ($academic) {
-                                // Map the status to a user-friendly label
-                                $status_labels = [
-                                    0 => 'Default (Not Started)',
-                                    1 => 'Ongoing',
-                                    2 => 'Closed'
-                                ];
+                                $status_labels = [0 => 'Default (Not Started)', 1 => 'Ongoing', 2 => 'Closed'];
                                 $status_label = $status_labels[$academic['status']] ?? 'Unknown';
 
-                                // Display the academic year, semester, and status in the callout
                                 echo '
-                                        <div class="callout callout-info" style="border-left: 5px solid rgb(51, 128, 64);">
-                                            <h5><b>Academic Year:</b> ' . htmlspecialchars($academic['year']) . ' <b>Semester:</b> ' . htmlspecialchars($academic['semester']) . '</h5>
-                                            <h6><b>Evaluation Status:</b> ' . htmlspecialchars($status_label) . '</h6>
-                                        </div>';
+                                    <div class="callout callout-info shadow-md rounded-lg p-3" style="border-left: 5px solid rgb(51, 128, 64);">
+                                        <h5><b>Academic Year:</b> ' . htmlspecialchars($academic['year']) . ' <b>Semester:</b> ' . htmlspecialchars($academic['semester']) . '</h5>
+                                        <h6><b>Evaluation Status:</b> ' . htmlspecialchars($status_label) . '</h6>
+                                    </div>';
                             } else {
-                                // No academic data found for the user's academic_id
                                 echo '
-                                        <div class="callout callout-warning" style="border-left: 5px solid orange;">
-                                            <h5><b>No Academic Year Data</b></h5>
-                                            <h6>The user is not associated with an active academic year or semester.</h6>
-                                        </div>';
+                                    <div class="callout callout-warning shadow-md rounded-lg p-3" style="border-left: 5px solid orange;">
+                                        <h5><b>No Academic Year Data</b></h5>
+                                        <h6>The user is not associated with an active academic year or semester.</h6>
+                                    </div>';
                             }
                         } else {
-                            // No academic_id found for the user
                             echo '
-                                    <div class="callout callout-warning" style="border-left: 5px solid orange;">
-                                        <h5><b>No Academic Association</b></h5>
-                                        <h6>The user is not associated with any academic year or semester.</h6>
-                                    </div>';
+                                <div class="callout callout-warning shadow-md rounded-lg p-3" style="border-left: 5px solid orange;">
+                                    <h5><b>No Academic Association</b></h5>
+                                    <h6>The user is not associated with any academic year or semester.</h6>
+                                </div>';
                         }
                         ?>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-12 mt-5">
-            <div class="alert text-center ml-2">
-                <h4><b>EVALUATION OF FACULTY PERFORMANCE</b></h4>
-                <h5><?php echo 'A.Y. ' . $academic_period; ?></h5><br>
-                <p class="justify-text">
+
+        <!-- Faculty Evaluation Section with Glassmorphism Logo -->
+        <div class="d-flex justify-content-center mt-5 position-relative">
+            <div class="card shadow-lg rounded-lg p-4 text-center glass-container">
+                <h4 class="font-weight-bold text-black">EVALUATION OF FACULTY PERFORMANCE</h4>
+                <h5 class="text-muted"><?php echo 'A.Y. ' . htmlspecialchars($academic_period); ?></h5>
+                <hr class="my-3" style="border-top: 1px solid #28a745;">
+                <p class="text-justify text-secondary">
                     This is intended to secure your <b>HONEST, SINCERE, and OBJECTIVE ASSESSMENT</b> of your
-                    teacher’s performance.It will assist the Department and the Administration in improving
+                    teacher’s performance. It will assist the Department and the Administration in improving
                     programs for <b>FACULTY DEVELOPMENT</b>.
                 </p>
             </div>
+            <!-- Glassmorphism Logo -->
+            <img src="images/spclog.png" class="glass-logo">
         </div>
     </nav>
 </div>
@@ -109,9 +103,29 @@ $academic_period = $active_academic
     }
 
     .content .main-header {
-        max-height: 81vh;
+        max-height: 90vh;
         overflow-y: auto;
         scroll-behavior: smooth;
+    }
+    .glass-container {
+        background: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
+        backdrop-filter: blur(10px); /* Glass blur effect */
+        border-radius: 15px;
+        padding: 20px;
+        position: relative;
+        max-width: 700px;
+        width: 100%;
+        z-index: 2;
+    }
+
+    .glass-logo {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 240px; /* Adjust logo size */
+        opacity: 0.2; /* Faded look */
+        z-index: 1;
     }
 </style>
 

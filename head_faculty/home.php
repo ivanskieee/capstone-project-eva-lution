@@ -244,22 +244,18 @@ foreach ($filteredFacultyList as $faculty) {
                         </div>
                     </div>
                 </div>
-                <div class="d-flex justify-content-center align-items-center mt-2">
-                    <div class="legend-item mx-2 text-center">
-                        <div class="legend-color"></div>
-                        <small>4 - Strongly Agree</small>
+                <div class="legend-container">
+                    <div class="legend-item">
+                        3.25 - 4.00 <br> <b>Strongly Agree</b> <span class="legend-text">High</span>
                     </div>
-                    <div class="legend-item mx-2 text-center">
-                        <div class="legend-color"></div>
-                        <small>3 - Agree</small>
+                    <div class="legend-item">
+                        2.50 - 3.24 <br> <b>Agree</b> <span class="legend-text">Moderate-High</span>
                     </div>
-                    <div class="legend-item mx-2 text-center">
-                        <div class="legend-color"></div>
-                        <small>2 - Disagree</small>
+                    <div class="legend-item">
+                        1.75 - 2.49 <br> <b>Disagree</b> <span class="legend-text">Moderate-Low</span>
                     </div>
-                    <div class="legend-item mx-2 text-center">
-                        <div class="legend-color"></div>
-                        <small>1 - Strongly Disagree</small>
+                    <div class="legend-item">
+                        1.00 - 1.74 <br> <b>Strongly Disagree</b> <span class="legend-text">Low</span>
                     </div>
                 </div>
 
@@ -529,7 +525,7 @@ foreach ($filteredFacultyList as $faculty) {
                 }
 
                 .content .main-header {
-                    max-height: 81vh;
+                    max-height: 88vh;
                     overflow-y: auto;
                     scroll-behavior: smooth;
                 }
@@ -592,6 +588,30 @@ foreach ($filteredFacultyList as $faculty) {
                     align-items: center;
                     font-size: 0.75rem;
                 } */
+                .legend-container {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 20px;
+                    margin-top: 10px;
+                    flex-wrap: wrap;
+                }
+
+                .legend-item {
+                    text-align: center;
+                    font-size: 14px;
+                    font-weight: bold;
+                    color: #333;
+                    padding: 5px;
+                    border-bottom: 1px solid #ddd;
+                    min-width: 180px;
+                }
+
+                .legend-text {
+                    display: block;
+                    font-size: 12px;
+                    font-weight: normal;
+                }
             </style>
 
 <?php include 'footer.php'; ?>
