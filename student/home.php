@@ -108,8 +108,8 @@ $academic_period = $active_academic
         scroll-behavior: smooth;
     }
     .glass-container {
-        background: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
-        backdrop-filter: blur(10px); /* Glass blur effect */
+        background: rgba(255, 255, 255, 0.2); 
+        backdrop-filter: blur(10px); 
         border-radius: 15px;
         padding: 20px;
         position: relative;
@@ -123,9 +123,11 @@ $academic_period = $active_academic
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        width: 240px; /* Adjust logo size */
-        opacity: 0.2; /* Faded look */
+        width: 240px; 
+        opacity: 0.5; 
         z-index: 1;
+        filter: drop-shadow(2px 2px 5px rgba(0, 0, 0, 0.3)); 
+        mix-blend-mode: multiply; 
     }
 </style>
 

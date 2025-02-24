@@ -483,17 +483,32 @@ $headList = fetchHeadFacultyList($conn);
                         const firstScore = dataset[0];
                         const lastScore = dataset[dataset.length - 1];
 
-                        if (lastScore > firstScore) {
-                            feedbackElement.textContent = `Great job! Performance in ${category} has improved.`;
+                        const firstPerformance = getPerformanceLevel(firstScore);
+                        const lastPerformance = getPerformanceLevel(lastScore);
+
+                        if (lastPerformance === "High" && firstPerformance !== "High") {
+                            feedbackElement.textContent = `Great job! Performance in ${category} has improved to High.`;
                             feedbackElement.className = "text-success";
-                        } else if (lastScore < firstScore) {
-                            feedbackElement.textContent = `Performance in ${category} has declined. Consider reviewing areas for improvement.`;
+                        } else if (lastPerformance === "Low" && firstPerformance !== "Low") {
+                            feedbackElement.textContent = `Performance in ${category} has declined to Low. Consider reviewing areas for improvement.`;
                             feedbackElement.className = "text-danger";
-                        } else {
-                            feedbackElement.textContent = `Performance in ${category} remains stable.`;
+                        } else if (lastPerformance === firstPerformance) {
+                            feedbackElement.textContent = `Performance in ${category} remains at ${lastPerformance}.`;
                             feedbackElement.className = "text-warning";
+                        } else {
+                            feedbackElement.textContent = `Performance in ${category} has changed from ${firstPerformance} to ${lastPerformance}.`;
+                            feedbackElement.className = "text-info";
                         }
                     }
+
+                    function getPerformanceLevel(score) {
+                        if (score >= 2.50) {
+                            return "High";
+                        } else {
+                            return "Low";
+                        }
+                    }
+
 
                     function clearCharts() {
                         if (barChart) {
@@ -568,7 +583,7 @@ $headList = fetchHeadFacultyList($conn);
                 }
 
                 .content .main-header {
-                    max-height: 85vh;
+                    max-height: 88vh;
                     overflow-y: auto;
                     scroll-behavior: smooth;
                 }

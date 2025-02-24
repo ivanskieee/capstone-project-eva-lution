@@ -425,48 +425,62 @@ foreach ($filteredFacultyList as $faculty) {
         }
 
         function updateFeedback(dataset, category) {
-            if (!selectedCategory || selectedCategory !== category) {
-                clearFeedback();
-                return;
-            }
+                        if (!selectedCategory || selectedCategory !== category) {
+                            clearFeedback();
+                            return;
+                        }
 
-            if (dataset.length < 2) {
-                feedbackElement.textContent = "Not enough data to analyze performance.";
-                feedbackElement.className = "text-secondary";
-                return;
-            }
+                        if (dataset.length < 2) {
+                            feedbackElement.textContent = "Not enough data to analyze performance.";
+                            feedbackElement.className = "text-secondary";
+                            return;
+                        }
 
-            const firstScore = dataset[0];
-            const lastScore = dataset[dataset.length - 1];
+                        const firstScore = dataset[0];
+                        const lastScore = dataset[dataset.length - 1];
 
-            if (lastScore > firstScore) {
-                feedbackElement.textContent = `Great job! Performance in ${category} has improved.`;
-                feedbackElement.className = "text-success";
-            } else if (lastScore < firstScore) {
-                feedbackElement.textContent = `Performance in ${category} has declined. Consider reviewing areas for improvement.`;
-                feedbackElement.className = "text-danger";
-            } else {
-                feedbackElement.textContent = `Performance in ${category} remains stable.`;
-                feedbackElement.className = "text-warning";
-            }
-        }
+                        const firstPerformance = getPerformanceLevel(firstScore);
+                        const lastPerformance = getPerformanceLevel(lastScore);
 
-        function clearCharts() {
-            if (barChart) {
-                barChart.destroy();
-                barChart = null;
-            }
-            if (lineChart) {
-                lineChart.destroy();
-                lineChart = null;
-            }
-        }
+                        if (lastPerformance === "High" && firstPerformance !== "High") {
+                            feedbackElement.textContent = `Great job! Performance in ${category} has improved to High.`;
+                            feedbackElement.className = "text-success";
+                        } else if (lastPerformance === "Low" && firstPerformance !== "Low") {
+                            feedbackElement.textContent = `Performance in ${category} has declined to Low. Consider reviewing areas for improvement.`;
+                            feedbackElement.className = "text-danger";
+                        } else if (lastPerformance === firstPerformance) {
+                            feedbackElement.textContent = `Performance in ${category} remains at ${lastPerformance}.`;
+                            feedbackElement.className = "text-warning";
+                        } else {
+                            feedbackElement.textContent = `Performance in ${category} has changed from ${firstPerformance} to ${lastPerformance}.`;
+                            feedbackElement.className = "text-info";
+                        }
+                    }
 
-        function clearFeedback() {
-            feedbackElement.textContent = "";
-            feedbackElement.className = "d-none"; // Hide feedback message
-        }
-    });
+                    function getPerformanceLevel(score) {
+                        if (score >= 2.50) {
+                            return "High";
+                        } else {
+                            return "Low";
+                        }
+                    }
+
+                    function clearCharts() {
+                        if (barChart) {
+                            barChart.destroy();
+                            barChart = null;
+                        }
+                        if (lineChart) {
+                            lineChart.destroy();
+                            lineChart = null;
+                        }
+                    }
+
+                    function clearFeedback() {
+                        feedbackElement.textContent = "";
+                        feedbackElement.className = "d-none"; // Hide feedback message
+                    }
+                });
 </script>
 
 
