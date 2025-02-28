@@ -6,7 +6,6 @@ if (isset($_POST['search'])) {
     $page = isset($_POST['page']) ? (int)$_POST['page'] : 1;
     $records_per_page = 5;
 
-    // Get the correct numbering from the database (preserve index)
     $query = "SELECT COUNT(*) as total FROM academic_list 
               WHERE year LIKE :search 
               OR semester LIKE :search 
@@ -39,7 +38,6 @@ if (isset($_POST['search'])) {
     $stmt->execute();
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Output table rows
     if ($result) {
         foreach ($result as $row) {
             echo "<tr>
@@ -68,11 +66,10 @@ if (isset($_POST['search'])) {
                   </tr>";
         }
 
-        // Pagination with limited page numbers
         echo "<!--pagination--><nav aria-label='Page navigation'>
                 <ul class='pagination justify-content-center'>";
         
-        $range = 5; // Number of visible pages
+        $range = 5; 
         $start_page = max(1, $page - floor($range / 2));
         $end_page = min($total_pages, $start_page + $range - 1);
 
