@@ -51,10 +51,9 @@ $generated_link = isset($_SESSION['generated_token']) ? "http://localhost/Capsto
     function copyLink() {
         var copyText = document.getElementById("generated-link");
         copyText.select();
-        copyText.setSelectionRange(0, 99999); // For mobile devices
+        copyText.setSelectionRange(0, 99999); 
         document.execCommand("copy");
 
-        // Show SweetAlert2 success message
         Swal.fire({
             icon: "success",
             title: "Copied!",
@@ -63,7 +62,6 @@ $generated_link = isset($_SESSION['generated_token']) ? "http://localhost/Capsto
             timer: 1500
         });
 
-        // After copying, clear the link from session storage
         fetch('clear_link.php')
             .then(response => response.json())
             .then(data => {

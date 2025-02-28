@@ -55,10 +55,10 @@ if (isset($_GET['faculty_id'], $_GET['category'], $_GET['academic_id'])) {
     $stmt->execute(['faculty_id' => $facultyId, 'academic_id' => $academicId]);
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Get total responses to calculate percentage
+   
     $totalResponses = array_sum(array_column($data, 'count'));
 
-    // Prepare labels (ratings) and dataset (percentage for each rating)
+   
     $labels = [];
     $dataset = [];
 

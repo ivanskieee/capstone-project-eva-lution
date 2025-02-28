@@ -11,23 +11,19 @@ $stmt = $conn->prepare($query);
 $stmt->execute();
 $users_data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Assume $total_records is the total number of records from the database
-$total_records = count($users_data); // Replace this with the actual query to count rows
-$records_per_page = 5; // Number of records per page
+$total_records = count($users_data); 
+$records_per_page = 5; 
 $total_pages = ceil($total_records / $records_per_page);
 
 // Current page
 $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
-$page = max(1, min($page, $total_pages)); // Ensure the page is within valid range
+$page = max(1, min($page, $total_pages)); 
 
-// Calculate offset for database query
 $offset = ($page - 1) * $records_per_page;
 
-// Fetch only the required records for the current page
 $users_data = array_slice($users_data, $offset, $records_per_page);
 
-// Pagination segment settings
-$segment_size = 5; // Number of page links per segment
+$segment_size = 5; 
 $current_segment = ceil($page / $segment_size);
 $start_page = ($current_segment - 1) * $segment_size + 1;
 $end_page = min($current_segment * $segment_size, $total_pages);

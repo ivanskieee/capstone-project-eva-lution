@@ -120,20 +120,20 @@ $end_page = min($total_pages, $start_page + $range - 1);
         white-space: normal;
     }
     .pagination .page-link {
-        color: black; /* Standard text color */
-        background-color: white; /* White background */
-        border: 1px solid #ddd; /* Light gray border */
-        padding: 6px 12px; /* Adjust spacing */
+        color: black; 
+        background-color: white;
+        border: 1px solid #ddd; 
+        padding: 6px 12px;
     }
 
     .pagination .page-item.active .page-link {
-        background-color: #f8f9fa; /* Light gray for active page */
-        color: black; /* Text remains black */
-        border-color: #ddd; /* Match border */
+        background-color: #f8f9fa; 
+        color: black; 
+        border-color: #ddd; 
     }
 
     .pagination .page-link:hover {
-        background-color: #f1f1f1; /* Slight hover effect */
+        background-color: #f1f1f1; 
         color: black;
     }
 </style>
@@ -150,8 +150,8 @@ $end_page = min($total_pages, $start_page + $range - 1);
                 },
                 dataType: 'json',
                 success: function (response) {
-                    $('#audit_table tbody').html(response.tableData); // Update logs
-                    $('#audit-pagination').html(response.pagination); // Update pagination
+                    $('#audit_table tbody').html(response.tableData); 
+                    $('#audit-pagination').html(response.pagination); 
                 },
                 error: function () {
                     console.error('Failed to fetch logs.');

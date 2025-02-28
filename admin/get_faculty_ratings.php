@@ -12,7 +12,6 @@ $response = [
 ];
 
 if ($faculty_id && $category) {
-    // Map categories to questions and evaluation tables
     $tableMapping = [
         'faculty' => [
             'questions' => 'question_list',
@@ -37,7 +36,6 @@ if ($faculty_id && $category) {
         $answerTable = $tableMapping[$category]['answers'];
 
         try {
-            // Fetch all criteria and group questions under each
             $query = $conn->prepare("
                 SELECT 
                     c.criteria_id, 
@@ -63,7 +61,6 @@ if ($faculty_id && $category) {
             $query->execute();
             $ratings = $query->fetchAll(PDO::FETCH_ASSOC);
 
-            // Fetch comments
             $commentQuery = $conn->prepare("
                 SELECT 
                     q.question_id,
@@ -79,13 +76,11 @@ if ($faculty_id && $category) {
             $commentQuery->execute();
             $comments = $commentQuery->fetchAll(PDO::FETCH_ASSOC);
 
-            // Group comments by question_id
             $commentsByQuestion = [];
             foreach ($comments as $comment) {
                 $commentsByQuestion[$comment['question_id']][] = $comment['comment'];
             }
 
-            // Organize data by criteria
             $responseData = [];
             foreach ($ratings as $row) {
                 $total = $row['total_responses'];

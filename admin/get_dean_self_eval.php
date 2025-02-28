@@ -4,7 +4,6 @@ include '../database/connection.php';
 if (isset($_GET['faculty_id'])) {
     $faculty_id = intval($_GET['faculty_id']); // Sanitize input
 
-    // Fetch self-evaluation data
     $stmt = $conn->prepare("
         SELECT 
             skills, 

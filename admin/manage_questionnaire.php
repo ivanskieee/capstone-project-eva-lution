@@ -6,7 +6,6 @@ include 'handlers/questionnaire_handler.php';
     <nav class="main-header">
         <div class="container-fluid">
             <div class="row">
-                <!-- Form Section -->
                 <div class="col-md-4 mt-5">
                     <div class="card card-success">
                         <div class="card-header">
@@ -23,7 +22,6 @@ include 'handlers/questionnaire_handler.php';
                                 <input type="hidden" name="academic_id"
                                     value="<?php echo isset($_GET['academic_id']) ? $_GET['academic_id'] : ''; ?>">
 
-                                <!-- Removed duplicate hidden sector input -->
 
                                 <div class="form-group">
                                     <label for="sector">Sector</label>
@@ -91,7 +89,6 @@ include 'handlers/questionnaire_handler.php';
                     </div>
                 </div>
 
-                <!-- Questionnaire Display Section -->
                 <div class="col-md-8 mt-2">
                     <div class="card card-outline card-success">
                         <div class="card-header">
