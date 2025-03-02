@@ -21,28 +21,29 @@ if (isset($_POST['search'])) {
     $total_pages = ceil($total_records / $records_per_page);
     $stmt->closeCursor();
 
-    // Fetch users
-    $query = "SELECT * FROM users
+    // Fetch users with row number
+    $query = "SELECT id, firstname, lastname, email, 
+                 (SELECT COUNT(*) FROM users AS sub WHERE sub.id <= main.id) AS row_num
+              FROM users AS main
               WHERE firstname LIKE :search 
               OR lastname LIKE :search 
               OR email LIKE :search
               ORDER BY id ASC
-              LIMIT :limit OFFSET :offset";
+              LIMIT :offset, :records_per_page";
     
     $stmt = $conn->prepare($query);
     $stmt->bindValue(':search', $searchTerm, PDO::PARAM_STR);
-    $stmt->bindValue(':limit', $records_per_page, PDO::PARAM_INT);
     $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+    $stmt->bindValue(':records_per_page', $records_per_page, PDO::PARAM_INT);
     $stmt->execute();
     $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Generate table rows
     $tableData = "";
-    $counter = $offset + 1;
     if ($users) {
         foreach ($users as $row) {
             $tableData .= "<tr>
-                    <th class='text-center'>{$counter}</th>
+                    <th class='text-center'>{$row['row_num']}</th>
                     <td><b>" . ucwords($row['firstname'] . ' ' . $row['lastname']) . "</b></td>
                     <td><b>{$row['email']}</b></td>
                     <td class='text-center'>
@@ -59,7 +60,6 @@ if (isset($_POST['search'])) {
                         </div>
                     </td>
                 </tr>";
-            $counter++;
         }
     } else {
         $tableData = "<tr><td colspan='4' class='text-center'>No results found.</td></tr>";

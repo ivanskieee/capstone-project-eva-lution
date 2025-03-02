@@ -24,9 +24,11 @@ if (isset($_POST['search'])) {
     $total_pages = ceil($total_records / $records_per_page);
     $stmt->closeCursor();
 
-    // Fetch filtered student records
+    // Fetch student records with actual row number
     $query = "
-        SELECT * FROM student_list
+        SELECT student_id, school_id, firstname, lastname, email, subject, section,
+               (SELECT COUNT(*) FROM student_list AS sub WHERE sub.student_id <= main.student_id) AS row_num
+        FROM student_list AS main
         WHERE school_id LIKE :search 
         OR firstname LIKE :search 
         OR lastname LIKE :search 
@@ -34,19 +36,18 @@ if (isset($_POST['search'])) {
         OR subject LIKE :search 
         OR section LIKE :search
         ORDER BY student_id ASC
-        LIMIT :limit OFFSET :offset
+        LIMIT :offset, :records_per_page
     ";
 
     $stmt = $conn->prepare($query);
     $stmt->bindValue(':search', $searchTerm, PDO::PARAM_STR);
-    $stmt->bindValue(':limit', $records_per_page, PDO::PARAM_INT);
     $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+    $stmt->bindValue(':records_per_page', $records_per_page, PDO::PARAM_INT);
     $stmt->execute();
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Prepare table rows
     $tableData = "";
-    $counter = ($page - 1) * $records_per_page + 1;
     if ($result) {
         foreach ($result as $row) {
             // Format subjects
@@ -57,14 +58,13 @@ if (isset($_POST['search'])) {
             }
 
             $tableData .= "<tr>
-                    <th class='text-center'>{$counter}</th>
+                    <th class='text-center'>{$row['row_num']}</th>
                     <td><b>{$row['school_id']}</b></td>
                     <td><b>" . ucwords($row['firstname'] . ' ' . $row['lastname']) . "</b></td>
                     <td><b>{$row['email']}</b></td>
                     <td>{$subjectList}</td>
                     <td><b>{$row['section']}</b></td>
                 </tr>";
-            $counter++;
         }
     } else {
         $tableData = "<tr><td colspan='6' class='text-center'>No results found.</td></tr>";
@@ -90,6 +90,12 @@ if (isset($_POST['search'])) {
     for ($page_num = $start_page; $page_num <= $end_page; $page_num++) {
         $active_class = ($page_num == $page) ? 'btn-success' : 'btn-outline-success text-black';
         $pagination .= "<li class='page-item'><a class='page-link text-black $active_class' href='#' data-page='$page_num'>$page_num</a></li>";
+    }
+
+    if ($end_page < $total_pages) {
+        if ($end_page < $total_pages - 1)
+            $pagination .= "<li class='page-item disabled'><span class='page-link text-black'>...</span></li>";
+        $pagination .= "<li class='page-item'><a class='page-link btn btn-outline-success text-black' href='#' data-page='$total_pages'>$total_pages</a></li>";
     }
 
     if ($page < $total_pages) {

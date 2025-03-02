@@ -3,7 +3,7 @@ include '../database/connection.php';
 
 if (isset($_POST['search'])) {
     $search = $_POST['search'];
-    $page = isset($_POST['page']) ? (int) $_POST['page'] : 1;
+    $page = isset($_POST['page']) ? (int)$_POST['page'] : 1;
     $records_per_page = 5;
     $offset = ($page - 1) * $records_per_page;
 
@@ -12,7 +12,7 @@ if (isset($_POST['search'])) {
               WHERE school_id LIKE :search 
               OR firstname LIKE :search 
               OR lastname LIKE :search";
-
+    
     $stmt = $conn->prepare($query);
     $searchTerm = "%$search%";
     $stmt->bindValue(':search', $searchTerm, PDO::PARAM_STR);
@@ -21,30 +21,30 @@ if (isset($_POST['search'])) {
     $total_pages = ceil($total_records / $records_per_page);
     $stmt->closeCursor();
 
-    // Fetch filtered faculty records
-    $query = "
-        SELECT * FROM college_faculty_list
-        WHERE school_id LIKE :search 
-        OR firstname LIKE :search 
-        OR lastname LIKE :search
-        ORDER BY faculty_id ASC
-        LIMIT :limit OFFSET :offset
-    ";
+    // Get actual row number from full dataset
+    $query = "SELECT faculty_id, school_id, firstname, lastname, email,
+                     (SELECT COUNT(*) FROM college_faculty_list AS sub WHERE sub.faculty_id <= main.faculty_id) AS row_num
+              FROM college_faculty_list AS main
+              WHERE school_id LIKE :search 
+              OR firstname LIKE :search 
+              OR lastname LIKE :search
+              OR email LIKE :search
+              ORDER BY faculty_id ASC
+              LIMIT :offset, :records_per_page";
 
     $stmt = $conn->prepare($query);
     $stmt->bindValue(':search', $searchTerm, PDO::PARAM_STR);
-    $stmt->bindValue(':limit', $records_per_page, PDO::PARAM_INT);
     $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+    $stmt->bindValue(':records_per_page', $records_per_page, PDO::PARAM_INT);
     $stmt->execute();
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Prepare table rows
     $tableData = "";
-    $counter = ($page - 1) * $records_per_page + 1;
     if ($result) {
         foreach ($result as $row) {
             $tableData .= "<tr>
-                    <th class='text-center'>{$counter}</th>
+                    <th class='text-center'>{$row['row_num']}</th>
                     <td><b>{$row['school_id']}</b></td>
                     <td><b>" . ucwords($row['firstname'] . ' ' . $row['lastname']) . "</b></td>
                     <td><b>{$row['email']}</b></td>
@@ -61,7 +61,6 @@ if (isset($_POST['search'])) {
                         </div>
                     </td>
                 </tr>";
-            $counter++;
         }
     } else {
         $tableData = "<tr><td colspan='5' class='text-center'>No results found.</td></tr>";
@@ -87,6 +86,12 @@ if (isset($_POST['search'])) {
     for ($page_num = $start_page; $page_num <= $end_page; $page_num++) {
         $active_class = ($page_num == $page) ? 'btn-success' : 'btn-outline-success text-black';
         $pagination .= "<li class='page-item'><a class='page-link text-black $active_class' href='#' data-page='$page_num'>$page_num</a></li>";
+    }
+
+    if ($end_page < $total_pages) {
+        if ($end_page < $total_pages - 1)
+            $pagination .= "<li class='page-item disabled'><span class='page-link text-black'>...</span></li>";
+        $pagination .= "<li class='page-item'><a class='page-link btn btn-outline-success text-black' href='#' data-page='$total_pages'>$total_pages</a></li>";
     }
 
     if ($page < $total_pages) {

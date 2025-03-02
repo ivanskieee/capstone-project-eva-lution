@@ -9,8 +9,12 @@ if (isset($_POST['search'])) {
 
     // Count total records
     $query = "SELECT COUNT(*) as total FROM academic_list 
-              WHERE year LIKE :search 
-              OR semester LIKE :search";
+              WHERE academic_id LIKE :search 
+              OR year LIKE :search 
+              OR semester LIKE :search 
+              OR end_date LIKE :search 
+              OR is_default LIKE :search 
+              OR status LIKE :search";
 
     $stmt = $conn->prepare($query);
     $searchTerm = "%$search%";
@@ -20,12 +24,13 @@ if (isset($_POST['search'])) {
     $total_pages = ceil($total_records / $records_per_page);
     $stmt->closeCursor();
 
-    // Fetch academic records with related questions count
+    // Fetch academic records with actual row numbers
     $query = "
-        SELECT a.*, 
+        SELECT main.*, 
+               (SELECT COUNT(*) FROM academic_list AS sub WHERE sub.academic_id <= main.academic_id) AS row_num,
                COALESCE(q.total_questions, 0) AS total_questions, 
                COALESCE(ea.total_answers, 0) AS total_answers      
-        FROM academic_list a
+        FROM academic_list AS main
         LEFT JOIN (
             SELECT academic_id, COUNT(*) AS total_questions
             FROM (
@@ -38,7 +43,7 @@ if (isset($_POST['search'])) {
                 SELECT academic_id, question_id FROM question_dean_faculty
             ) AS combined_questions
             GROUP BY academic_id
-        ) q ON a.academic_id = q.academic_id
+        ) q ON main.academic_id = q.academic_id
         LEFT JOIN (
             SELECT academic_id, COUNT(DISTINCT faculty_id) AS total_answers
             FROM (
@@ -55,10 +60,14 @@ if (isset($_POST['search'])) {
                 SELECT NULL AS academic_id, faculty_id FROM self_head_eval
             ) AS combined_evaluation_answers
             GROUP BY academic_id
-        ) ea ON a.academic_id = ea.academic_id
-        WHERE a.year LIKE :search 
-        OR a.semester LIKE :search
-        ORDER BY a.academic_id ASC
+        ) ea ON main.academic_id = ea.academic_id
+        WHERE main.academic_id LIKE :search
+        OR main.year LIKE :search 
+        OR main.semester LIKE :search 
+        OR main.end_date LIKE :search 
+        OR main.is_default LIKE :search 
+        OR main.status LIKE :search
+        ORDER BY main.academic_id ASC
         LIMIT :limit OFFSET :offset
     ";
 
@@ -71,11 +80,10 @@ if (isset($_POST['search'])) {
 
     // Prepare table rows
     $tableData = "";
-    $counter = ($page - 1) * $records_per_page + 1; // Start from the correct number
     if ($result) {
         foreach ($result as $row) {
             $tableData .= "<tr>
-                    <th class='text-center'>{$counter}</th>
+                    <th class='text-center'>{$row['row_num']}</th>
                     <td><b>{$row['year']}</b></td>
                     <td><b>{$row['semester']}</b></td>
                     <td class='text-center'><b>{$row['total_questions']}</b></td>
@@ -89,7 +97,6 @@ if (isset($_POST['search'])) {
                         </div>
                     </td>
                   </tr>";
-            $counter++; // Increment the counter
         }
     } else {
         $tableData = "<tr><td colspan='6' class='text-center'>No results found.</td></tr>";

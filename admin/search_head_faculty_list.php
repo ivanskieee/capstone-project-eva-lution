@@ -21,30 +21,32 @@ if (isset($_POST['search'])) {
     $total_pages = ceil($total_records / $records_per_page);
     $stmt->closeCursor();
 
-    // Fetch filtered head faculty records
+    // Fetch filtered head faculty records with row numbers
     $query = "
-        SELECT * FROM head_faculty_list
+        SELECT head_id, school_id, firstname, lastname, email,
+               (SELECT COUNT(*) FROM head_faculty_list AS sub WHERE sub.head_id <= main.head_id) AS row_num
+        FROM head_faculty_list AS main
         WHERE school_id LIKE :search 
         OR firstname LIKE :search 
         OR lastname LIKE :search
+        OR email LIKE :search
         ORDER BY head_id ASC
-        LIMIT :limit OFFSET :offset
+        LIMIT :offset, :records_per_page
     ";
 
     $stmt = $conn->prepare($query);
     $stmt->bindValue(':search', $searchTerm, PDO::PARAM_STR);
-    $stmt->bindValue(':limit', $records_per_page, PDO::PARAM_INT);
     $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+    $stmt->bindValue(':records_per_page', $records_per_page, PDO::PARAM_INT);
     $stmt->execute();
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     // Prepare table rows
     $tableData = "";
-    $counter = ($page - 1) * $records_per_page + 1; // Start from the correct number
     if ($result) {
         foreach ($result as $row) {
             $tableData .= "<tr>
-                    <th class='text-center'>{$counter}</th>
+                    <th class='text-center'>{$row['row_num']}</th>
                     <td><b>{$row['school_id']}</b></td>
                     <td><b>" . ucwords($row['firstname'] . ' ' . $row['lastname']) . "</b></td>
                     <td><b>{$row['email']}</b></td>
@@ -61,7 +63,6 @@ if (isset($_POST['search'])) {
                         </div>
                     </td>
                 </tr>";
-            $counter++; // Increment the counter
         }
     } else {
         $tableData = "<tr><td colspan='5' class='text-center'>No results found.</td></tr>";
@@ -71,7 +72,7 @@ if (isset($_POST['search'])) {
     $pagination = "<nav aria-label='Page navigation'>
         <ul class='pagination justify-content-center'>";
 
-    $range = 5; // Number of visible pages
+    $range = 5;
     $start_page = max(1, $page - floor($range / 2));
     $end_page = min($total_pages, $start_page + $range - 1);
 

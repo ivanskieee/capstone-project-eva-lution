@@ -7,21 +7,24 @@ include 'handlers/academic_handler.php';
     <nav class="main-header">
         <div class="col-lg-12 mt-3">
             <div class="col-12 mb-3">
-                <h2 class="text-start" style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
+                <h2 class="text-start"
+                    style="font-size: 1.8rem; font-weight: bold; color: #4a4a4a; border-bottom: 2px solid #ccc; padding-bottom: 5px;">
                     Academic Year and Semester
                 </h2>
             </div>
             <div class="card card-outline card-success">
                 <div class="card-header">
                     <div class="card-tools">
-                        <a class="btn btn-block btn-sm btn-default btn-flat border-success new_academic" href="manage_academic.php">
+                        <a class="btn btn-block btn-sm btn-default btn-flat border-success new_academic"
+                            href="manage_academic.php">
                             <i class="fa fa-plus"></i> Add New
                         </a>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-8 col-md-4 ms-auto mt-3 mr-3">
-                        <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="Search Academic Year">
+                        <input type="text" id="searchInput" class="form-control form-control-sm"
+                            placeholder="Search Academic Year">
                     </div>
                 </div>
                 <div class="card-body">
@@ -49,7 +52,8 @@ include 'handlers/academic_handler.php';
                                 <!-- Table rows will be populated by the search and pagination AJAX -->
                             </tbody>
                         </table>
-                        <p id="noRecordsMessage" style="display:none; color: black;" class="ml-1">No academic year found.</p>
+                        <p id="noRecordsMessage" style="display:none; color: black;" class="ml-1">No academic year
+                            found.</p>
                     </div>
                 </div>
                 <nav aria-label="Page navigation example">
@@ -63,9 +67,9 @@ include 'handlers/academic_handler.php';
 </div>
 
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
 
-        $(document).on('submit', '.delete-form', function(e) {
+        $(document).on('submit', '.delete-form', function (e) {
             e.preventDefault();
             var form = this;
 
@@ -83,7 +87,7 @@ include 'handlers/academic_handler.php';
                         type: 'POST',
                         url: 'academic_list.php', // Adjust the URL as needed
                         data: $(form).serialize(),
-                        success: function() {
+                        success: function () {
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Deleted!',
@@ -94,7 +98,7 @@ include 'handlers/academic_handler.php';
                                 window.location.href = 'academic_list.php'; // Adjust the redirect URL if needed
                             });
                         },
-                        error: function() {
+                        error: function () {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Oops...',
@@ -108,37 +112,55 @@ include 'handlers/academic_handler.php';
     });
 </script>
 <script>
-   $(document).ready(function() {
-    function updateTable(page = 1, search = '') {
-        $.ajax({
-            url: 'search_academic.php',
-            method: 'POST',
-            data: {
-                search: search,
-                page: page
-            },
-            success: function(response) {
-                var result = response.split('<!--pagination-->'); 
-                $('#list tbody').html(result[0]);  
-                $('#pagination-links').html(result[1]); 
-            },
-            error: function() {
-                console.error('Failed to fetch search results.');
+    $(document).ready(function () {
+        function updateTable(page = 1, search = '') {
+            $.ajax({
+                url: 'search_academic.php',
+                method: 'POST',
+                data: {
+                    search: search,
+                    page: page
+                },
+                success: function (response) {
+                    var result = response.split('<!--pagination-->');
+
+                    // Update the table body
+                    $('#list tbody').html(result[0]);
+
+                    // Update pagination only if available
+                    if (result.length > 1) {
+                        $('#pagination-links').html(result[1]);
+                    }
+                },
+                error: function () {
+                    console.error('Failed to fetch search results.');
+                }
+            });
+        }
+
+        // Live search
+        $('#searchInput').on('keyup', function () {
+            let searchValue = $(this).val().trim();
+
+            // If user types #6, remove the # before sending the request
+            if (searchValue.startsWith('#')) {
+                searchValue = searchValue.substring(1);
             }
+
+            updateTable(1, searchValue);
         });
-    }
 
-    $('#searchInput').on('keyup', function() {
-        updateTable(1, $(this).val());
+
+        // Handle pagination clicks
+        $(document).on('click', '.pagination a', function (e) {
+            e.preventDefault();
+            let pageNumber = $(this).data('page');
+            updateTable(pageNumber, $('#searchInput').val());
+        });
+
+        // Load table data on page load
+        updateTable(1);
     });
-
-    $(document).on('click', '.pagination a', function(e) {
-        e.preventDefault();
-        updateTable($(this).data('page'), $('#searchInput').val());
-    });
-
-    updateTable(1);
-});
 </script>
 <style>
     .list-group-item:hover {
@@ -151,12 +173,13 @@ include 'handlers/academic_handler.php';
         overflow-y: auto;
         scroll-behavior: smooth;
     }
+
     .pagination a {
         cursor: pointer;
     }
 </style>
 <script>
-    $(document).on('click', '.update_status', function() {
+    $(document).on('click', '.update_status', function () {
         var academicId = $(this).data('id');
         var newStatus = $(this).data('status');
         var statusText = newStatus === 1 ? 'Start Evaluation' : 'Close Evaluation';
@@ -181,7 +204,7 @@ include 'handlers/academic_handler.php';
                         academic_id: academicId,
                         status: newStatus
                     },
-                    success: function() {
+                    success: function () {
                         Swal.fire({
                             icon: 'success',
                             title: 'Status Updated!',
@@ -192,7 +215,7 @@ include 'handlers/academic_handler.php';
                             window.location.reload();
                         });
                     },
-                    error: function() {
+                    error: function () {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error!',
