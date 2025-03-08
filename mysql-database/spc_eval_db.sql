@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 16, 2025 at 11:22 AM
+-- Generation Time: Mar 08, 2025 at 10:29 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 7.4.16
 
@@ -42,10 +42,7 @@ CREATE TABLE `academic_list` (
 --
 
 INSERT INTO `academic_list` (`academic_id`, `year`, `semester`, `is_default`, `status`, `start_date`, `end_date`) VALUES
-(20, '2024-2025', 2, 0, 2, NULL, NULL),
-(21, '2025-2026', 1, 0, 2, NULL, NULL),
-(22, '2026-2027', 1, 1, 1, '2025-02-06', '2026-02-06'),
-(23, '2026-2027', 2, 0, 0, NULL, NULL);
+(20, '2024-2025', 2, 0, 0, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -66,12 +63,8 @@ CREATE TABLE `archives_student_list` (
 --
 
 INSERT INTO `archives_student_list` (`id`, `student_id`, `email`, `archive_reason`, `archive_date`) VALUES
-(10, 105, 'gabrieldorado09@gmail.com', 'Academic period closed', '2025-01-30 17:30:24'),
-(11, 106, '15equips@gmail.com', 'Academic period closed', '2025-01-30 17:37:56'),
-(12, 107, '15equips@gmail.com', 'Academic period closed', '2025-02-06 21:39:16'),
-(13, 108, 'brilataivan86@gmail.com', 'Academic period closed', '2025-02-06 21:39:16'),
-(14, 118, 'sadfdsafdsaf@ga.com', 'Academic period closed', '2025-02-06 21:39:16'),
-(15, 119, 'aybanbrilata05@gmail.com', 'Academic period closed', '2025-02-06 21:39:16');
+(50, 174, 'erer@1.com', 'Academic period closed', '2025-03-08 17:24:14'),
+(51, 175, 'fdgrtt@trewr.com', 'Academic period closed', '2025-03-08 17:24:14');
 
 -- --------------------------------------------------------
 
@@ -97,7 +90,8 @@ INSERT INTO `audit_log` (`id`, `action_type`, `table_name`, `academic_id`, `user
 (6, 'archive', 'student_list', 20, 49, '2025-01-30 16:31:54'),
 (7, 'archive', 'student_list', 20, 49, '2025-01-30 17:30:24'),
 (8, 'archive', 'student_list', 20, 49, '2025-01-30 17:37:56'),
-(9, 'archive', 'student_list', 21, 49, '2025-02-06 21:39:16');
+(9, 'archive', 'student_list', 21, 49, '2025-02-06 21:39:16'),
+(10, 'archive', 'student_list', 22, 55, '2025-02-17 09:11:23');
 
 -- --------------------------------------------------------
 
@@ -112,19 +106,6 @@ CREATE TABLE `audit_logs` (
   `details` text DEFAULT NULL,
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `audit_logs`
---
-
-INSERT INTO `audit_logs` (`id`, `user_id`, `action`, `details`, `timestamp`) VALUES
-(2, 49, 'Generated Registration Link', 'Token: 13bce0f7f6e96f1db77587b905ea9106, Expires: 2025-02-17 10:53:45', '2025-02-16 09:53:45'),
-(3, 49, 'Generated Registration Link', 'Token: c598093bb6fc63b980ed1a08b5b24079, Expires: 2025-02-17 10:54:17', '2025-02-16 09:54:17'),
-(4, 49, 'Generated Registration Link', 'Token: d317b48ab0586609cd1a86b891f1acfd, Expires: 2025-02-17 10:57:21', '2025-02-16 09:57:21'),
-(5, 55, 'Generated Registration Link', 'Token: dd03a95f517ecfb09bf5fc2843d86c9d, Expires: 2025-02-17 10:58:27', '2025-02-16 09:58:27'),
-(6, 55, 'Generated Registration Link', 'Token: f0b0013256ccd25ddddd3992d093ae77, Expires: 2025-02-17 10:59:07', '2025-02-16 09:59:07'),
-(7, 55, 'Generated Registration Link', 'Token: 734310fdf1469bfddbb2c5aa16e90106, Expires: 2025-02-17 11:06:58', '2025-02-16 10:06:58'),
-(8, 49, 'Generated Registration Link', 'Token: 12643644f952250204edc59de972a0c4, Expires: 2025-02-17 11:20:45', '2025-02-16 10:20:45');
 
 -- --------------------------------------------------------
 
@@ -171,25 +152,6 @@ CREATE TABLE `college_faculty_list` (
   `account_status` int(11) NOT NULL,
   `date_created` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `college_faculty_list`
---
-
-INSERT INTO `college_faculty_list` (`faculty_id`, `school_id`, `firstname`, `lastname`, `subject`, `department`, `email`, `password`, `avatar`, `academic_id`, `account_status`, `date_created`) VALUES
-(67, '1001', 'joann', 'lopez', 'cc101, cc102', 'ccs', 'joann@lopez.com', '$2y$10$PpQSWK0gDAlZbU1H0mOEaeBXFPBDRMvEh5uCHTFAPc8WNQjmQo7p2', '', 22, 0, '2025-01-29 21:46:39'),
-(68, '1002', 'apol', 'capuno', 'cc103', 'ccs', 'apol@capuno.com', '$2y$10$tcjA1L9dnHt1.MoOM7XxiO2.6O0nfLUGCkOIWZuiSejM3OUmG42YC', '', 22, 0, '2025-01-29 21:48:01'),
-(69, '1003', 'solejaena', 'herrera', 'cc104', 'ccs', 'solejaena@herrera.com', '$2y$10$Ty.6YNHI0JMNvzAClxsZ/el1gkkIa12YRbr8.F3W3wEh0DmNFxMOO', '', 22, 0, '2025-01-29 21:51:09'),
-(70, '1004', 'aaron', 'lagaya', 'cc105', 'ccs', 'aaron@lagaya.com', '$2y$10$f593oA6tlVDsbFL3t6Tyj.D2Gs7bbwQ44KIqb1X5dCJxbPOE4ykta', '', 22, 0, '2025-01-29 21:51:54'),
-(72, '12233', 'Juan', 'Dela Cruz', 'gec7', 'cas', '10equips@gmail.com', '$2y$10$VPPIyU2S06aYZR4VKxAVme2grPZbZIMfb08zFhJi/TOckGrDDGvcm', '', 22, 0, '2025-01-30 17:33:33'),
-(74, '0006', 'klein', 'ligs', 'ES104, IT PROF EL5', 'ccs', 'klein@darelleligs.com', '$2y$10$KghmfL9S0AlorjNP7XwG.uBj3KmIDD98ulV3UMIP6MSIqdDvUIqhu', '', 22, 0, '2025-02-01 12:42:14'),
-(75, '23232', 'gab', 'darelle', 'ES104, IT PROF EL5', 'ccs', 'gab@darelle.com', '$2y$10$y7iUlRxoCK5zS.GPGxa.c.ebyMvCiIsqL.9xIg1ZsCoLHUL4t0iuG', '', 22, 0, '2025-02-02 02:39:00'),
-(77, '34873784832', 'beia', 'biancs', 'GEC3, GEC4, NSTP2', 'ccs', 'bancabeia@gmail.com', '$2y$10$P9tcQpifP1wJ0X6zWUGWhOPX88d53t92d1JKJS2T9l4Ej36gX056m', '', 22, 0, '2025-02-11 13:11:13'),
-(80, '45454', 'van', 'asd', 'ED101', 'educ', 'vanss@van.com', '$2y$10$TgfY6xoy14i/EvW8I..5Bu14/5gRyPFGUElKVUzSKEQgt7/cUrThi', '', 22, 0, '2025-02-15 19:06:10'),
-(81, '3453454', 'hehe', 'hehez', 'ES104', 'ccs', 'hehe@123.com', '$2y$10$9.OnVQyX9LwgE9nAVfIuNu8i/qrLMD0RZ2Pz3VpaxjQDHFEPu7kiS', '', 22, 0, '2025-02-15 19:24:43'),
-(82, '43433', 'yuyu', 'oweowo', 'cc111, es108', 'ccs', 'bano@bano.com', '$2y$10$WG6Pl/.69scWCkQOm84Zou5Yp30wpe2p5BfG5hvauo86U0xPHhiPG', '', 22, 0, '2025-02-16 08:37:32'),
-(83, '89889', 'dgfgfg', 'fgf', 'cc111', 'ccs', 'asdwe@1.com', '$2y$10$pz.EKX95/cKagL.JjL1yEedXxlQ2i4aSPzkq6R4VUaqJQWBK9bsEm', '', 22, 0, '2025-02-16 08:41:45'),
-(84, '48594895489', 'asdasas', 'awewew', 'IM101', 'ccs', 'ertertr@1.com', '$2y$10$HKQNrgeyKSmfndsAioJAwu.Vhuhu.Vnjjs.R49a5Shkqfg8HNy9NS', '', 22, 0, '2025-02-16 09:19:13');
 
 -- --------------------------------------------------------
 
@@ -305,130 +267,6 @@ CREATE TABLE `evaluation_answers` (
   `comment` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `evaluation_answers`
---
-
-INSERT INTO `evaluation_answers` (`evaluation_id`, `faculty_id`, `student_id`, `head_id`, `evaluator_id`, `question_id`, `rate`, `academic_id`, `comment`) VALUES
-(485, 67, 107, 0, 0, 233, 4, 21, ''),
-(486, 67, 107, 0, 0, 234, 1, 21, ''),
-(487, 67, 107, 0, 0, 235, 2, 21, ''),
-(488, 67, 107, 0, 0, 236, 3, 21, ''),
-(489, 67, 107, 0, 0, 237, 4, 21, ''),
-(490, 67, 107, 0, 0, 238, NULL, 21, 'the best!!!'),
-(491, 67, 107, 0, 0, 239, 4, 21, ''),
-(492, 72, 107, 0, 0, 233, 3, 21, ''),
-(493, 72, 107, 0, 0, 234, 2, 21, ''),
-(494, 72, 107, 0, 0, 235, 3, 21, ''),
-(495, 72, 107, 0, 0, 236, 4, 21, ''),
-(496, 72, 107, 0, 0, 237, 2, 21, ''),
-(497, 72, 107, 0, 0, 238, NULL, 21, 'ang bakal na crus'),
-(498, 72, 107, 0, 0, 239, 2, 21, ''),
-(499, 67, 108, 0, 0, 233, 3, 21, ''),
-(500, 67, 108, 0, 0, 234, 2, 21, ''),
-(501, 67, 108, 0, 0, 235, 3, 21, ''),
-(502, 67, 108, 0, 0, 236, 3, 21, ''),
-(503, 67, 108, 0, 0, 237, 2, 21, ''),
-(504, 67, 108, 0, 0, 238, NULL, 21, 'high'),
-(505, 67, 108, 0, 0, 239, 2, 21, ''),
-(506, 74, 110, 0, 0, 233, 1, 21, ''),
-(507, 74, 110, 0, 0, 234, 1, 21, ''),
-(508, 74, 110, 0, 0, 235, 1, 21, ''),
-(509, 74, 110, 0, 0, 236, 1, 21, ''),
-(510, 74, 110, 0, 0, 237, 1, 21, ''),
-(511, 74, 110, 0, 0, 238, NULL, 21, 'ay ang tanong?'),
-(512, 74, 110, 0, 0, 239, 4, 21, ''),
-(513, 74, 119, 0, 0, 233, 4, 21, ''),
-(514, 74, 119, 0, 0, 234, 4, 21, ''),
-(515, 74, 119, 0, 0, 235, 4, 21, ''),
-(516, 74, 119, 0, 0, 236, 3, 21, ''),
-(517, 74, 119, 0, 0, 237, 3, 21, ''),
-(518, 74, 119, 0, 0, 239, 3, 21, ''),
-(519, 74, 119, 0, 0, 240, NULL, 21, 'goods brother!'),
-(520, 74, 118, 0, 0, 233, 1, 21, ''),
-(521, 74, 118, 0, 0, 234, 1, 21, ''),
-(522, 74, 118, 0, 0, 235, 1, 21, ''),
-(523, 74, 118, 0, 0, 236, 1, 21, ''),
-(524, 74, 118, 0, 0, 237, 1, 21, ''),
-(525, 74, 118, 0, 0, 239, 1, 21, ''),
-(526, 74, 118, 0, 0, 240, NULL, 21, 'bad job'),
-(527, 74, 120, 0, 0, 233, 4, 22, ''),
-(528, 74, 120, 0, 0, 234, 4, 22, ''),
-(529, 74, 120, 0, 0, 235, 3, 22, ''),
-(530, 74, 120, 0, 0, 236, 3, 22, ''),
-(531, 74, 120, 0, 0, 237, 3, 22, ''),
-(532, 74, 120, 0, 0, 239, 3, 22, ''),
-(533, 74, 120, 0, 0, 240, NULL, 22, 'asdasasdasasdasasdasdasas'),
-(534, 75, 120, 0, 0, 233, 3, 22, ''),
-(535, 75, 120, 0, 0, 234, 4, 22, ''),
-(536, 75, 120, 0, 0, 235, 4, 22, ''),
-(537, 75, 120, 0, 0, 236, 3, 22, ''),
-(538, 75, 120, 0, 0, 237, 3, 22, ''),
-(539, 75, 120, 0, 0, 239, 3, 22, ''),
-(540, 75, 120, 0, 0, 240, NULL, 22, 'asdasdasdaasdasdas'),
-(541, 74, 122, 0, 0, 234, 4, 22, ''),
-(542, 74, 122, 0, 0, 235, 3, 22, ''),
-(543, 74, 122, 0, 0, 236, 3, 22, ''),
-(544, 74, 122, 0, 0, 237, 3, 22, ''),
-(545, 74, 122, 0, 0, 241, 4, 22, ''),
-(546, 74, 122, 0, 0, 242, 4, 22, ''),
-(547, 74, 122, 0, 0, 243, 4, 22, ''),
-(548, 74, 122, 0, 0, 244, 4, 22, ''),
-(549, 74, 122, 0, 0, 245, 4, 22, ''),
-(550, 74, 122, 0, 0, 246, 4, 22, ''),
-(551, 74, 122, 0, 0, 239, 3, 22, ''),
-(552, 74, 122, 0, 0, 247, 3, 22, ''),
-(553, 74, 122, 0, 0, 248, 3, 22, ''),
-(554, 74, 122, 0, 0, 249, 3, 22, ''),
-(555, 74, 122, 0, 0, 250, 2, 22, ''),
-(556, 74, 122, 0, 0, 251, 2, 22, ''),
-(557, 74, 122, 0, 0, 252, 2, 22, ''),
-(558, 74, 122, 0, 0, 253, 2, 22, ''),
-(559, 74, 122, 0, 0, 254, 3, 22, ''),
-(560, 74, 122, 0, 0, 255, 3, 22, ''),
-(561, 74, 122, 0, 0, 256, 3, 22, ''),
-(562, 74, 122, 0, 0, 257, 3, 22, ''),
-(563, 74, 122, 0, 0, 258, 3, 22, ''),
-(564, 74, 122, 0, 0, 259, 3, 22, ''),
-(565, 74, 122, 0, 0, 260, 3, 22, ''),
-(566, 74, 122, 0, 0, 261, 2, 22, ''),
-(567, 74, 122, 0, 0, 262, 2, 22, ''),
-(568, 74, 122, 0, 0, 263, 2, 22, ''),
-(569, 74, 122, 0, 0, 264, 2, 22, ''),
-(570, 74, 122, 0, 0, 265, 1, 22, ''),
-(571, 74, 122, 0, 0, 240, NULL, 22, 'asdadas'),
-(572, 75, 122, 0, 0, 234, 4, 22, ''),
-(573, 75, 122, 0, 0, 235, 3, 22, ''),
-(574, 75, 122, 0, 0, 236, 3, 22, ''),
-(575, 75, 122, 0, 0, 237, 2, 22, ''),
-(576, 75, 122, 0, 0, 241, 2, 22, ''),
-(577, 75, 122, 0, 0, 242, 2, 22, ''),
-(578, 75, 122, 0, 0, 243, 3, 22, ''),
-(579, 75, 122, 0, 0, 244, 3, 22, ''),
-(580, 75, 122, 0, 0, 245, 3, 22, ''),
-(581, 75, 122, 0, 0, 246, 3, 22, ''),
-(582, 75, 122, 0, 0, 239, 2, 22, ''),
-(583, 75, 122, 0, 0, 247, 2, 22, ''),
-(584, 75, 122, 0, 0, 248, 2, 22, ''),
-(585, 75, 122, 0, 0, 249, 2, 22, ''),
-(586, 75, 122, 0, 0, 250, 3, 22, ''),
-(587, 75, 122, 0, 0, 251, 3, 22, ''),
-(588, 75, 122, 0, 0, 252, 2, 22, ''),
-(589, 75, 122, 0, 0, 253, 2, 22, ''),
-(590, 75, 122, 0, 0, 254, 3, 22, ''),
-(591, 75, 122, 0, 0, 255, 2, 22, ''),
-(592, 75, 122, 0, 0, 256, 3, 22, ''),
-(593, 75, 122, 0, 0, 257, 3, 22, ''),
-(594, 75, 122, 0, 0, 258, 3, 22, ''),
-(595, 75, 122, 0, 0, 259, 3, 22, ''),
-(596, 75, 122, 0, 0, 260, 3, 22, ''),
-(597, 75, 122, 0, 0, 261, 2, 22, ''),
-(598, 75, 122, 0, 0, 262, 2, 22, ''),
-(599, 75, 122, 0, 0, 263, 2, 22, ''),
-(600, 75, 122, 0, 0, 264, 3, 22, ''),
-(601, 75, 122, 0, 0, 265, 3, 22, ''),
-(602, 75, 122, 0, 0, 240, NULL, 22, 'asdsasadsadsa');
-
 -- --------------------------------------------------------
 
 --
@@ -517,14 +355,6 @@ CREATE TABLE `head_faculty_list` (
   `date_created` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `head_faculty_list`
---
-
-INSERT INTO `head_faculty_list` (`head_id`, `school_id`, `firstname`, `lastname`, `email`, `department`, `password`, `avatar`, `academic_id`, `account_status`, `date_created`) VALUES
-(20, '1001', 'jorge', 'resurreccion', 'jorge@resurreccion.com', 'ccs', '$2y$10$U7UtO60TT/Z4.Y0KUKhMTe9C6KmruMhXC9l40kgkoGyZ2r42DM0Yy', '', 22, 0, '2025-01-29 21:44:10'),
-(30, '62622662', 'hatdog', 'tender', 'hatdog@123.com', 'cdn', '$2y$10$sO3w36/Z4S1Q.ObhvNBGXeB7GLYMA6N3pohjALZGKZrOucoTYwhhC', '', 22, 0, '2025-02-15 19:22:47');
-
 -- --------------------------------------------------------
 
 --
@@ -578,7 +408,43 @@ INSERT INTO `password_resets` (`id`, `email`, `token`, `expires_at`, `created_at
 (324, '', 'dd03a95f517ecfb09bf5fc2843d86c9d', '2025-02-17 10:58:27', '2025-02-16 09:58:27'),
 (325, '', 'f0b0013256ccd25ddddd3992d093ae77', '2025-02-17 10:59:07', '2025-02-16 09:59:07'),
 (326, '', '734310fdf1469bfddbb2c5aa16e90106', '2025-02-17 11:06:58', '2025-02-16 10:06:58'),
-(327, '', '12643644f952250204edc59de972a0c4', '2025-02-17 11:20:45', '2025-02-16 10:20:45');
+(327, '', '12643644f952250204edc59de972a0c4', '2025-02-17 11:20:45', '2025-02-16 10:20:45'),
+(328, '', '884942294cd4ccaa534ae65a35dbe195', '2025-02-17 11:25:04', '2025-02-16 10:25:04'),
+(329, '', '0ac0fd25a80e2e03493d89e79f3e6115', '2025-02-17 14:11:25', '2025-02-16 13:11:25'),
+(330, '', '6ca47aa10d1143e74f2cf1c10d25329d', '2025-02-17 14:58:12', '2025-02-16 13:58:12'),
+(331, '', '118179199bbb59e8a770cf2fa9db56ab', '2025-02-17 15:10:23', '2025-02-16 14:10:23'),
+(332, '', 'e9e01b39daa2fdc8f9532b7957892a6d', '2025-02-18 01:26:07', '2025-02-17 00:26:07'),
+(333, '', '2cb804878363b3c2c4098ec51179cdf4', '2025-02-18 08:59:34', '2025-02-17 07:59:34'),
+(334, '', 'dec21246de31bf981169e9bd2ec17ff2', '2025-02-18 12:39:27', '2025-02-17 11:39:27'),
+(335, '', 'cdb21adde496436b98db298d7bacd4f3', '2025-02-18 12:41:25', '2025-02-17 11:41:25'),
+(336, '', '7dc5a54d6a44d562b7a2550733a1923a', '2025-02-18 12:42:13', '2025-02-17 11:42:13'),
+(337, '', '76a398f18af1294493da81acadf180c3', '2025-02-18 12:42:53', '2025-02-17 11:42:53'),
+(338, '', 'c6d078ed65875e54b577571065852be4', '2025-02-18 12:43:19', '2025-02-17 11:43:19'),
+(339, '', '81b6c1d58159405fae187d86b6a054d3', '2025-02-18 12:44:47', '2025-02-17 11:44:47'),
+(340, '', '0d12ec19754790fae5da4b3401a2e7e5', '2025-02-18 12:46:11', '2025-02-17 11:46:11'),
+(341, '', 'fd3e8ffb4b17367cb8de4f589b38ff1a', '2025-02-18 12:46:35', '2025-02-17 11:46:35'),
+(342, '', 'd143cbdd75a0d8abf428fc02a7cfd18c', '2025-02-18 12:47:36', '2025-02-17 11:47:36'),
+(343, '', '05716b100662ceae2c9fec8a244be1d6', '2025-02-18 14:02:00', '2025-02-17 13:02:00'),
+(344, '', 'f9edb019f74e2eee0c6befa22de5225c', '2025-02-18 14:10:56', '2025-02-17 13:10:56'),
+(345, '', 'bc51c07ef709e4f711fc268736a8b117', '2025-02-18 15:37:09', '2025-02-17 14:37:09'),
+(346, '', '2c0defbf3d88070ee4d70c925cf39e7a', '2025-02-20 14:30:09', '2025-02-19 13:30:09'),
+(347, '', '7573048678f2dada902aa5619acdbc69', '2025-02-20 14:30:57', '2025-02-19 13:30:57'),
+(348, '', '83589187380c16a7a5fd4cf9bdc05bc2', '2025-02-20 14:38:30', '2025-02-19 13:38:30'),
+(349, '', '5257242483f1723cf5f9d8677e76ae06', '2025-02-25 02:49:12', '2025-02-24 01:49:12'),
+(350, '', 'f3829f5ca39cb75e66883a6753ad0f30', '2025-02-25 02:54:14', '2025-02-24 01:54:14'),
+(351, '', '76eb52121119e56bd434ef0d6422edd8', '2025-02-25 03:00:51', '2025-02-24 02:00:51'),
+(352, '', '5e9aa4e65ae94a3cca9b79a510c01d5f', '2025-02-25 03:05:48', '2025-02-24 02:05:48'),
+(353, '', '582a2336aabbbbc1ecfdc40b3a19c702', '2025-02-25 05:01:51', '2025-02-24 04:01:51'),
+(354, '', '444e24be3c1b2d109bfacfe06a78d60b', '2025-02-25 05:14:31', '2025-02-24 04:14:31'),
+(355, '', '64d475e4eb9db2a94963309a12ec8ec7', '2025-02-25 13:38:11', '2025-02-24 12:38:11'),
+(356, '', '094d3f79b5666c0ace15faa23917c388', '2025-02-25 14:15:03', '2025-02-24 13:15:03'),
+(357, '', '8c9664f4a80c307c8e14d0adea04c0f9', '2025-02-27 01:52:47', '2025-02-26 00:52:47'),
+(358, '', '05b1cb0da8c1f9adf06757f1e872da5a', '2025-02-27 02:02:15', '2025-02-26 01:02:15'),
+(359, '', 'f10105aaf2194d1632897d5af0ce09a9', '2025-02-27 02:05:32', '2025-02-26 01:05:32'),
+(360, '', '7f17edd76f97615152686c5d1ec929ce', '2025-02-27 02:13:18', '2025-02-26 01:13:18'),
+(361, '', '39b4f4e3ed63553ead898e8e559a3c97', '2025-02-27 02:17:48', '2025-02-26 01:17:48'),
+(362, 'aybanbrilata05@gmail.com', '37db3e7040726fe95cb7d0e8ad5f5a98af64202723411f67ff4ce3af7d15226437f4a3423545cd39a1152085f7a9f1f19de1', '2025-02-27 02:27:55', '2025-02-26 01:27:55'),
+(363, '', '9d0591de9aa020de1a7603fe96a2a461', '2025-03-03 12:09:30', '2025-03-02 11:09:30');
 
 -- --------------------------------------------------------
 
@@ -799,18 +665,6 @@ CREATE TABLE `student_list` (
   `account_status` tinyint(1) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `student_list`
---
-
-INSERT INTO `student_list` (`student_id`, `school_id`, `firstname`, `lastname`, `email`, `password`, `subject`, `section`, `avatar`, `academic_id`, `date_created`, `account_status`) VALUES
-(120, '2312321', 'aaa', 'aaaa', 'aaa@aa.com', '$2y$10$Ws1zvVbSOkW1ugSJ7HJAoeE691/7vUKKNrJTXHBfvQStl6R/OaYg6', 'ES104', 'A', '', 22, '2025-02-06 21:42:06', 1),
-(121, '2147483647', 'asdfadsf', 'asdfasdf', 'sadfdsafdsaf@ga.com', '$2y$10$8mcd/33kFmdWlrWhlsVu/Oud9RZB.9C5zcr11ADL72xHMxK1Poft2', 'IT PROF EL5', 'A', '', 22, '2025-02-06 21:42:11', 1),
-(123, '10003', 'kevin', 'balocos', 'kevinbalocos03@gmail.com', '$2y$10$W9.UYNQ5vzFreTW018HJ3OWUCr8SQfj8H/qwcW7FqwMnDXvhyQQva', 'ES104', 'A', '', 22, '2025-02-10 11:48:08', 1),
-(126, '23423', 'Ivan', 'Brilata', 'brilataivan86@gmail.com', '$2y$10$fQGKVrA2CuAdEcH/kdJfkuMd6QWl43eatdmOQdGNugaYKeFAp4aai', 'ES104', 'A', '', 22, '2025-02-10 22:19:35', 1),
-(131, '324', 'van', 'asd', 'vanss@vanss.com', '$2y$10$pXSXg9t4Zuv5DC9OFYHtNOYOb1o6KtB.9blSd4tkVjBNT3Qjxfw3O', 'ed102', 'A', '', 22, '2025-02-15 19:12:40', 1),
-(132, '343242323', 'para', 'salahat', 'para@salahat.com', '$2y$10$FPmG4onlVFi7Ntw3qVK8NuLKSkevP1b1Wj2/L4816mdVnGja5KSxK', 'IM101', 'A', '', 22, '2025-02-16 13:19:57', 1);
-
 -- --------------------------------------------------------
 
 --
@@ -914,7 +768,14 @@ INSERT INTO `subjects` (`id`, `subject_code`, `subject_name`, `department_code`)
 (85, 'BA101', 'Principles of Marketing', 'CBA'),
 (86, 'BA102', 'Financial Management', 'CBA'),
 (87, 'BA103', 'Business Law', 'CBA'),
-(88, 'BA104', 'Entrepreneurship', 'CBA');
+(88, 'BA104', 'Entrepreneurship', 'CBA'),
+(89, 'CC114', 'MAKABAGOMAKALUMA', 'ccs'),
+(90, 'CC913', 'MABILIS NGA', 'ccs'),
+(91, 'ASDLKAS23', 'ASDASDASDASDASDSAAS', 'ccs'),
+(92, 'ASDASDAAADSDSADAS', 'ASDASDASDASDAS', 'ccs'),
+(93, 'ASDASDASDAS', 'ADASDASDASDASASDASD', 'ccs'),
+(94, 'ASHDASHDSAJ', 'ASDHNASJKDHSAJDHSAJDSA', 'ccs'),
+(95, 'ASHGDJKSAHJHJASD', 'ASDASDASDSADASDAS', 'ccs');
 
 -- --------------------------------------------------------
 
@@ -1072,8 +933,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `firstname`, `lastname`, `email`, `password`, `avatar`, `academic_id`, `date_created`) VALUES
-(49, 'SPC', 'admin', 'spc@admin.com', '$2y$10$wmwcFX8dInqYbb.1clkxNOKDGFYBsvWpKPasHVfSepAy5/Li7pwi.', '', 22, '2025-01-29 21:02:56'),
-(55, 'SPC', 'co-admin', 'spc@coadmin.com', '$2y$10$isYMw2Rl2vcovgTWzs1O5.Ln0xnJotkAWuVV/mvxnjOI0IZd39zcS', '', 22, '2025-02-16 13:34:43');
+(49, 'SPC', 'admin', 'spc@admin.com', '$2y$10$wmwcFX8dInqYbb.1clkxNOKDGFYBsvWpKPasHVfSepAy5/Li7pwi.', '', 20, '2025-01-29 21:02:56'),
+(55, 'SPC', 'cos-admin', 'spc@coadmin.com', '$2y$10$isYMw2Rl2vcovgTWzs1O5.Ln0xnJotkAWuVV/mvxnjOI0IZd39zcS', '', 20, '2025-02-16 13:34:43');
 
 --
 -- Indexes for dumped tables
@@ -1268,25 +1129,25 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `academic_list`
 --
 ALTER TABLE `academic_list`
-  MODIFY `academic_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `academic_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT for table `archives_student_list`
 --
 ALTER TABLE `archives_student_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT for table `audit_log`
 --
 ALTER TABLE `audit_log`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `audit_logs`
 --
 ALTER TABLE `audit_logs`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=336;
 
 --
 -- AUTO_INCREMENT for table `class`
@@ -1304,7 +1165,7 @@ ALTER TABLE `class_list`
 -- AUTO_INCREMENT for table `college_faculty_list`
 --
 ALTER TABLE `college_faculty_list`
-  MODIFY `faculty_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
+  MODIFY `faculty_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=102;
 
 --
 -- AUTO_INCREMENT for table `courses`
@@ -1316,7 +1177,7 @@ ALTER TABLE `courses`
 -- AUTO_INCREMENT for table `criteria_list`
 --
 ALTER TABLE `criteria_list`
-  MODIFY `criteria_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=171;
+  MODIFY `criteria_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=178;
 
 --
 -- AUTO_INCREMENT for table `departments`
@@ -1328,7 +1189,7 @@ ALTER TABLE `departments`
 -- AUTO_INCREMENT for table `evaluation_answers`
 --
 ALTER TABLE `evaluation_answers`
-  MODIFY `evaluation_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=603;
+  MODIFY `evaluation_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1641;
 
 --
 -- AUTO_INCREMENT for table `evaluation_answers_dean_faculty`
@@ -1358,13 +1219,13 @@ ALTER TABLE `evaluation_list`
 -- AUTO_INCREMENT for table `head_faculty_list`
 --
 ALTER TABLE `head_faculty_list`
-  MODIFY `head_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `head_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `password_resets`
 --
 ALTER TABLE `password_resets`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=328;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=364;
 
 --
 -- AUTO_INCREMENT for table `pending_students`
@@ -1394,7 +1255,7 @@ ALTER TABLE `question_faculty_faculty`
 -- AUTO_INCREMENT for table `question_list`
 --
 ALTER TABLE `question_list`
-  MODIFY `question_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=266;
+  MODIFY `question_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=270;
 
 --
 -- AUTO_INCREMENT for table `secondary_faculty_list`
@@ -1418,13 +1279,13 @@ ALTER TABLE `self_head_eval`
 -- AUTO_INCREMENT for table `student_list`
 --
 ALTER TABLE `student_list`
-  MODIFY `student_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=134;
+  MODIFY `student_id` int(30) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=176;
 
 --
 -- AUTO_INCREMENT for table `subjects`
 --
 ALTER TABLE `subjects`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=96;
 
 --
 -- AUTO_INCREMENT for table `subjects_course`
@@ -1442,7 +1303,7 @@ ALTER TABLE `subject_list`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(15) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+  MODIFY `id` int(15) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
 
 --
 -- Constraints for dumped tables
