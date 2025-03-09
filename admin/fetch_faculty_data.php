@@ -55,10 +55,8 @@ if (isset($_GET['faculty_id'], $_GET['category'], $_GET['academic_id'])) {
     $stmt->execute(['faculty_id' => $facultyId, 'academic_id' => $academicId]);
     $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-   
     $totalResponses = array_sum(array_column($data, 'count'));
 
-   
     $labels = [];
     $dataset = [];
 
@@ -68,13 +66,54 @@ if (isset($_GET['faculty_id'], $_GET['category'], $_GET['academic_id'])) {
         $dataset[] = round($percentage, 2);
     }
 
-    // Fetch the average score per academic_id including semester
-    $averageQuery = "SELECT CONCAT(al.year, ' - ', al.semester) AS academic_period, AVG(ea.rate) AS average_score
-                 FROM evaluation_answers ea
-                 JOIN academic_list al ON ea.academic_id = al.academic_id
-                 WHERE ea.faculty_id = :faculty_id
-                 GROUP BY al.academic_id, al.year, al.semester
-                 ORDER BY al.year ASC, al.semester ASC";
+    // Select the correct table for calculating the average score per academic period
+    $averageQuery = "";
+    if ($category === 'faculty') {
+        $averageQuery = "SELECT CONCAT(al.year, ' - ', al.semester) AS academic_period, AVG(ea.rate) AS average_score
+                         FROM evaluation_answers ea
+                         JOIN academic_list al ON ea.academic_id = al.academic_id
+                         WHERE ea.faculty_id = :faculty_id
+                         GROUP BY al.academic_id, al.year, al.semester
+                         ORDER BY al.year ASC, al.semester ASC";
+    } elseif ($category === 'self-faculty') {
+        $averageQuery = "SELECT CONCAT(al.year, ' - ', al.semester) AS academic_period, AVG(sfe.average_score) AS average_score
+                         FROM self_faculty_eval sfe
+                         JOIN academic_list al ON sfe.academic_id = al.academic_id
+                         WHERE sfe.faculty_id = :faculty_id
+                         GROUP BY al.academic_id, al.year, al.semester
+                         ORDER BY al.year ASC, al.semester ASC";
+    } elseif ($category === 'self-head-faculty') {
+        $averageQuery = "SELECT CONCAT(al.year, ' - ', al.semester) AS academic_period, AVG(she.average_score) AS average_score
+                         FROM self_head_eval she
+                         JOIN academic_list al ON she.academic_id = al.academic_id
+                         WHERE she.faculty_id = :faculty_id
+                         GROUP BY al.academic_id, al.year, al.semester
+                         ORDER BY al.year ASC, al.semester ASC";
+    } elseif ($category === 'faculty-to-faculty') {
+        $averageQuery = "SELECT CONCAT(al.year, ' - ', al.semester) AS academic_period, AVG(eaf.rate) AS average_score
+                         FROM evaluation_answers_faculty_faculty eaf
+                         JOIN academic_list al ON eaf.academic_id = al.academic_id
+                         WHERE eaf.faculty_id = :faculty_id
+                         GROUP BY al.academic_id, al.year, al.semester
+                         ORDER BY al.year ASC, al.semester ASC";
+    } elseif ($category === 'faculty-to-head') {
+        $averageQuery = "SELECT CONCAT(al.year, ' - ', al.semester) AS academic_period, AVG(eah.rate) AS average_score
+                         FROM evaluation_answers_faculty_dean eah
+                         JOIN academic_list al ON eah.academic_id = al.academic_id
+                         WHERE eah.faculty_id = :faculty_id
+                         GROUP BY al.academic_id, al.year, al.semester
+                         ORDER BY al.year ASC, al.semester ASC";
+    } elseif ($category === 'head-to-faculty') {
+        $averageQuery = "SELECT CONCAT(al.year, ' - ', al.semester) AS academic_period, AVG(eahf.rate) AS average_score
+                         FROM evaluation_answers_dean_faculty eahf
+                         JOIN academic_list al ON eahf.academic_id = al.academic_id
+                         WHERE eahf.faculty_id = :faculty_id
+                         GROUP BY al.academic_id, al.year, al.semester
+                         ORDER BY al.year ASC, al.semester ASC";
+    } else {
+        echo json_encode(['error' => 'Invalid category']);
+        exit;
+    }
 
     $avgStmt = $conn->prepare($averageQuery);
     $avgStmt->execute(['faculty_id' => $facultyId]);

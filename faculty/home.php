@@ -102,22 +102,18 @@ include '../database/connection.php';
                 </div>
             </div>
         </div>
-        <div class="d-flex justify-content-center align-items-center mb-2">
-            <div class="legend-item mx-2 text-center">
-                <div class="legend-color"></div>
-                <small>4 - Strongly Agree</small>
+        <div class="legend-container mb-2">
+            <div class="legend-item">
+                3.25 - 4.00 <br> <b>Strongly Agree</b> <span class="legend-text">High</span>
             </div>
-            <div class="legend-item mx-2 text-center">
-                <div class="legend-color"></div>
-                <small>3 - Agree</small>
+            <div class="legend-item">
+                2.50 - 3.24 <br> <b>Agree</b> <span class="legend-text">Moderate-High</span>
             </div>
-            <div class="legend-item mx-2 text-center">
-                <div class="legend-color"></div>
-                <small>2 - Disagree</small>
+            <div class="legend-item">
+                1.75 - 2.49 <br> <b>Disagree</b> <span class="legend-text">Moderate-Low</span>
             </div>
-            <div class="legend-item mx-2 text-center">
-                <div class="legend-color"></div>
-                <small>1 - Strongly Disagree</small>
+            <div class="legend-item">
+                1.00 - 1.74 <br> <b>Strongly Disagree</b> <span class="legend-text">Low</span>
             </div>
         </div>
 
@@ -150,7 +146,7 @@ include '../database/connection.php';
             .then(response => response.json())
             .then(data => {
                 if (data.status === "success") {
-                    updateLineChart(data.academic_ratings);
+                    updateLineChart(data.performance_data);
                     updateBarChart(data.criteria_ratings);
                 } else {
                     console.error("Error fetching data:", data.message);
@@ -159,15 +155,9 @@ include '../database/connection.php';
             .catch(error => console.error("Fetch error:", error));
     }
 
-    function updateLineChart(academicRatings) {
-        const labels = [];
-        const dataset = [];
-
-        Object.entries(academicRatings).forEach(([academicPeriod, data]) => {
-            labels.push(academicPeriod);
-            let avgScore = (data.rate1 * 1 + data.rate2 * 2 + data.rate3 * 3 + data.rate4 * 4) / 4;
-            dataset.push(avgScore);
-        });
+    function updateLineChart(performanceData) {
+        const labels = Object.keys(performanceData);
+        const dataset = Object.values(performanceData);
 
         const ctxLine = document.getElementById("facultyLineChart").getContext("2d");
         if (lineChart) {
@@ -190,7 +180,7 @@ include '../database/connection.php';
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                scales: { y: { beginAtZero: true, max: 100 } }
+                scales: { y: { beginAtZero: true, max: 4 } }
             }
         });
 
@@ -198,13 +188,10 @@ include '../database/connection.php';
     }
 
     function updateBarChart(criteriaRatings) {
-        const labels = [];
-        const dataset = [];
-
-        Object.entries(criteriaRatings).forEach(([criteria, data]) => {
-            labels.push(criteria);
-            let avgScore = (data.rate1 * 1 + data.rate2 * 2 + data.rate3 * 3 + data.rate4 * 4) / 4;
-            dataset.push(avgScore);
+        const labels = Object.keys(criteriaRatings);
+        const dataset = labels.map(criteria => {
+            const data = criteriaRatings[criteria];
+            return ((data.rate1 * 1 + data.rate2 * 2 + data.rate3 * 3 + data.rate4 * 4) / 4).toFixed(2);
         });
 
         const ctxBar = document.getElementById("facultyBarChart").getContext("2d");
@@ -225,7 +212,7 @@ include '../database/connection.php';
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                scales: { y: { beginAtZero: true, max: 100 } }
+                scales: { y: { beginAtZero: true, max: 4 } }
             }
         });
     }
@@ -243,10 +230,10 @@ include '../database/connection.php';
         const lastScore = dataset[dataset.length - 1];
 
         if (lastScore > firstScore) {
-            feedbackElement.textContent = `Great job! ${category} has improved over time.`;
+            feedbackElement.textContent = `Great job! ${category} has improved to High over time.`;
             feedbackElement.className = "text-success";
         } else if (lastScore < firstScore) {
-            feedbackElement.textContent = `Performance in ${category} has declined. Consider reviewing areas for improvement.`;
+            feedbackElement.textContent = `Performance in ${category} has declined to Low. Consider reviewing areas for improvement.`;
             feedbackElement.className = "text-danger";
         } else {
             feedbackElement.textContent = `${category} remains stable.`;
@@ -268,6 +255,31 @@ include '../database/connection.php';
         max-height: 81vh;
         overflow-y: auto;
         scroll-behavior: smooth;
+    }
+
+    .legend-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        margin-top: 10px;
+        flex-wrap: wrap;
+    }
+
+    .legend-item {
+        text-align: center;
+        font-size: 14px;
+        font-weight: bold;
+        color: #333;
+        padding: 5px;
+        border-bottom: 1px solid #ddd;
+        min-width: 180px;
+    }
+
+    .legend-text {
+        display: block;
+        font-size: 12px;
+        font-weight: normal;
     }
 </style>
 
