@@ -159,6 +159,15 @@ $normalizedSubjectsString = implode(',', $normalizedSubjects);
 									</tbody>
 								</table>
 							<?php endforeach; ?>
+							<div class="card-header mt-3">
+							<b></b>
+							<div class="card-tools">
+								<form id="evaluation-form" method="POST" action="eval_handler.php">
+									<button type="submit" id="submit-btn"
+										class="btn btn-sm btn-flat btn-success bg-gradient-success mx-1">Submit
+										Evaluation</button>
+							</div>
+						</div>
 							</form>
 						</div>
 					</div>
