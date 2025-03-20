@@ -80,7 +80,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $cpass = $_POST['cpass'];
         $subjects = $_POST['subjects'] ?? []; // Multiple subjects array
         $department = $_POST['department']; // New department field
-        $avatar = isset($_FILES['img']['name']) ? $_FILES['img']['name'] : null;
         $id = $_POST['faculty_id'] ?? null;
 
         if (!empty($password) && $password !== $cpass) {
@@ -96,12 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!empty($password)) {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-        }
-
-        if ($avatar) {
-            $target_dir = "assets/uploads/";
-            $target_file = $target_dir . basename($_FILES["img"]["name"]);
-            move_uploaded_file($_FILES["img"]["tmp_name"], $target_file);
         }
 
         $query = 'SELECT academic_id FROM academic_list WHERE status = 1 AND start_date <= CURDATE() AND end_date >= CURDATE()';
@@ -137,10 +130,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $query .= ", password = :password";
             }
 
-            if ($avatar) {
-                $query .= ", avatar = :avatar";
-            }
-
             $query .= " WHERE faculty_id = :faculty_id";
             $stmt = $conn->prepare($query);
 
@@ -154,10 +143,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if (!empty($password)) {
                 $stmt->bindParam(':password', $hashed_password);
-            }
-
-            if ($avatar) {
-                $stmt->bindParam(':avatar', $avatar);
             }
 
             $stmt->bindParam(':faculty_id', $id, PDO::PARAM_INT);
