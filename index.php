@@ -80,12 +80,24 @@ include "login_handler.php";
 </div>
 
 <style>
-     #loading-spinner {
-    display: none;
-    text-align: center;
-    font-size: 18px;
-    margin-top: 15px;
-    color: black;
+    #loading-spinner {
+        display: none;
+        text-align: center;
+        font-size: 18px;
+        margin-top: 15px;
+        color: black;
+    }
+
+    @media (max-width: 768px) {
+        .login-box {
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        .container {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
     }
 </style>
 

@@ -73,7 +73,8 @@ include "submit_registration.php";
                                     placeholder="Enter Course Code">
                                 <input type="text" id="new_course_name" class="form-control mt-2"
                                     placeholder="Enter Course Name">
-                                <button type="button" id="add_course" class="btn btn-success btn-sm mt-2 mb-3">Add</button>
+                                <button type="button" id="add_course"
+                                    class="btn btn-success btn-sm mt-2 mb-3">Add</button>
                             </div>
 
                             <div class="input-group mb-3">
@@ -93,7 +94,8 @@ include "submit_registration.php";
                                     placeholder="Enter Subject Code">
                                 <input type="text" id="new_subject_name" class="form-control mt-2"
                                     placeholder="Enter Subject Name">
-                                <button type="button" id="add_subject" class="btn btn-success btn-sm mt-2 mb-3">Add</button>
+                                <button type="button" id="add_subject"
+                                    class="btn btn-success btn-sm mt-2 mb-3">Add</button>
                             </div>
 
                             <div class="input-group mb-3">
@@ -128,74 +130,74 @@ include "submit_registration.php";
 </div>
 
 <script>
-$(document).ready(function () {
-    $("#subjects").select2({
-        placeholder: "Select Subjects",
-        allowClear: true,
-        width: "100%",
-        templateSelection: function (data) {
-            return data.id ? data.id.toUpperCase() : data.text;
-        }
-    });
-
-    const courseSelect = $("#course");
-    const subjectDropdown = $("#subjects");
-    const newSubjectContainer = $("#new_subject_container");
-    const newSubjectCode = $("#new_subject_code");
-    const newSubjectName = $("#new_subject_name");
-    const addSubjectBtn = $("#add_subject");
-
-    courseSelect.change(function () {
-        let courseCode = $(this).val();
-        subjectDropdown.empty().append('<option value="" disabled>Select Subjects</option>');
-
-        if (!courseCode) return;
-
-        $.post("get_course_subjects.php", { course_code: courseCode }, function (data) {
-            data.forEach(subject => {
-                let subjectCode = subject.subject_code.toUpperCase();
-                let subjectName = subject.subject_name;
-                let displayText = `${subjectCode} - ${subjectName}`;
-                subjectDropdown.append(new Option(displayText, subjectCode, false, false));
-            });
-            subjectDropdown.append(new Option("ADD NEW SUBJECT", "add_new", false, false));
-        }, "json");
-    });
-
-    subjectDropdown.on("select2:select", function (e) {
-        if (e.params.data.id === "add_new") {
-            newSubjectContainer.show();
-            subjectDropdown.val([]).trigger("change");
-        } else {
-            newSubjectContainer.hide();
-        }
-    });
-
-    addSubjectBtn.click(function () {
-        let courseCode = courseSelect.val();
-        let subjectCode = newSubjectCode.val().trim().toUpperCase();
-        let subjectName = newSubjectName.val().trim();
-
-        if (!courseCode) return alert("Please select a course first.");
-        if (!subjectCode || !subjectName) return alert("Please enter both Subject Code and Subject Name.");
-
-        $.post("add_course_subject.php", { subject_code: subjectCode, subject_name: subjectName, course_code: courseCode }, function (data) {
-            if (data.status === "success") {
-                alert("Subject added successfully!");
-                newSubjectContainer.hide();
-
-                let displayText = `${subjectCode} - ${subjectName}`;
-                let newOption = new Option(displayText, subjectCode, true, true);
-                subjectDropdown.append(newOption).trigger("change");
-
-                newSubjectCode.val("");
-                newSubjectName.val("");
-            } else {
-                alert(data.status === "exists" ? "Subject already exists!" : "Error adding subject.");
+    $(document).ready(function () {
+        $("#subjects").select2({
+            placeholder: "Select Subjects",
+            allowClear: true,
+            width: "100%",
+            templateSelection: function (data) {
+                return data.id ? data.id.toUpperCase() : data.text;
             }
-        }, "json");
+        });
+
+        const courseSelect = $("#course");
+        const subjectDropdown = $("#subjects");
+        const newSubjectContainer = $("#new_subject_container");
+        const newSubjectCode = $("#new_subject_code");
+        const newSubjectName = $("#new_subject_name");
+        const addSubjectBtn = $("#add_subject");
+
+        courseSelect.change(function () {
+            let courseCode = $(this).val();
+            subjectDropdown.empty().append('<option value="" disabled>Select Subjects</option>');
+
+            if (!courseCode) return;
+
+            $.post("get_course_subjects.php", { course_code: courseCode }, function (data) {
+                data.forEach(subject => {
+                    let subjectCode = subject.subject_code.toUpperCase();
+                    let subjectName = subject.subject_name;
+                    let displayText = `${subjectCode} - ${subjectName}`;
+                    subjectDropdown.append(new Option(displayText, subjectCode, false, false));
+                });
+                subjectDropdown.append(new Option("ADD NEW SUBJECT", "add_new", false, false));
+            }, "json");
+        });
+
+        subjectDropdown.on("select2:select", function (e) {
+            if (e.params.data.id === "add_new") {
+                newSubjectContainer.show();
+                subjectDropdown.val([]).trigger("change");
+            } else {
+                newSubjectContainer.hide();
+            }
+        });
+
+        addSubjectBtn.click(function () {
+            let courseCode = courseSelect.val();
+            let subjectCode = newSubjectCode.val().trim().toUpperCase();
+            let subjectName = newSubjectName.val().trim();
+
+            if (!courseCode) return alert("Please select a course first.");
+            if (!subjectCode || !subjectName) return alert("Please enter both Subject Code and Subject Name.");
+
+            $.post("add_course_subject.php", { subject_code: subjectCode, subject_name: subjectName, course_code: courseCode }, function (data) {
+                if (data.status === "success") {
+                    alert("Subject added successfully!");
+                    newSubjectContainer.hide();
+
+                    let displayText = `${subjectCode} - ${subjectName}`;
+                    let newOption = new Option(displayText, subjectCode, true, true);
+                    subjectDropdown.append(newOption).trigger("change");
+
+                    newSubjectCode.val("");
+                    newSubjectName.val("");
+                } else {
+                    alert(data.status === "exists" ? "Subject already exists!" : "Error adding subject.");
+                }
+            }, "json");
+        });
     });
-});
 </script>
 
 <script>
@@ -276,5 +278,18 @@ $(document).ready(function () {
         margin-bottom: 5px;
         display: none;
         /* Initially hidden */
+    }
+
+    @media (max-width: 768px) {
+        .login-box {
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        .container {
+            padding-left: 15px;
+            padding-right: 15px;
+            padding-top: 30px;
+        }
     }
 </style>

@@ -59,22 +59,36 @@ unset($_SESSION['allow_forgot_password']);
 <?php endif; ?>
 
 <script>
-    
-    document.addEventListener("DOMContentLoaded", function() {
-       
-        const flashMessages = document.querySelectorAll('.flash-message');
-        
-        setTimeout(function() {
-            flashMessages.forEach(function(message) {
-                message.style.opacity = '0'; 
-            });
-        }, 3000); 
 
-        
-        setTimeout(function() {
-            flashMessages.forEach(function(message) {
-                message.remove(); 
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const flashMessages = document.querySelectorAll('.flash-message');
+
+        setTimeout(function () {
+            flashMessages.forEach(function (message) {
+                message.style.opacity = '0';
             });
-        }, 3500); 
+        }, 3000);
+
+
+        setTimeout(function () {
+            flashMessages.forEach(function (message) {
+                message.remove();
+            });
+        }, 3500);
     });
 </script>
+
+<style>
+    @media (max-width: 768px) {
+        .login-box {
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        .container {
+            padding-left: 15px;
+            padding-right: 15px;
+        }
+    }
+</style>
