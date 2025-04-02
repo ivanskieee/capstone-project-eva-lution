@@ -53,12 +53,10 @@ include "submit_registration.php";
                                     <?php
                                     $stmt = $conn->query("SELECT * FROM courses ORDER BY course_name ASC");
                                     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                                        $formatted_name = ucwords(strtolower($row['course_name']));
-                                        $formatted_name = preg_replace('/\bOf\b/', 'of', $formatted_name);
+                                        $formatted_name = strtoupper($row['course_name']);
                                         echo "<option value='{$row['course_code']}'>{$formatted_name}</option>";
                                     }
                                     ?>
-                                    <!-- <option value="add_new">Add New Course</option> -->
                                 </select>
                                 <div class="input-group-append">
                                     <div class="input-group-text">
