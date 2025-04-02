@@ -4,7 +4,6 @@ include 'database/connection.php';
 if (isset($_POST['course_code'])) {
     $course_code = $_POST['course_code'];
 
-    // Step 1: Get department codes from subjects linked to the selected course
     $stmt = $conn->prepare("
         SELECT DISTINCT s.department_code 
         FROM subjects_course sc
@@ -12,14 +11,13 @@ if (isset($_POST['course_code'])) {
         WHERE sc.course_code = ?
     ");
     $stmt->execute([$course_code]);
-    $departments = $stmt->fetchAll(PDO::FETCH_COLUMN); // Get department codes
+    $departments = $stmt->fetchAll(PDO::FETCH_COLUMN); 
 
     if (empty($departments)) {
         echo json_encode([]);
         exit;
     }
 
-    // Step 2: Fetch all subjects from the retrieved department(s)
     $placeholders = implode(',', array_fill(0, count($departments), '?'));
     $stmt2 = $conn->prepare("
         SELECT subject_code, subject_name 

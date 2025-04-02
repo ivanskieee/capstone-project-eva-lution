@@ -58,7 +58,7 @@ include "submit_registration.php";
                                         echo "<option value='{$row['course_code']}'>{$formatted_name}</option>";
                                     }
                                     ?>
-                                    <option value="add_new">Add New Course</option>
+                                    <!-- <option value="add_new">Add New Course</option> -->
                                 </select>
                                 <div class="input-group-append">
                                     <div class="input-group-text">
@@ -68,14 +68,14 @@ include "submit_registration.php";
                             </div>
 
                             <!-- New Course Input (Hidden Initially) -->
-                            <div id="new_course_container" style="display: none; margin-top: 5px;">
+                            <!-- <div id="new_course_container" style="display: none; margin-top: 5px;">
                                 <input type="text" id="new_course_code" class="form-control mt-2"
                                     placeholder="Enter Course Code">
                                 <input type="text" id="new_course_name" class="form-control mt-2"
                                     placeholder="Enter Course Name">
                                 <button type="button" id="add_course"
                                     class="btn btn-success btn-sm mt-2 mb-3">Add</button>
-                            </div>
+                            </div> -->
 
                             <div class="input-group mb-3">
                                 <select id="subjects" class="form-control" name="subjects[]" multiple required>
@@ -89,14 +89,14 @@ include "submit_registration.php";
                             </div>
 
                             <!-- New Subject Input (Hidden Initially) -->
-                            <div id="new_subject_container" style="display: none; margin-top: 5px;">
+                            <!-- <div id="new_subject_container" style="display: none; margin-top: 5px;">
                                 <input type="text" id="new_subject_code" class="form-control mt-2"
                                     placeholder="Enter Subject Code">
                                 <input type="text" id="new_subject_name" class="form-control mt-2"
                                     placeholder="Enter Subject Name">
                                 <button type="button" id="add_subject"
                                     class="btn btn-success btn-sm mt-2 mb-3">Add</button>
-                            </div>
+                            </div> -->
 
                             <div class="input-group mb-3">
                                 <input type="text" class="form-control" name="section" required placeholder="Section">
@@ -160,18 +160,18 @@ include "submit_registration.php";
                     let displayText = `${subjectCode} - ${subjectName}`;
                     subjectDropdown.append(new Option(displayText, subjectCode, false, false));
                 });
-                subjectDropdown.append(new Option("ADD NEW SUBJECT", "add_new", false, false));
+                // subjectDropdown.append(new Option("ADD NEW SUBJECT", "add_new", false, false));
             }, "json");
         });
 
-        subjectDropdown.on("select2:select", function (e) {
-            if (e.params.data.id === "add_new") {
-                newSubjectContainer.show();
-                subjectDropdown.val([]).trigger("change");
-            } else {
-                newSubjectContainer.hide();
-            }
-        });
+        // subjectDropdown.on("select2:select", function (e) {
+        //     if (e.params.data.id === "add_new") {
+        //         newSubjectContainer.show();
+        //         subjectDropdown.val([]).trigger("change");
+        //     } else {
+        //         newSubjectContainer.hide();
+        //     }
+        // });
 
         addSubjectBtn.click(function () {
             let courseCode = courseSelect.val();
