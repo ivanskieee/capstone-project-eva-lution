@@ -18,7 +18,7 @@ include 'audit_log.php';
 
 $id = isset($_GET['academic_id']) ? $_GET['academic_id'] : null;
 
-$query = "SELECT COUNT(*) as total FROM academic_list"; 
+$query = "SELECT COUNT(*) as total FROM academic_list";
 $stmt = $conn->prepare($query);
 $stmt->execute();
 $total_records = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
@@ -33,7 +33,7 @@ $page = max(1, min($page, $total_pages));
 $offset = ($page - 1) * $records_per_page;
 
 // Fetch academic records with pagination
-$query = "SELECT * FROM academic_list ORDER BY academic_id ASC LIMIT :limit OFFSET :offset"; 
+$query = "SELECT * FROM academic_list ORDER BY academic_id ASC LIMIT :limit OFFSET :offset";
 $stmt = $conn->prepare($query);
 $stmt->bindValue(':limit', $records_per_page, PDO::PARAM_INT);
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
@@ -57,13 +57,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($_POST['delete_id'])) {
         $delete_id = $_POST['delete_id'];
-        
+
         // Fetch year and semester before deleting
         $stmt = $conn->prepare('SELECT year, semester FROM academic_list WHERE academic_id = ?');
         $stmt->execute([$delete_id]);
         $academic = $stmt->fetch(PDO::FETCH_ASSOC);
         $year = $academic['year'] ?? 'Unknown';
         $semester = $academic['semester'] ?? 'Unknown';
+
+        // Delete all related questions
+        $tables_to_delete_from = [
+            'question_list',
+            'question_faculty_faculty',
+            'question_faculty_dean',
+            'question_dean_faculty',
+            'evaluation_answers',
+            'evaluation_answers_faculty_dean',
+            'evaluation_answers_faculty_faculty',
+            'evaluation_answers_dean_faculty',
+            'student_list'
+        ];
+
+        foreach ($tables_to_delete_from as $table) {
+            $stmt = $conn->prepare("DELETE FROM $table WHERE academic_id = :academic_id");
+            $stmt->bindParam(':academic_id', $delete_id, PDO::PARAM_INT);
+            $stmt->execute(); // Execute each delete
+        }
 
         $stmt = $conn->prepare('DELETE FROM academic_list WHERE academic_id = :id');
         $stmt->bindParam(':id', $delete_id, PDO::PARAM_INT);
