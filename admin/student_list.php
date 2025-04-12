@@ -27,7 +27,6 @@ $offset = ($page - 1) * $records_per_page;
 // Fetch only the required records for the current page
 $student_data = array_slice($student_data, $offset, $records_per_page);
 
-// Pagination segment settings
 $segment_size = 5; // Number of page links per segment
 $current_segment = ceil($page / $segment_size);
 $start_page = ($current_segment - 1) * $segment_size + 1;
