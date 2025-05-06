@@ -13,12 +13,16 @@ include "submit_registration.php";
                         </div>
                         <form action="submit_registration.php" method="POST" id="registration-form">
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control" name="school_id" required
+                                <input type="text" class="form-control" name="school_id" id="school_id" required
                                     placeholder="Student ID">
                                 <div class="input-group-append">
                                     <div class="input-group-text">
                                         <i class="fas fa-id-card"></i>
                                     </div>
+                                </div>
+                                <!-- Custom feedback message -->
+                                <div class="invalid-feedback" id="school_id_feedback">
+                                    Student ID must contain only numbers (no special characters).
                                 </div>
                             </div>
                             <div class="input-group mb-3">
@@ -126,6 +130,42 @@ include "submit_registration.php";
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('registration-form');
+        const schoolIdInput = document.getElementById('school_id');
+        const schoolIdFeedback = document.getElementById('school_id_feedback');
+        const invalidChars = /[^a-zA-Z0-9]/;
+
+        // Realtime validation while typing
+        schoolIdInput.addEventListener('input', function () {
+            if (invalidChars.test(this.value)) {
+                this.classList.add('is-invalid');
+                schoolIdFeedback.style.display = 'block';
+            } else {
+                this.classList.remove('is-invalid');
+                schoolIdFeedback.style.display = 'none';
+            }
+        });
+
+        // On form submission
+        form.addEventListener('submit', function (e) {
+            if (!form.checkValidity()) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+
+            if (invalidChars.test(schoolIdInput.value)) {
+                e.preventDefault();
+                schoolIdInput.classList.add('is-invalid');
+                schoolIdFeedback.style.display = 'block';
+            }
+
+            form.classList.add('was-validated');
+        });
+    });
+</script>
 
 <script>
     $(document).ready(function () {
