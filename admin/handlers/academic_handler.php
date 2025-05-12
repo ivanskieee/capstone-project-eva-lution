@@ -23,16 +23,16 @@ $stmt = $conn->prepare($query);
 $stmt->execute();
 $total_records = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
-$records_per_page = 5; // Adjust per preference
+$records_per_page = 5; 
 $total_pages = ceil($total_records / $records_per_page);
 
-// Determine current page
+
 $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
 $page = max(1, min($page, $total_pages));
 
 $offset = ($page - 1) * $records_per_page;
 
-// Fetch academic records with pagination
+
 $query = "SELECT * FROM academic_list ORDER BY academic_id ASC LIMIT :limit OFFSET :offset";
 $stmt = $conn->prepare($query);
 $stmt->bindValue(':limit', $records_per_page, PDO::PARAM_INT);
@@ -40,7 +40,7 @@ $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->execute();
 $academics = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Segment pagination settings
+
 $segment_size = 5;
 $current_segment = ceil($page / $segment_size);
 $start_page = ($current_segment - 1) * $segment_size + 1;
@@ -58,14 +58,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['delete_id'])) {
         $delete_id = $_POST['delete_id'];
 
-        // Fetch year and semester before deleting
+        
         $stmt = $conn->prepare('SELECT year, semester FROM academic_list WHERE academic_id = ?');
         $stmt->execute([$delete_id]);
         $academic = $stmt->fetch(PDO::FETCH_ASSOC);
         $year = $academic['year'] ?? 'Unknown';
         $semester = $academic['semester'] ?? 'Unknown';
 
-        // Delete all related questions
         $tables_to_delete_from = [
             'question_list',
             'question_faculty_faculty',
@@ -81,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         foreach ($tables_to_delete_from as $table) {
             $stmt = $conn->prepare("DELETE FROM $table WHERE academic_id = :academic_id");
             $stmt->bindParam(':academic_id', $delete_id, PDO::PARAM_INT);
-            $stmt->execute(); // Execute each delete
+            $stmt->execute(); 
         }
 
         $stmt = $conn->prepare('DELETE FROM academic_list WHERE academic_id = :id');
@@ -127,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $academic_id = $_POST['academic_id'];
         $status = $_POST['status'];
 
-        // Fetch year and semester for logging
+        
         $stmt = $conn->prepare('SELECT year, semester FROM academic_list WHERE academic_id = ?');
         $stmt->execute([$academic_id]);
         $academic = $stmt->fetch(PDO::FETCH_ASSOC);

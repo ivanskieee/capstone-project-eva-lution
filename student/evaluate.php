@@ -8,7 +8,6 @@ $student = $stmt->fetch(PDO::FETCH_ASSOC);
 
 $subjects = $student['subject'] ?? '';
 
-// Normalize the subjects
 $normalizedSubjects = array_map('trim', explode(',', strtolower($subjects)));
 $normalizedSubjectsString = implode(',', $normalizedSubjects);
 ?>
@@ -50,12 +49,11 @@ $normalizedSubjectsString = implode(',', $normalizedSubjects);
 
 								if ($stmt->rowCount() > 0) {
 									while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-										// Check if the student has already evaluated this faculty
 										$evaluationStmt = $conn->prepare('SELECT COUNT(*) FROM evaluation_answers WHERE faculty_id = ? AND student_id = ?');
 										$evaluationStmt->execute([$row['fid'], $_SESSION['user']['student_id']]);
 										$evaluationExists = $evaluationStmt->fetchColumn();
 
-										// If the student has already evaluated this faculty, skip this faculty
+
 										if ($evaluationExists > 0) {
 											continue;
 										}
@@ -82,7 +80,7 @@ $normalizedSubjectsString = implode(',', $normalizedSubjects);
 					</div>
 				</div>
 				<?php
-				// Retrieve faculty_id from URL
+
 				$faculty_id = $_GET['rid'] ?? null;
 				?>
 
@@ -97,7 +95,7 @@ $normalizedSubjectsString = implode(',', $normalizedSubjects);
 										Evaluation</button>
 							</div>
 						</div>
-						<!-- Add a wrapper div with a class for grayed-out state -->
+
 						<div class="card-body" id="evaluation-questions" class="disabled-section">
 							<fieldset class="border border-success p-2 w-100">
 								<legend class="w-auto">Rating Legend</legend>
@@ -145,7 +143,6 @@ $normalizedSubjectsString = implode(',', $normalizedSubjects);
 															</td>
 														<?php endfor; ?>
 													<?php elseif ($qRow['question_type'] == 'text'): ?>
-														<!-- Comment textarea in the same row -->
 														<td colspan="4" class="text-center">
 															<textarea name="comment[<?= $qRow['question_id'] ?>]" class="form-control"
 																rows="3" placeholder="Enter your answer" required disabled></textarea>
@@ -160,14 +157,14 @@ $normalizedSubjectsString = implode(',', $normalizedSubjects);
 								</table>
 							<?php endforeach; ?>
 							<div class="card-header mt-3">
-							<b></b>
-							<div class="card-tools">
-								<form id="evaluation-form" method="POST" action="eval_handler.php">
-									<button type="submit" id="submit-btn"
-										class="btn btn-sm btn-flat btn-success bg-gradient-success mx-1">Submit
-										Evaluation</button>
+								<b></b>
+								<div class="card-tools">
+									<form id="evaluation-form" method="POST" action="eval_handler.php">
+										<button type="submit" id="submit-btn"
+											class="btn btn-sm btn-flat btn-success bg-gradient-success mx-1">Submit
+											Evaluation</button>
+								</div>
 							</div>
-						</div>
 							</form>
 						</div>
 					</div>
@@ -178,65 +175,56 @@ $normalizedSubjectsString = implode(',', $normalizedSubjects);
 </div>
 
 <script>
-    $(document).ready(function () {
-        // Disable submit button initially
-        $('#submit-btn').prop('disabled', true);
+	$(document).ready(function () {
+		$('#submit-btn').prop('disabled', true);
 
-        // Handle faculty item click
-        $('.list-group-item').click(function (e) {
-            e.preventDefault(); // Prevent the default link action
+		$('.list-group-item').click(function (e) {
+			e.preventDefault();
 
-            // Remove 'list-group-item-success' from all items
-            $('.list-group-item').removeClass('list-group-item-success');
 
-            // Add 'list-group-item-success' to the clicked item
-            $(this).addClass('list-group-item-success');
+			$('.list-group-item').removeClass('list-group-item-success');
 
-            // Get the faculty ID from the link's href
-            let facultyId = $(this).attr('href').split('=')[1]; // Get the faculty ID after 'rid='
 
-            if (facultyId) {
-                // Set the faculty ID in the hidden input field
-                $('input[name="faculty_id"]').val(facultyId);
+			$(this).addClass('list-group-item-success');
 
-                // Enable the submit button
-                $('#submit-btn').prop('disabled', false);
+			let facultyId = $(this).attr('href').split('=')[1];
 
-                // Remove the grayed-out state and enable interaction
-                $('#evaluation-questions')
-                    .addClass('show').show();
+			if (facultyId) {
 
-                // Enable all disabled input fields within the evaluation section
-                $('#evaluation-questions input, #evaluation-questions textarea').prop('disabled', false);
-            }
-        });
+				$('input[name="faculty_id"]').val(facultyId);
 
-        // Ensure submit button stays disabled if no faculty is selected
-        $('#evaluation-form').on('submit', function (e) {
-            let selectedFaculty = $('input[name="faculty_id"]').val();
-            if (!selectedFaculty) {
-                e.preventDefault();
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Faculty Not Selected',
-                    text: 'Please select a faculty member before submitting your evaluation.',
-                    confirmButtonText: 'Okay'
-                });
-            }
-        });
-    });
+				$('#submit-btn').prop('disabled', false);
+
+
+				$('#evaluation-questions')
+					.addClass('show').show();
+
+				$('#evaluation-questions input, #evaluation-questions textarea').prop('disabled', false);
+			}
+		});
+
+		$('#evaluation-form').on('submit', function (e) {
+			let selectedFaculty = $('input[name="faculty_id"]').val();
+			if (!selectedFaculty) {
+				e.preventDefault();
+				Swal.fire({
+					icon: 'warning',
+					title: 'Faculty Not Selected',
+					text: 'Please select a faculty member before submitting your evaluation.',
+					confirmButtonText: 'Okay'
+				});
+			}
+		});
+	});
 </script>
 
 <script>
 	$(document).ready(function () {
 		$('#evaluation-form').on('submit', function (e) {
-			// Prevent form submission to handle validation
 			e.preventDefault();
 
-			// Check if a faculty member is selected
 			const selectedFaculty = $('input[name="faculty_id"]').val();
 
-			// If no faculty is selected, show SweetAlert
 			if (!selectedFaculty) {
 				Swal.fire({
 					icon: 'warning',
@@ -244,10 +232,9 @@ $normalizedSubjectsString = implode(',', $normalizedSubjects);
 					text: 'Please select a faculty member before submitting your evaluation.',
 					confirmButtonText: 'Okay'
 				});
-				return; // Exit the function if no faculty is selected
+				return;
 			}
 
-			// If faculty is selected, proceed with form submission (AJAX)
 			var formData = $(this).serialize();
 
 			$.ajax({
@@ -265,7 +252,7 @@ $normalizedSubjectsString = implode(',', $normalizedSubjects);
 						window.location.href = 'evaluate.php';
 					});
 
-					$('#evaluation-form')[0].reset();  // Optionally reset the form after success
+					$('#evaluation-form')[0].reset();
 				},
 				error: function () {
 					Swal.fire({
@@ -280,15 +267,12 @@ $normalizedSubjectsString = implode(',', $normalizedSubjects);
 </script>
 <script>
 	$(document).ready(function () {
-		// Check if the success message is visible
 		if ($('#success-message').length) {
-			// Fade the message out after 1 second
 			setTimeout(function () {
 				$('#success-message').fadeOut('slow', function () {
-					// Use the normalized subjects string in the URL
 					window.location.href = 'evaluate.php?subjects=<?php echo urlencode($normalizedSubjectsString); ?>';
 				});
-			}, 1000); // 1000 ms = 1 second
+			}, 1000);
 		}
 	});
 </script>
@@ -301,56 +285,49 @@ $normalizedSubjectsString = implode(',', $normalizedSubjects);
 
 	#evaluation-questions {
 		opacity: 0.5;
-		/* Gray out the section */
 		pointer-events: none;
-		/* Disable interaction */
 	}
 
 	#evaluation-questions.show {
 		opacity: 1;
-		/* Restore full opacity */
 		pointer-events: auto;
-		/* Enable interaction */
 	}
-	/* Grayed-out and non-interactive state */
-    .disabled-section {
-        opacity: 0.5; /* Make the section semi-transparent */
-        pointer-events: none; /* Disable interaction */
-    }
 
-    /* Active state (when a faculty member is selected) */
-    .active-section {
-        opacity: 1; /* Restore full opacity */
-        pointer-events: auto; /* Enable interaction */
-    }
+	.disabled-section {
+		opacity: 0.5;
+		pointer-events: none;
+	}
+
+	.active-section {
+		opacity: 1;
+		pointer-events: auto;
+	}
 </style>
 <script>
-    // Check if the criteria contains any 'text' type questions
-    document.addEventListener('DOMContentLoaded', function() {
-        const tables = document.querySelectorAll('table');
-        
-        tables.forEach(table => {
-            const rows = table.querySelectorAll('tbody tr');
-            let hasTextQuestion = false;
+	document.addEventListener('DOMContentLoaded', function () {
+		const tables = document.querySelectorAll('table');
 
-            // Check if there's a text-type question in the current table
-            rows.forEach(row => {
-                if (row.querySelector('textarea')) {
-                    hasTextQuestion = true;
-                }
-            });
+		tables.forEach(table => {
+			const rows = table.querySelectorAll('tbody tr');
+			let hasTextQuestion = false;
 
-            if (hasTextQuestion) {
-                // Hide the rating columns (1 to 4)
-                const headerCells = table.querySelectorAll('thead th');
-                headerCells.forEach((cell, index) => {
-                    if (index > 0) {
-                        cell.style.display = 'none'; // Hide columns 1 to 4
-                    }
-                });
-            }
-        });
-    });
+			rows.forEach(row => {
+				if (row.querySelector('textarea')) {
+					hasTextQuestion = true;
+				}
+			});
+
+			if (hasTextQuestion) {
+
+				const headerCells = table.querySelectorAll('thead th');
+				headerCells.forEach((cell, index) => {
+					if (index > 0) {
+						cell.style.display = 'none';
+					}
+				});
+			}
+		});
+	});
 </script>
 
 <?php include 'footer.php'; ?>

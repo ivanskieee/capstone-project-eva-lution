@@ -85,7 +85,7 @@ include 'handlers/academic_handler.php';
                 if (result.isConfirmed) {
                     $.ajax({
                         type: 'POST',
-                        url: 'academic_list.php', // Adjust the URL as needed
+                        url: 'academic_list.php', 
                         data: $(form).serialize(),
                         success: function () {
                             Swal.fire({
@@ -95,7 +95,7 @@ include 'handlers/academic_handler.php';
                                 showConfirmButton: false,
                                 timer: 2000
                             }).then(() => {
-                                window.location.href = 'academic_list.php'; // Adjust the redirect URL if needed
+                                window.location.href = 'academic_list.php'; 
                             });
                         },
                         error: function () {
@@ -124,10 +124,8 @@ include 'handlers/academic_handler.php';
                 success: function (response) {
                     var result = response.split('<!--pagination-->');
 
-                    // Update the table body
                     $('#list tbody').html(result[0]);
 
-                    // Update pagination only if available
                     if (result.length > 1) {
                         $('#pagination-links').html(result[1]);
                     }
@@ -137,12 +135,10 @@ include 'handlers/academic_handler.php';
                 }
             });
         }
-
-        // Live search
+        
         $('#searchInput').on('keyup', function () {
             let searchValue = $(this).val().trim();
 
-            // If user types #6, remove the # before sending the request
             if (searchValue.startsWith('#')) {
                 searchValue = searchValue.substring(1);
             }
@@ -150,15 +146,12 @@ include 'handlers/academic_handler.php';
             updateTable(1, searchValue);
         });
 
-
-        // Handle pagination clicks
         $(document).on('click', '.pagination a', function (e) {
             e.preventDefault();
             let pageNumber = $(this).data('page');
             updateTable(pageNumber, $('#searchInput').val());
         });
 
-        // Load table data on page load
         updateTable(1);
     });
 </script>

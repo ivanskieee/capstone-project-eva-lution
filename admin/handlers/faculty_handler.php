@@ -37,7 +37,6 @@ if ($id) {
     $stmt->execute();
     $faculty = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    // Fetch faculty's department and subjects
     if ($faculty) {
         $faculty_id = $faculty['faculty_id'];
 
