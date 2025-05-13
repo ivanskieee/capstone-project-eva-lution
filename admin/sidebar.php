@@ -11,7 +11,7 @@
         <i class="fas fa-user-circle fa-2x"></i>
       </div>
       <div class="user-info ml-2">
-        <p class="user-name mb-0">Administrator</p>
+        <p class="user-name mb-0"><b><?php echo ucwords($_SESSION['login_name']); ?></b></p>
         <small class="user-role text-muted">System Admin</small>
       </div>
     </div>
