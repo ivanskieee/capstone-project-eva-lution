@@ -36,8 +36,8 @@ function fetchAllAcademicYears($conn)
 
 // Fetch the user's current academic year
 $academic_id = $_SESSION['user']['academic_id'];  // Assuming the user's academic_id is stored in session
-$facultyList = fetchFacultyList($conn, $academic_id);
-$headList = fetchHeadFacultyList($conn, $academic_id);
+$facultyList = fetchFacultyList($conn);
+$headList = fetchHeadFacultyList($conn);
 
 // Fetch all academic years (including closed ones)
 $academicYearList = fetchAllAcademicYears($conn);
@@ -50,7 +50,6 @@ $stmt_academic->execute();
 $academic = $stmt_academic->fetch(PDO::FETCH_ASSOC);
 
 $status_labels = [0 => 'Default (Not Started)', 1 => 'Ongoing', 2 => 'Closed'];
-// $status_label = $status_labels[$academic['status']] ?? 'Unknown';
 if (is_array($academic) && isset($academic['status']) && isset($status_labels[$academic['status']])) {
     $status_label = $status_labels[$academic['status']];
 } else {
@@ -61,44 +60,101 @@ if (is_array($academic) && isset($academic['status']) && isset($status_labels[$a
 $facultyList = fetchFacultyList($conn);
 $headList = fetchHeadFacultyList($conn);
 
+// Define color variables - primary green theme
+$primaryColor = "rgb(51, 128, 64)"; // Main green color
+$primaryHex = "#338040"; // Hex equivalent for Tailwind custom styles
 ?>
 <!-- Add Tailwind CDN for styling -->
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 <!-- Add Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
+<!-- Custom Styles -->
+<style>
+    :root {
+        --primary-color: <?php echo $primaryColor; ?>;
+        --primary-dark: rgb(41, 105, 52);
+        --primary-light: rgb(236, 253, 239);
+    }
+    
+    .bg-primary {
+        background-color: var(--primary-color);
+    }
+    
+    .text-primary {
+        color: var(--primary-color);
+    }
+    
+    .border-primary {
+        border-color: var(--primary-color);
+    }
+    
+    .hover\:bg-primary-dark:hover {
+        background-color: var(--primary-dark);
+    }
+    
+    .from-primary {
+        --tw-gradient-from: var(--primary-color);
+    }
+    
+    .to-primary-dark {
+        --tw-gradient-to: var(--primary-dark);
+    }
+    
+    .ring-primary {
+        --tw-ring-color: var(--primary-color);
+    }
+    
+    .bg-primary-light {
+        background-color: var(--primary-light);
+    }
+    
+    /* Smooth transitions */
+    .card-transition {
+        transition: all 0.3s ease;
+    }
+    
+    .card-transition:hover {
+        transform: translateY(-3px);
+    }
+</style>
+
 <div class="content bg-gray-50 ml-64 transition-all duration-300 ease-in-out" style="margin-top: 4rem;">
     <div class="main-header">
-        <div class="container mx-auto px-4 py-8">
+        <div class="container mx-auto px-4 py-6">
             <!-- Page Header -->
-            <div class="mb-6">
-                <h2 class="text-3xl font-bold text-gray-800 border-b-2 border-indigo-500 pb-2">
-                    Dashboard
-                </h2>
+            <div class="mb-8">
+                <div class="flex items-center justify-between">
+                    <h2 class="text-3xl font-bold text-gray-800 pb-2">
+                        Dashboard
+                    </h2>
+                    <div class="text-sm text-gray-500">
+                        <span class="font-medium"><?php echo date('l, F j, Y'); ?></span>
+                    </div>
+                </div>
+                <div class="h-1 w-32 bg-primary rounded-full"></div>
             </div>
 
             <!-- Welcome Card -->
-            <div class="bg-white rounded-lg shadow-md mb-8">
+            <div class="bg-white rounded-lg shadow-md mb-8 border-l-4">
                 <div class="p-6">
                     <div class="flex items-center justify-between">
                         <div>
-                            <h4 class="text-2xl font-semibold text-gray-800">Welcome, <?php echo $_SESSION['login_name']; ?>!</h4>
-                            <p class="text-gray-500 mt-1">Admin Dashboard</p>
+                            <h4 class="text-2xl font-semibold text-gray-800">Welcome, <?php echo $_SESSION['login_name']; ?></h4>
+                            <p class="text-gray-600 mt-1">Admin Dashboard</p>
                         </div>
-                        <div class="hidden md:block">
-                            <div class="flex space-x-2">
-                                <span class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full bg-indigo-100 text-indigo-800">
-                                    <i class="fas fa-user-shield mr-1"></i> Admin
-                                </span>
-                                <span class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full bg-green-100 text-green-800">
-                                    <i class="fas fa-check-circle mr-1"></i> Online
-                                </span>
-                            </div>
+                        <div class="hidden md:flex space-x-3">
+                            <span class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full bg-primary-light text-primary">
+                                <i class="fas fa-user-shield mr-1"></i> Administrator
+                            </span>
+                            <span class="inline-flex items-center px-3 py-1 text-sm font-medium rounded-full bg-green-100 text-green-800">
+                                <i class="fas fa-check-circle mr-1"></i> Online
+                            </span>
                         </div>
                     </div>
 
                     <!-- Academic Year Info -->
-                    <div class="mt-4 max-w-2xl">
+                    <div class="mt-5 max-w-3xl">
                         <?php
                         // Fetch the user's academic_id from the `users` table (assuming the user is logged in)
                         $user_id = $_SESSION['user']['id'];  // Adjust this to your session variable
@@ -131,22 +187,22 @@ $headList = fetchHeadFacultyList($conn);
                                 $status_colors = [
                                     0 => 'bg-yellow-100 text-yellow-800', // Not Started
                                     1 => 'bg-green-100 text-green-800',   // Ongoing
-                                    2 => 'bg-gray-100 text-gray-800'      // Closed
+                                    2 => 'bg-gray-100 text-gray-700'      // Closed
                                 ];
-                                $status_color = $status_colors[$academic['status']] ?? 'bg-gray-100 text-gray-800';
+                                $status_color = $status_colors[$academic['status']] ?? 'bg-gray-100 text-gray-700';
 
                                 // Display the academic year, semester, and status in the new style
                                 echo '
-                                <div class="bg-indigo-50 border-l-4 border-indigo-500 rounded-lg p-4">
+                                <div class="bg-gray-50 border-l-4 border-primary rounded-md p-4">
                                     <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                                         <div>
                                             <div class="flex items-center">
-                                                <i class="fas fa-calendar-alt text-indigo-500 mr-2"></i>
-                                                <h5 class="font-semibold text-gray-800">Academic Year: <span class="text-indigo-600">' . htmlspecialchars($academic['year']) . '</span></h5>
+                                                <i class="fas fa-calendar-alt text-primary mr-2"></i>
+                                                <h5 class="font-semibold text-gray-800">Academic Year: <span class="text-primary">' . htmlspecialchars($academic['year']) . '</span></h5>
                                             </div>
                                             <div class="flex items-center mt-2">
-                                                <i class="fas fa-book text-indigo-500 mr-2"></i>
-                                                <h5 class="font-semibold text-gray-800">Semester: <span class="text-indigo-600">' . htmlspecialchars($academic['semester']) . '</span></h5>
+                                                <i class="fas fa-book text-primary mr-2"></i>
+                                                <h5 class="font-semibold text-gray-800">Semester: <span class="text-primary">' . htmlspecialchars($academic['semester']) . '</span></h5>
                                             </div>
                                         </div>
                                         <div class="mt-3 md:mt-0">
@@ -160,7 +216,7 @@ $headList = fetchHeadFacultyList($conn);
                             } else {
                                 // No academic data found for the user's academic_id
                                 echo '
-                                <div class="bg-yellow-50 border-l-4 border-yellow-500 rounded-lg p-4">
+                                <div class="bg-yellow-50 border-l-4 border-yellow-500 rounded-md p-4">
                                     <div class="flex">
                                         <div class="flex-shrink-0">
                                             <i class="fas fa-exclamation-triangle text-yellow-500"></i>
@@ -175,7 +231,7 @@ $headList = fetchHeadFacultyList($conn);
                         } else {
                             // No academic_id found for the user
                             echo '
-                            <div class="bg-yellow-50 border-l-4 border-yellow-500 rounded-lg p-4">
+                            <div class="bg-yellow-50 border-l-4 border-yellow-500 rounded-md p-4">
                                 <div class="flex">
                                     <div class="flex-shrink-0">
                                         <i class="fas fa-exclamation-triangle text-yellow-500"></i>
@@ -193,13 +249,13 @@ $headList = fetchHeadFacultyList($conn);
             </div>
 
             <!-- Stat Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
                 <?php
                 $dashboardData = [
-                    ["Faculty Members", "college_faculty_list", "fas fa-user-friends", "tertiary_faculty_list.php", "bg-gradient-to-r from-blue-500 to-blue-600"],
-                    ["Students", "student_list", "fas fa-graduation-cap", "student_list.php", "bg-gradient-to-r from-green-500 to-green-600"],
-                    ["Users", "users", "fas fa-users", "user_list.php", "bg-gradient-to-r from-purple-500 to-purple-600"],
-                    ["Academic Heads", "head_faculty_list", "fas fa-user-tie", "head_faculty_list.php", "bg-gradient-to-r from-red-500 to-red-600"],
+                    ["Faculty Members", "college_faculty_list", "fas fa-user-friends", "tertiary_faculty_list.php", "from-primary to-primary-dark"],
+                    ["Students", "student_list", "fas fa-graduation-cap", "student_list.php", "from-primary to-primary-dark"],
+                    ["Users", "users", "fas fa-users", "user_list.php", "from-primary to-primary-dark"],
+                    ["Academic Heads", "head_faculty_list", "fas fa-user-tie", "head_faculty_list.php", "from-primary to-primary-dark"],
                 ];
 
                 foreach ($dashboardData as $index => $data) {
@@ -209,25 +265,25 @@ $headList = fetchHeadFacultyList($conn);
                     $gradient = $data[4];
                 
                     echo "
-                    <a href='{$listPage}' class='transform transition-transform duration-300 hover:scale-105'>
-                        <div class='rounded-lg shadow-md overflow-hidden {$gradient} text-white relative'>
-                            <div class='p-6'>
+                    <a href='{$listPage}' class='card-transition'>
+                        <div class='rounded-lg shadow-md overflow-hidden bg-gradient-to-r {$gradient} text-white relative'>
+                            <div class='p-5'>
                                 <div class='flex items-center justify-between'>
                                     <div>
-                                        <p class='text-white text-opacity-80'>{$data[0]}</p>
+                                        <p class='text-white text-opacity-90 font-medium'>{$data[0]}</p>
                                         <h3 class='text-3xl font-bold mt-1'>{$total}</h3>
                                     </div>
-                                    <div class='rounded-full bg-white bg-opacity-30 p-4'>
-                                        <i class='{$data[2]} text-2xl'></i>
+                                    <div class='rounded-full bg-white bg-opacity-20 p-3'>
+                                        <i class='{$data[2]} text-xl'></i>
                                     </div>
                                 </div>
-                                <div class='flex items-center mt-4 text-sm text-white text-opacity-80'>
-                                    <i class='fas fa-arrow-right mr-1'></i>
+                                <div class='flex items-center mt-4 text-sm text-white text-opacity-90'>
                                     <span>View Details</span>
+                                    <i class='fas fa-arrow-right ml-1'></i>
                                 </div>
                             </div>
                             <div class='absolute top-0 right-0 bottom-0 opacity-10'>
-                                <i class='{$data[2]} text-8xl transform translate-x-4 translate-y-6'></i>
+                                <i class='{$data[2]} text-9xl transform translate-x-8 translate-y-6'></i>
                             </div>
                         </div>
                     </a>";
@@ -237,33 +293,36 @@ $headList = fetchHeadFacultyList($conn);
 
             <!-- Evaluation Types -->
             <div class="mb-8">
-                <h3 class="text-xl font-semibold text-gray-800 mb-4">Evaluation Categories</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="flex items-center mb-4">
+                    <div class="w-1 h-6 bg-primary rounded-full mr-2"></div>
+                    <h3 class="text-xl font-bold text-gray-800">Evaluation Categories</h3>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     <?php
                     $evaluationCategories = [
-                        ["Student to Faculty Evaluation", "faculty", "fas fa-chalkboard-teacher", "bg-gradient-to-r from-cyan-400 to-cyan-500"],
-                        ["Faculty Self-Evaluation", "self-faculty", "fas fa-user-check", "bg-gradient-to-r from-amber-400 to-amber-500"],
-                        ["Head Self-Evaluation", "self-head-faculty", "fas fa-user-tie", "bg-gradient-to-r from-lime-400 to-lime-500"],
-                        ["Peer to Peer Evaluation", "faculty-to-faculty", "fas fa-users-cog", "bg-gradient-to-r from-violet-400 to-violet-500"],
-                        ["Peer to Head Evaluation", "faculty-to-head", "fas fa-user-graduate", "bg-gradient-to-r from-pink-400 to-pink-500"],
-                        ["Head to Faculty Evaluation", "head-to-faculty", "fas fa-user-shield", "bg-gradient-to-r from-indigo-400 to-indigo-500"]
+                        ["Student to Faculty Evaluation", "faculty", "fas fa-chalkboard-teacher", "border-green-500"],
+                        ["Faculty Self-Evaluation", "self-faculty", "fas fa-user-check", "border-amber-500"],
+                        ["Head Self-Evaluation", "self-head-faculty", "fas fa-user-tie", "border-lime-500"],
+                        ["Peer to Peer Evaluation", "faculty-to-faculty", "fas fa-users-cog", "border-violet-500"],
+                        ["Peer to Head Evaluation", "faculty-to-head", "fas fa-user-graduate", "border-pink-500"],
+                        ["Head to Faculty Evaluation", "head-to-faculty", "fas fa-user-shield", "border-indigo-500"]
                     ];
 
                     foreach ($evaluationCategories as $category) {
                         echo "
-                        <div class='evaluation-card cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-lg' data-category='{$category[1]}'>
-                            <div class='bg-white rounded-lg shadow-md overflow-hidden'>
+                        <div class='evaluation-card cursor-pointer card-transition' data-category='{$category[1]}'>
+                            <div class='bg-white rounded-lg shadow-md overflow-hidden border-l-4 {$category[3]}'>
                                 <div class='p-5 flex items-center space-x-4'>
                                     <div class='flex-shrink-0'>
-                                        <div class='rounded-full p-3 {$category[3]} text-white'>
+                                        <div class='rounded-full p-3 bg-gray-100 text-gray-700'>
                                             <i class='{$category[2]} text-lg'></i>
                                         </div>
                                     </div>
                                     <div class='flex-1 min-w-0'>
-                                        <h6 class='text-gray-800 text-lg font-semibold truncate'>{$category[0]}</h6>
+                                        <h6 class='text-gray-800 text-base font-semibold truncate'>{$category[0]}</h6>
                                         <p class='text-sm text-gray-500'>Click to select</p>
                                     </div>
-                                    <div class='indicator-dot hidden'></div>
+                                    <div class='indicator-dot hidden w-3 h-3 rounded-full bg-primary'></div>
                                 </div>
                             </div>
                         </div>";
@@ -276,14 +335,14 @@ $headList = fetchHeadFacultyList($conn);
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                 <!-- Faculty Selection -->
                 <div class="bg-white rounded-lg shadow-md">
-                    <div class="bg-indigo-600 text-white rounded-t-lg py-3 px-4">
-                        <h5 class="text-lg font-semibold text-center">Select Faculty to Monitor</h5>
+                    <div class="bg-primary text-white rounded-t-lg py-3 px-4">
+                        <h5 class="text-lg font-semibold">Select Faculty to Monitor</h5>
                     </div>
                     <div class="p-5">
                         <form id="facultyForm">
                             <div class="mb-4">
                                 <label for="facultySelect" class="block text-sm font-medium text-gray-700 mb-1">Faculty:</label>
-                                <select id="facultySelect" name="faculty_id" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <select id="facultySelect" name="faculty_id" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
                                     <option value="" selected disabled>Select Faculty</option>
                                     <!-- Options dynamically populated -->
                                 </select>
@@ -294,14 +353,14 @@ $headList = fetchHeadFacultyList($conn);
 
                 <!-- Academic Year Selection -->
                 <div class="bg-white rounded-lg shadow-md">
-                    <div class="bg-indigo-600 text-white rounded-t-lg py-3 px-4">
-                        <h5 class="text-lg font-semibold text-center">Select Academic Year</h5>
+                    <div class="bg-primary text-white rounded-t-lg py-3 px-4">
+                        <h5 class="text-lg font-semibold">Select Academic Year</h5>
                     </div>
                     <div class="p-5">
                         <form id="academicForm">
                             <div class="mb-4">
                                 <label for="academicSelect" class="block text-sm font-medium text-gray-700 mb-1">Academic Year:</label>
-                                <select id="academicSelect" name="academic_id" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                <select id="academicSelect" name="academic_id" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
                                     <option value="" selected disabled>Select Academic Year</option>
                                     <?php foreach ($academicYearList as $academicYear): ?>
                                         <option value="<?php echo $academicYear['academic_id']; ?>" 
@@ -320,27 +379,31 @@ $headList = fetchHeadFacultyList($conn);
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                 <!-- Performance Over Time Chart -->
                 <div class="bg-white rounded-lg shadow-md">
-                    <div class="bg-indigo-600 text-white rounded-t-lg py-3 px-4">
-                        <h5 class="text-lg font-semibold text-center">Performance Over Time</h5>
+                    <div class="bg-primary text-white rounded-t-lg py-3 px-4">
+                        <h5 class="text-lg font-semibold">Performance Over Time</h5>
                     </div>
-                    <div class="p-4">
+                    <div class="p-5">
                         <canvas id="facultyLineChart" class="max-h-80"></canvas>
                     </div>
                 </div>
 
                 <!-- Mean Score Chart -->
                 <div class="bg-white rounded-lg shadow-md">
-                    <div class="bg-indigo-600 text-white rounded-t-lg py-3 px-4">
-                        <h5 class="text-lg font-semibold text-center">Mean Score</h5>
+                    <div class="bg-primary text-white rounded-t-lg py-3 px-4">
+                        <h5 class="text-lg font-semibold">Mean Score</h5>
                     </div>
-                    <div class="p-4">
+                    <div class="p-5">
                         <canvas id="facultyBarChart" class="max-h-80"></canvas>
                     </div>
                 </div>
             </div>
 
             <!-- Legend Section -->
-            <div class="bg-white rounded-lg shadow-md p-4 mb-6">
+            <div class="bg-white rounded-lg shadow-md p-5 mb-6">
+                <div class="flex items-center mb-3">
+                    <div class="w-1 h-5 bg-primary rounded-full mr-2"></div>
+                    <h4 class="text-lg font-semibold text-gray-800">Performance Scale</h4>
+                </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                     <div class="border-l-4 border-green-500 bg-green-50 p-3 rounded">
                         <div class="text-sm text-gray-800 font-medium">3.25 - 4.00</div>
@@ -367,8 +430,8 @@ $headList = fetchHeadFacultyList($conn);
 
             <!-- Feedback Section -->
             <div class="bg-white rounded-lg shadow-md mb-8">
-                <div class="bg-indigo-600 text-white rounded-t-lg py-3 px-4">
-                    <h5 class="text-lg font-semibold text-center">Performance Feedback</h5>
+                <div class="bg-primary text-white rounded-t-lg py-3 px-4">
+                    <h5 class="text-lg font-semibold">Performance Feedback</h5>
                 </div>
                 <div class="p-6 text-center">
                     <p id="performanceFeedback" class="text-lg font-medium text-gray-800"></p>
@@ -381,6 +444,8 @@ $headList = fetchHeadFacultyList($conn);
 <script>
     const facultyList = <?php echo json_encode($facultyList); ?>;
     const headList = <?php echo json_encode($headList); ?>;
+    const primaryColor = "<?php echo $primaryColor; ?>";
+    const primaryHex = "<?php echo $primaryHex; ?>";
 
     document.addEventListener("DOMContentLoaded", function () {
         let barChart;
@@ -416,11 +481,11 @@ $headList = fetchHeadFacultyList($conn);
         evaluationCards.forEach(card => {
             card.addEventListener('click', function () {
                 evaluationCards.forEach(c => {
-                    c.classList.remove('ring-2', 'ring-indigo-500');
+                    c.classList.remove('ring-2', 'ring-primary');
                     c.querySelector('.indicator-dot').classList.add('hidden');
                 });
                 
-                this.classList.add('ring-2', 'ring-indigo-500');
+                this.classList.add('ring-2', 'ring-primary');
                 this.querySelector('.indicator-dot').classList.remove('hidden');
 
                 selectedCategory = this.getAttribute('data-category'); // Store active category
@@ -478,10 +543,10 @@ $headList = fetchHeadFacultyList($conn);
                     labels: labels,
                     datasets: [{
                         label: "Performance Score (%)",
-                        backgroundColor: getGradientColor(ctxBar, 'indigo'),
-                        borderColor: "#4f46e5",
+                        backgroundColor: getGradientColor(ctxBar, primaryColor),
+                        borderColor: primaryHex,
                         borderWidth: 1,
-                        borderRadius: 6,
+                        borderRadius: 4,
                         data: dataset
                     }]
                 },
@@ -547,16 +612,16 @@ $headList = fetchHeadFacultyList($conn);
                     labels: labels,
                     datasets: [{
                         label: "Average Performance Score",
-                        borderColor: "#4f46e5",
-                        backgroundColor: getGradientFill(ctxLine, 'indigo'),
+                        borderColor: primaryHex,
+                        backgroundColor: getGradientFill(ctxLine, primaryColor),
                         data: dataset,
                         fill: true,
                         tension: 0.4,
-                        pointBackgroundColor: "#4f46e5",
+                        pointBackgroundColor: primaryHex,
                         pointBorderColor: "#fff",
                         pointBorderWidth: 2,
-                        pointRadius: 5,
-                        pointHoverRadius: 7
+                        pointRadius: 4,
+                        pointHoverRadius: 6
                     }]
                 },
                 options: {
