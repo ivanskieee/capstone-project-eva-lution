@@ -32,7 +32,8 @@ $generated_link = isset($_SESSION['generated_token']) ? "http://localhost/Capsto
 </head>
 <body>
     <!-- Main Content -->
-    <div class="content ml-64 pt-16 min-h-screen transition-all duration-300 bg-gray-100">
+    <!-- Check if sidebar is collapsed via localStorage and set initial class accordingly -->
+    <div id="mainContent" class="content ml-64 pt-16 min-h-screen transition-all duration-300 bg-gray-100">
         <div class="p-4 md:p-6">
             <div class="max-w-5xl mx-auto">
                 <!-- Header -->
@@ -119,6 +120,26 @@ $generated_link = isset($_SESSION['generated_token']) ? "http://localhost/Capsto
     </div>
 
     <script>
+    // Check if sidebar state is stored in localStorage and apply it on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const mainContent = document.getElementById('mainContent');
+        const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+        
+        if (sidebarCollapsed) {
+            mainContent.classList.remove('ml-64');
+            mainContent.classList.add('ml-16');
+        } else {
+            mainContent.classList.remove('ml-16');
+            mainContent.classList.add('ml-64');
+        }
+        
+        // Listen for sidebar toggle events from parent document
+        window.addEventListener('sidebarToggled', function(e) {
+            mainContent.classList.toggle('ml-64');
+            mainContent.classList.toggle('ml-16');
+        });
+    });
+
     function copyLink() {
         var copyText = document.getElementById("generated-link");
         copyText.select();
@@ -151,18 +172,6 @@ $generated_link = isset($_SESSION['generated_token']) ? "http://localhost/Capsto
                 console.error('Error:', error);
             });
     }
-
-    // Adjust content margin when sidebar is toggled
-    document.addEventListener('DOMContentLoaded', function() {
-        const sidebarToggle = document.getElementById('sidebarToggle');
-        if (sidebarToggle) {
-            sidebarToggle.addEventListener('click', function() {
-                const content = document.querySelector('.content');
-                content.classList.toggle('ml-64');
-                content.classList.toggle('ml-16');
-            });
-        }
-    });
     </script>
 </body>
 </html>
