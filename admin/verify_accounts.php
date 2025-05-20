@@ -205,7 +205,6 @@ include "handlers/verify_actions_handler.php";
                 mainContent.classList.add('ml-64');
             }
 
-            // Listen for sidebar toggle events from parent document
             window.addEventListener('sidebarToggled', function (e) {
                 mainContent.classList.toggle('ml-64');
                 mainContent.classList.toggle('ml-16');
