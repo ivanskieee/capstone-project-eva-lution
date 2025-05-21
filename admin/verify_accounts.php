@@ -171,24 +171,21 @@ include "handlers/verify_actions_handler.php";
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            // Add the 'select all' checkbox event listener
             document.getElementById('select-all')?.addEventListener('change', function () {
                 document.querySelectorAll('input[name="student_ids[]"]').forEach(checkbox => {
                     checkbox.checked = this.checked;
                 });
             });
 
-            // Fade-out alert after a delay
             var alertElement = document.querySelector('.fade-alert');
             if (alertElement) {
                 setTimeout(function () {
                     alertElement.classList.add('opacity-0');
 
-                    // Remove the alert from the DOM after fade-out completes
                     setTimeout(function () {
                         alertElement.remove();
-                    }, 1000); // 1 second after fade-out
-                }, 3000); // 3 seconds before fade-out
+                    }, 1000); 
+                }, 3000); 
             }
         });
     </script>
