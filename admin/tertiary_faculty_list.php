@@ -142,8 +142,8 @@ $end_page = min($current_segment * $segment_size, $total_pages);
                 },
                 dataType: 'json',
                 success: function(response) {
-                    $('#list tbody').html(response.tableData); // Update table rows
-                    $('#pagination-links').html(response.pagination); // Update pagination
+                    $('#list tbody').html(response.tableData);
+                    $('#pagination-links').html(response.pagination); 
                 },
                 error: function() {
                     console.error('Failed to fetch search results.');
