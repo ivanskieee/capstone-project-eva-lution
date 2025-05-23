@@ -69,15 +69,13 @@ $end_page = min($current_segment * $segment_size, $total_pages);
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Faculty Data will be loaded here dynamically -->
                             </tbody>
                         </table>
                         <p id="noRecordsMessage" style="display:none; color: black;" class="ml-1">No faculty found.</p>
                     </div>
                 </div>
                 <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-center" id="pagination-links">
-                        <!-- Pagination links will be generated dynamically -->
+                    <ul class="pagination justify-content-center" id="pagination-links">     
                     </ul>
                 </nav>
             </div>
