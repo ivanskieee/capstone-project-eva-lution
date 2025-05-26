@@ -56,20 +56,18 @@ if (is_array($academic) && isset($academic['status']) && isset($status_labels[$a
     $status_label = ''; // Empty, so nothing is shown
 }
 
-// Fetch data
 $facultyList = fetchFacultyList($conn);
 $headList = fetchHeadFacultyList($conn);
 
-// Define color variables - primary green theme
-$primaryColor = "rgb(51, 128, 64)"; // Main green color
-$primaryHex = "#338040"; // Hex equivalent for Tailwind custom styles
+$primaryColor = "rgb(51, 128, 64)"; 
+$primaryHex = "#338040"; 
 ?>
-<!-- Add Tailwind CDN for styling -->
+
 <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-<!-- Add Font Awesome for icons -->
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-<!-- Custom Styles -->
+
 <style>
     :root {
         --primary-color: <?php echo $primaryColor; ?>;
@@ -109,7 +107,6 @@ $primaryHex = "#338040"; // Hex equivalent for Tailwind custom styles
         background-color: var(--primary-light);
     }
     
-    /* Smooth transitions */
     .card-transition {
         transition: all 0.3s ease;
     }
@@ -122,7 +119,6 @@ $primaryHex = "#338040"; // Hex equivalent for Tailwind custom styles
 <div class="content bg-gray-50 ml-64 transition-all duration-300 ease-in-out" style="margin-top: 4rem;">
     <div class="main-header">
         <div class="container mx-auto px-4 py-6">
-            <!-- Page Header -->
             <div class="mb-8">
                 <div class="flex items-center justify-between">
                     <h2 class="text-3xl font-bold text-gray-800 pb-2">
@@ -135,7 +131,6 @@ $primaryHex = "#338040"; // Hex equivalent for Tailwind custom styles
                 <div class="h-1 w-32 bg-primary rounded-full"></div>
             </div>
 
-            <!-- Welcome Card -->
             <div class="bg-white rounded-lg shadow-md mb-8 border-l-4">
                 <div class="p-6">
                     <div class="flex items-center justify-between">
@@ -153,11 +148,9 @@ $primaryHex = "#338040"; // Hex equivalent for Tailwind custom styles
                         </div>
                     </div>
 
-                    <!-- Academic Year Info -->
                     <div class="mt-5 max-w-3xl">
                         <?php
-                        // Fetch the user's academic_id from the `users` table (assuming the user is logged in)
-                        $user_id = $_SESSION['user']['id'];  // Adjust this to your session variable
+                        $user_id = $_SESSION['user']['id'];  
                         $query_user = 'SELECT academic_id FROM users WHERE id = :user_id';
                         $stmt_user = $conn->prepare($query_user);
                         $stmt_user->bindParam(':user_id', $user_id, PDO::PARAM_INT);
@@ -167,7 +160,6 @@ $primaryHex = "#338040"; // Hex equivalent for Tailwind custom styles
                         if ($user && $user['academic_id']) {
                             $academic_id = $user['academic_id'];
 
-                            // Fetch the academic year, semester, and status from the `academic_list` table
                             $query_academic = 'SELECT year, semester, status FROM academic_list WHERE academic_id = :academic_id';
                             $stmt_academic = $conn->prepare($query_academic);
                             $stmt_academic->bindParam(':academic_id', $academic_id, PDO::PARAM_INT);
@@ -175,7 +167,6 @@ $primaryHex = "#338040"; // Hex equivalent for Tailwind custom styles
                             $academic = $stmt_academic->fetch(PDO::FETCH_ASSOC);
 
                             if ($academic) {
-                                // Map the status to a user-friendly label
                                 $status_labels = [
                                     0 => 'Default (Not Started)',
                                     1 => 'Ongoing',
@@ -183,15 +174,15 @@ $primaryHex = "#338040"; // Hex equivalent for Tailwind custom styles
                                 ];
                                 $status_label = $status_labels[$academic['status']] ?? 'Unknown';
 
-                                // Determine status badge color
+                             
                                 $status_colors = [
-                                    0 => 'bg-yellow-100 text-yellow-800', // Not Started
-                                    1 => 'bg-green-100 text-green-800',   // Ongoing
-                                    2 => 'bg-gray-100 text-gray-700'      // Closed
+                                    0 => 'bg-yellow-100 text-yellow-800', 
+                                    1 => 'bg-green-100 text-green-800',  
+                                    2 => 'bg-gray-100 text-gray-700'      
                                 ];
                                 $status_color = $status_colors[$academic['status']] ?? 'bg-gray-100 text-gray-700';
 
-                                // Display the academic year, semester, and status in the new style
+                          
                                 echo '
                                 <div class="bg-gray-50 border-l-4 border-primary rounded-md p-4">
                                     <div class="flex flex-col md:flex-row md:items-center md:justify-between">
@@ -214,7 +205,7 @@ $primaryHex = "#338040"; // Hex equivalent for Tailwind custom styles
                                     </div>
                                 </div>';
                             } else {
-                                // No academic data found for the user's academic_id
+                        
                                 echo '
                                 <div class="bg-yellow-50 border-l-4 border-yellow-500 rounded-md p-4">
                                     <div class="flex">
@@ -229,7 +220,7 @@ $primaryHex = "#338040"; // Hex equivalent for Tailwind custom styles
                                 </div>';
                             }
                         } else {
-                            // No academic_id found for the user
+                        
                             echo '
                             <div class="bg-yellow-50 border-l-4 border-yellow-500 rounded-md p-4">
                                 <div class="flex">
@@ -248,7 +239,7 @@ $primaryHex = "#338040"; // Hex equivalent for Tailwind custom styles
                 </div>
             </div>
 
-            <!-- Stat Cards -->
+
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
                 <?php
                 $dashboardData = [
@@ -261,7 +252,7 @@ $primaryHex = "#338040"; // Hex equivalent for Tailwind custom styles
                 foreach ($dashboardData as $index => $data) {
                     $stmt = $conn->query("SELECT * FROM {$data[1]}");
                     $total = $stmt->rowCount();
-                    $listPage = $data[3]; // Correct file name mapping
+                    $listPage = $data[3]; 
                     $gradient = $data[4];
                 
                     echo "
@@ -291,7 +282,7 @@ $primaryHex = "#338040"; // Hex equivalent for Tailwind custom styles
                 ?>
             </div>
 
-            <!-- Evaluation Types -->
+       
             <div class="mb-8">
                 <div class="flex items-center mb-4">
                     <div class="w-1 h-6 bg-primary rounded-full mr-2"></div>
@@ -331,9 +322,9 @@ $primaryHex = "#338040"; // Hex equivalent for Tailwind custom styles
                 </div>
             </div>
 
-            <!-- Analysis Section -->
+          
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <!-- Faculty Selection -->
+             
                 <div class="bg-white rounded-lg shadow-md">
                     <div class="bg-primary text-white rounded-t-lg py-3 px-4">
                         <h5 class="text-lg font-semibold">Select Faculty to Monitor</h5>
@@ -344,14 +335,14 @@ $primaryHex = "#338040"; // Hex equivalent for Tailwind custom styles
                                 <label for="facultySelect" class="block text-sm font-medium text-gray-700 mb-1">Faculty:</label>
                                 <select id="facultySelect" name="faculty_id" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm">
                                     <option value="" selected disabled>Select Faculty</option>
-                                    <!-- Options dynamically populated -->
+                                 
                                 </select>
                             </div>
                         </form>
                     </div>
                 </div>
 
-                <!-- Academic Year Selection -->
+          
                 <div class="bg-white rounded-lg shadow-md">
                     <div class="bg-primary text-white rounded-t-lg py-3 px-4">
                         <h5 class="text-lg font-semibold">Select Academic Year</h5>
@@ -375,9 +366,9 @@ $primaryHex = "#338040"; // Hex equivalent for Tailwind custom styles
                 </div>
             </div>
 
-            <!-- Charts Section -->
+          
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                <!-- Performance Over Time Chart -->
+               
                 <div class="bg-white rounded-lg shadow-md">
                     <div class="bg-primary text-white rounded-t-lg py-3 px-4">
                         <h5 class="text-lg font-semibold">Performance Over Time</h5>
@@ -387,7 +378,6 @@ $primaryHex = "#338040"; // Hex equivalent for Tailwind custom styles
                     </div>
                 </div>
 
-                <!-- Mean Score Chart -->
                 <div class="bg-white rounded-lg shadow-md">
                     <div class="bg-primary text-white rounded-t-lg py-3 px-4">
                         <h5 class="text-lg font-semibold">Mean Score</h5>
@@ -398,7 +388,6 @@ $primaryHex = "#338040"; // Hex equivalent for Tailwind custom styles
                 </div>
             </div>
 
-            <!-- Legend Section -->
             <div class="bg-white rounded-lg shadow-md p-5 mb-6">
                 <div class="flex items-center mb-3">
                     <div class="w-1 h-5 bg-primary rounded-full mr-2"></div>
@@ -428,7 +417,6 @@ $primaryHex = "#338040"; // Hex equivalent for Tailwind custom styles
                 </div>
             </div>
 
-            <!-- Feedback Section -->
             <div class="bg-white rounded-lg shadow-md mb-8">
                 <div class="bg-primary text-white rounded-t-lg py-3 px-4">
                     <h5 class="text-lg font-semibold">Performance Feedback</h5>
@@ -456,7 +444,7 @@ $primaryHex = "#338040"; // Hex equivalent for Tailwind custom styles
         const academicSelect = document.getElementById('academicSelect');
         const feedbackElement = document.getElementById('performanceFeedback');
 
-        let selectedCategory = null; // Track the active category
+        let selectedCategory = null; 
 
         function populateDropdown(category) {
             facultySelect.innerHTML = '<option value="" selected disabled>Select Faculty</option>';
@@ -488,10 +476,9 @@ $primaryHex = "#338040"; // Hex equivalent for Tailwind custom styles
                 this.classList.add('ring-2', 'ring-primary');
                 this.querySelector('.indicator-dot').classList.remove('hidden');
 
-                selectedCategory = this.getAttribute('data-category'); // Store active category
+                selectedCategory = this.getAttribute('data-category'); 
                 populateDropdown(selectedCategory);
-                
-                // Clear charts and feedback when category changes
+             
                 clearCharts();
                 clearFeedback();
             });
