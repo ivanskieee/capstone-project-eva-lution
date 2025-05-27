@@ -69,17 +69,15 @@ $end_page = min($current_segment * $segment_size, $total_pages);
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Data will be dynamically loaded here -->
                             </tbody>
                         </table>
                         <p id="noRecordsMessage" style="display:none; color: black;" class="ml-1">No user found.</p>
                     </div>
                 </div>
 
-                <!-- Pagination -->
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-center" id="pagination-links">
-                        <!-- Pagination links will be dynamically generated -->
+                       
                     </ul>
                 </nav>
             </div>
