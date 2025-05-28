@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $lastname = $_POST['lastname'];
     $email = $_POST['email'];
     $course = $_POST['course'];
-    $subjects = isset($_POST['subjects']) ? implode(", ", $_POST['subjects']) : ''; // Convert array to string // Join subjects array into a string
+    $subjects = isset($_POST['subjects']) ? implode(", ", $_POST['subjects']) : '';
     $section = $_POST['section'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
@@ -21,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bindParam(':lastname', $lastname);
     $stmt->bindParam(':email', $email);
     $stmt->bindParam(':course', $course);
-    $stmt->bindParam(':subject', $subjects); // Bind the joined subjects string
+    $stmt->bindParam(':subject', $subjects); 
     $stmt->bindParam(':section', $section);
     $stmt->bindParam(':password', $password);
 
