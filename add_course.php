@@ -2,9 +2,9 @@
 include 'database/connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['course_code']) && isset($_POST['course_name'])) {
-    $course_code = strtolower(trim($_POST['course_code'])); // Convert to lowercase
-    $course_name = ucwords(strtolower(trim($_POST['course_name']))); // Capitalize first letter of each word
-    $course_name = preg_replace('/\bOf\b/', 'of', $course_name); // Ensure "of" stays lowercase
+    $course_code = strtolower(trim($_POST['course_code'])); 
+    $course_name = ucwords(strtolower(trim($_POST['course_name']))); 
+    $course_name = preg_replace('/\bOf\b/', 'of', $course_name); 
 
     try {
         $stmt = $conn->prepare("SELECT * FROM courses WHERE course_code = :code OR course_name = :name");
