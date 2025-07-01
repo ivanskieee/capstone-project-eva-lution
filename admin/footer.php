@@ -144,5 +144,3 @@ $('.number').on('input keyup keypress',function(){
 <script src="assets/plugins/datatables-buttons/js/buttons.colVis.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-
-
